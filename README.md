@@ -136,13 +136,13 @@ In my cluster there are two instances of [ExternalDNS](https://github.com/kubern
 
 | Device                      | Num | OS Disk Size | Data Disk Size                  | Ram  | OS            | Function                |
 |-----------------------------|-----|--------------|---------------------------------|------|---------------|-------------------------|
-| ASUS NUC 14 Pro CU 5 125H   | 3   | 1TB SSD      | 1TB (local) / 800GB (rook-ceph) | 96GB | Talos         | Kubernetes              |
-| Dell PowerEdge T340         | 1   | 1TB SSD      | 8x22TB ZFS (mirrored vdevs)     | 64GB | TrueNAS SCALE | NFS + Backup Server     |
-| JetKVM                      | 3   | -            | -                               | -    | -             | KVM for Kubernetes      |
-| UniFi UDMP Max              | 1   | -            | 2x4TB HDD                       | -    | -             | Router & NVR            |
-| UniFi USW-Enterprise-24-PoE | 1   | -            | -                               | -    | -             | 2.5Gb PoE Switch        |
-| UniFi USP PDU Pro           | 1   | -            | -                               | -    | -             | PDU                     |
-| APC SMT1500RM2U             | 1   | -            | -                               | -    | -             | UPS                     |
+| MS-01                       | 3   | 256Gb SSD    | 1TB (rook-ceph)                 | 64GB | Talos         | Kubernetes              |
+| DIY                         | 1   | 256Gb SSD    | 4x4TB ZFS                       | 16GB | TrueNAS SCALE | NFS + Backup Server     |
+| JetKVM                      | 3   | -            | -                               | -    | -             | KVM for k8s nodes       |
+| Lenovo m720q OPNsense       | 1   | -            | 4x4TB HDD                       | -    | -             | Router                  |
+| Mikrotik CRS310 8G-2S-IN    | 1   | -            | -                               | -    | -             | 2.5Gb  Switch           |
+| MikroTik CRS305-1G-4S+IN    | 1   | -            | -                               | -    | -             | 10Gb SFP+ Switch        |
+| EATON 3S 850                | 1   | -            | -                               | -    | -             | UPS                     |
 
 ---
 
@@ -164,12 +164,12 @@ In my cluster there are two instances of [ExternalDNS](https://github.com/kubern
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f64f/512.gif" alt="🙏" width="20" height="20"> Gratitude and Thanks
 
-Thanks to all the people who donate their time to the [Home Operations](https://discord.gg/home-operations) Discord community. Be sure to check out [kubesearch.dev](https://kubesearch.dev/) for ideas on how to deploy applications or get ideas on what you could deploy.
+Thanks to all the people over at [Home Operations](https://discord.gg/home-operations) Discord community. Be sure to check out [kubesearch.dev](https://kubesearch.dev/) for ideas on how to deploy applications or get ideas on what you could deploy.
 
 ---
 
 <div align="center">
 
-[![DeepWiki](https://img.shields.io/badge/deepwiki-purple?label=&logo=deepl&style=for-the-badge&logoColor=white)](https://deepwiki.com/onedr0p/home-ops)
+[![DeepWiki](https://img.shields.io/badge/deepwiki-purple?label=&logo=deepl&style=for-the-badge&logoColor=white)](https://deepwiki.com/thomloy/home-ops)
 
 </div>
