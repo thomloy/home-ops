@@ -1,0 +1,9 @@
+---
+creation_rules:
+  - path_regex: /.+\.sops\.yaml
+    encrypted_regex: ^(data|stringData)$
+    mac_only_encrypted: true
+    age: age1u6wxmzymsqgek8hlngpz9juwvheq2njm2upe8rgv0cp250lq7veqecyka2
+stores:
+  yaml:
+    indent: 2

@@ -1,0 +1,34 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: default
+
+components:
+  - ../../components/alerts
+
+resources:
+  - ./namespace.yaml
+  - ./atuin/ks.yaml
+  - ./autobrr/ks.yaml
+  - ./bazarr/ks.yaml
+  - ./cross-seed/ks.yaml
+  - ./go2rtc/ks.yaml
+  - ./home-assistant/ks.yaml
+  - ./mosquitto/ks.yaml
+  - ./notifier/ks.yaml
+  - ./nzbget/ks.yaml
+  - ./plex/ks.yaml
+  - ./prowlarr/ks.yaml
+  - ./qbittorrent/ks.yaml
+  - ./qui/ks.yaml
+  - ./radarr/ks.yaml
+  - ./recyclarr/ks.yaml
+  - ./seerr/ks.yaml
+  - ./slskd/ks.yaml
+  - ./smtp-relay/ks.yaml
+  - ./sonarr/ks.yaml
+  - ./tautulli/ks.yaml
+  - ./tqm/ks.yaml
+  - ./zigbee/ks.yaml
+  - ./zwave/ks.yaml

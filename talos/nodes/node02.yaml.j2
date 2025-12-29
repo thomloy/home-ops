@@ -1,0 +1,43 @@
+---
+machine:
+  type: controlplane
+  nodeLabels:
+    topology.kubernetes.io/zone: m
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: node02
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: node02-to-node01
+selector:
+  match: link.driver == "thunderbolt-net" && link.bus_path == "1-1.0"
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: node02-to-node01
+up: true
+mtu: 65520
+addresses:
+  - address: 169.254.255.21/32 # node02
+routes:
+  - destination: 169.254.255.20/32 # node01
+    metric: 2048
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: node02-to-node03
+selector:
+  match: link.driver == "thunderbolt-net" && link.bus_path == "0-1.0"
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: node02-to-node03
+up: true
+mtu: 65520
+addresses:
+  - address: 169.254.255.21/32 # node02
+routes:
+  - destination: 169.254.255.22/32 # node03
+    metric: 2048
