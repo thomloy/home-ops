@@ -137,7 +137,7 @@ In my cluster there are two instances of [ExternalDNS](https://github.com/kubern
 | MS-01                       | 3   | 256Gb SSD    | 1TB (rook-ceph)                 | 64GB | Talos         | Kubernetes              |
 | DIY                         | 1   | 256Gb SSD    | 4x4TB ZFS                       | 16GB | TrueNAS SCALE | NFS + Backup Server     |
 | JetKVM                      | 3   | -            | -                               | -    | -             | KVM for k8s nodes       |
-| Lenovo m720q OPNsense       | 1   | -            | 4x4TB HDD                       | -    | -             | Router                  |
+| Lenovo m720q OPNsense       | 1   | -            | -                               | -    | -             | Router                  |
 | Mikrotik CRS310 8G-2S-IN    | 1   | -            | -                               | -    | -             | 2.5Gb  Switch           |
 | MikroTik CRS305-1G-4S+IN    | 1   | -            | -                               | -    | -             | 10Gb SFP+ Switch        |
 | EATON 3S 850                | 1   | -            | -                               | -    | -             | UPS                     |
