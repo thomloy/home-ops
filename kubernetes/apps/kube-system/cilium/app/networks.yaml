@@ -1,5 +1,5 @@
 ---
-apiVersion: cilium.io/v2
+apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: pool
@@ -8,7 +8,21 @@ spec:
   blocks:
     - cidr: "192.168.42.0/24"
 ---
-apiVersion: cilium.io/v2
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: l2-policy
+spec:
+  loadBalancerIPs: true
+  # NOTE: interfaces might need to be set if you have more than one active NIC on your hosts
+  # interfaces:
+  #   - ^eno[0-9]+
+  #   - ^eth[0-9]+
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+---
+apiVersion: cilium.io/v2alpha1
 kind: CiliumBGPAdvertisement
 metadata:
   name: bgp-advertisement-config
@@ -22,15 +36,12 @@ spec:
           - LoadBalancerIP
       selector:
         matchExpressions:
-          - key: fakeSelector
-            operator: NotIn
-            values:
-              - will-match-and-announce-all-services
+          - { key: somekey, operator: NotIn, values: ["never-used-value"] }
 ---
-apiVersion: cilium.io/v2
+apiVersion: cilium.io/v2alpha1
 kind: CiliumBGPPeerConfig
 metadata:
-  name: bgp-peer-config
+  name: bgp-peer-config-v4
 spec:
   families:
     - afi: ipv4
@@ -39,7 +50,7 @@ spec:
         matchLabels:
           advertise: bgp
 ---
-apiVersion: cilium.io/v2
+apiVersion: cilium.io/v2alpha1
 kind: CiliumBGPClusterConfig
 metadata:
   name: bgp-cluster-config
@@ -48,11 +59,11 @@ spec:
     matchLabels:
       kubernetes.io/os: linux
   bgpInstances:
-    - name: cilium
+    - name: instance-64514
       localASN: 64514
       peers:
-        - name: opnsense
+        - name: peer-64513-v4
           peerASN: 64513
           peerAddress: 192.168.42.1
           peerConfigRef:
-            name: bgp-peer-config
+            name: bgp-peer-config-v4

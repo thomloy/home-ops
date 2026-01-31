@@ -10,12 +10,12 @@ spec:
   interval: 1h
   values:
     fullnameOverride: k8s-gateway
-    domain: "kryzql.space"
+    domain: "${SECRET_DOMAIN}"
     ttl: 1
     service:
       type: LoadBalancer
       port: 53
       annotations:
-        lbipam.cilium.io/ips: "192.168.42.110"
+        lbipam.cilium.io/ips: "192.168.42.99"
       externalTrafficPolicy: Cluster
     watchedResources: ["HTTPRoute", "Service"]

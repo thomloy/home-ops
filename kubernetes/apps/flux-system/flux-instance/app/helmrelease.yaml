@@ -21,7 +21,7 @@ spec:
         - notification-controller
       sync:
         kind: GitRepository
-        url: "https://github.com/thomloy/home-ops.git"
+        url: "https://github.com/thomloy.git"
         ref: "refs/heads/main"
         path: kubernetes/flux/cluster
       commonMetadata:
