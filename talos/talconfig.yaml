@@ -1,0 +1,125 @@
+---
+clusterName: kubernetes
+
+talosVersion: "${talosVersion}"
+kubernetesVersion: "${kubernetesVersion}"
+
+endpoint: https://192.168.42.100:6443
+additionalApiServerCertSans: &sans
+  - "127.0.0.1"
+  - "192.168.42.100"
+  - "k8s.internal"
+additionalMachineCertSans: *sans
+
+clusterPodNets: ["10.42.0.0/16"]
+clusterSvcNets: ["10.43.0.0/16"]
+
+# Disable built-in CNI to use Cilium
+cniConfig:
+  name: none
+
+nodes:
+  - hostname: "node01"
+    ipAddress: "192.168.42.41"
+    installDiskSelector:
+      serial: "23492U801714"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/75d0b5534a40b784a247e68fa4287f161301bf31fcb448d138fc4a60e5b5fdab
+    controlPlane: true
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "58:47:ca:7d:c0:bb"
+        dhcp: false
+        addresses:
+          - "192.168.42.41/24"
+        routes:
+          - gateway: "192.168.42.1"
+            network: 0.0.0.0/0
+        mtu: 9000
+        vip:
+          ip: "192.168.42.100"
+    patches:
+      - # Load kernel modules
+        |-
+        machine:
+          kernel:
+            modules:
+              - name: i915
+              - name: intel-ucode
+              - name: mei
+              - name: thunderbolt
+  - hostname: "node02"
+    ipAddress: "192.168.42.42"
+    installDiskSelector:
+      serial: "23492V800631"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/75d0b5534a40b784a247e68fa4287f161301bf31fcb448d138fc4a60e5b5fdab
+    controlPlane: true
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "58:47:ca:7d:ca:43"
+        dhcp: false
+        addresses:
+          - "192.168.42.42/24"
+        routes:
+          - gateway: "192.168.42.1"
+            network: 0.0.0.0/0
+        mtu: 9000
+        vip:
+          ip: "192.168.42.100"
+    patches:
+      - # Load kernel modules
+        |-
+        machine:
+          kernel:
+            modules:
+              - name: i915
+              - name: intel-ucode
+              - name: mei
+              - name: thunderbolt
+  - hostname: "node03"
+    ipAddress: "192.168.42.43"
+    installDiskSelector:
+      serial: "23485G808758"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/75d0b5534a40b784a247e68fa4287f161301bf31fcb448d138fc4a60e5b5fdab
+    controlPlane: true
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "58:47:ca:7d:ce:3b"
+        dhcp: false
+        addresses:
+          - "192.168.42.43/24"
+        routes:
+          - gateway: "192.168.42.1"
+            network: 0.0.0.0/0
+        mtu: 9000
+        vip:
+          ip: "192.168.42.100"
+    patches:
+      - # Load kernel modules
+        |-
+        machine:
+          kernel:
+            modules:
+              - name: i915
+              - name: intel-ucode
+              - name: mei
+              - name: thunderbolt
+
+# Global patches
+patches:
+  - "@./patches/global/machine-files.yaml"
+  - "@./patches/global/machine-kubelet.yaml"
+  - "@./patches/global/machine-network.yaml"
+  - "@./patches/global/machine-sysctls.yaml"
+  - "@./patches/global/machine-time.yaml"
+
+# Controller patches
+controlPlane:
+  patches:
+    - "@./patches/controller/cluster.yaml"
+

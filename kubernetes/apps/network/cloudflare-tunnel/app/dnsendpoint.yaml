@@ -1,0 +1,10 @@
+---
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: cloudflare-tunnel
+spec:
+  endpoints:
+    - dnsName: "external.kryzql.space"
+      recordType: CNAME
+      targets: ["c069e239-b16a-4b88-9424-c54a6dea143d.cfargotunnel.com"]

@@ -1,0 +1,18 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "kryzql-space-production"
+spec:
+  dnsNames:
+    - "kryzql.space"
+    - "*.kryzql.space"
+  duration: 160h
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  privateKey:
+    algorithm: ECDSA
+  secretName: "kryzql-space-production-tls"
+  usages:
+    - digital signature

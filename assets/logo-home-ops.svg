@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  width="512"
+  height="512"
+  viewBox="0 0 512 512"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="Home-Ops logo">
+
+  <!-- ===== HOUSE ===== -->
+  <g id="house" transform="translate(96 48)">
+    <!-- Roof -->
+    <polygon
+      points="160 0 352 144 -32 144"
+      fill="#0f172a"/>
+
+    <!-- Body -->
+    <rect
+      x="0"
+      y="144"
+      width="320"
+      height="256"
+      rx="32"
+      fill="#020617"/>
+
+    <!-- Window -->
+    <rect
+      x="136"
+      y="216"
+      width="48"
+      height="48"
+      rx="10"
+      fill="#fb923c"/>
+  </g>
+
+  <!-- ===== INFINITY SYMBOL (SOLID SHAPES) ===== -->
+  <g id="infinity" transform="translate(256 360)">
+
+    <!-- Left (blue) -->
+    <path
+      fill="#3b82f6"
+      d="
+        M -180 0
+        C -260 0 -260 -120 -180 -120
+        C -120 -120 -80 -40 0 0
+        C -80 40 -120 120 -180 120
+        C -260 120 -260 0 -180 0
+        Z
+      "/>
+
+    <!-- Right (orange) -->
+    <path
+      fill="#f97316"
+      d="
+        M 180 0
+        C 260 0 260 -120 180 -120
+        C 120 -120 80 -40 0 0
+        C 80 40 120 120 180 120
+        C 260 120 260 0 180 0
+        Z
+      "/>
+
+  </g>
+
+</svg>
+
