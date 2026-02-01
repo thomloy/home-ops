@@ -70,13 +70,13 @@ spec:
         useAllNodes: true
         useAllDevices: false
         nodes:
-          node01:
+          - name: node01
             devices:
               - name: /dev/disk/by-id/nvme-BIWIN_NV7200_1TB_2534220001790
-          node02:
+          - name: node02
             devices:
               - name: /dev/disk/by-id/nvme-BIWIN_NV7200_1TB_2534220502974
-          node03:
+          - name: node03
             devices:
               - name: /dev/disk/by-id/nvme-BIWIN_NV7200_1TB_2534220201769
         config:
