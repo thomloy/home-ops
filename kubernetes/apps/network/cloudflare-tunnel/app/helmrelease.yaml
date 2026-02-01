@@ -73,7 +73,7 @@ spec:
                 originRequest:
                   http2Origin: true
                   originServerName: external.kryzql.space
-                service: https://envoy-external.{{ .Release.Namespace }}.svc.cluster.local:80
+                service: https://envoy-external.{{ .Release.Namespace }}.svc.cluster.local:443
               - service: http_status:404
     persistence:
       config-file:
