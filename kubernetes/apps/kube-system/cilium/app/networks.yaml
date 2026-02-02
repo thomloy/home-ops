@@ -59,10 +59,10 @@ spec:
     matchLabels:
       kubernetes.io/os: linux
   bgpInstances:
-    - name: instance-64514
+    - name: cilium
       localASN: 64514
       peers:
-        - name: peer-64513-v4
+        - name: opnsense
           peerASN: 64513
           peerAddress: 192.168.42.1
           peerConfigRef:

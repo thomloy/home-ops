@@ -10,10 +10,8 @@ spec:
   interval: 1h
   values:
     fullnameOverride: k8s-gateway
-    domain: "kryzql.space"
+    domain: "${SECRET_DOMAIN}"
     ttl: 1
-    extraArgs:
-      - --exclude-domains=_acme-challenge.kryzql.space
     service:
       type: LoadBalancer
       port: 53

@@ -48,7 +48,9 @@ nodes:
               - name: i915
               - name: intel-ucode
               - name: mei
+              - name: nbd
               - name: thunderbolt
+              - name: thunderbolt_net
   - hostname: "node02"
     ipAddress: "192.168.42.42"
     installDiskSelector:
@@ -78,7 +80,9 @@ nodes:
               - name: i915
               - name: intel-ucode
               - name: mei
+              - name: nbd
               - name: thunderbolt
+              - name: thunderbolt_net
   - hostname: "node03"
     ipAddress: "192.168.42.43"
     installDiskSelector:
@@ -108,12 +112,15 @@ nodes:
               - name: i915
               - name: intel-ucode
               - name: mei
+              - name: nbd
               - name: thunderbolt
+              - name: thunderbolt_net
 
 # Global patches
 patches:
   - "@./patches/global/machine-files.yaml"
   - "@./patches/global/machine-kubelet.yaml"
+  - "@./patches/global/machine-labels.yaml"
   - "@./patches/global/machine-network.yaml"
   - "@./patches/global/machine-sysctls.yaml"
   - "@./patches/global/machine-time.yaml"

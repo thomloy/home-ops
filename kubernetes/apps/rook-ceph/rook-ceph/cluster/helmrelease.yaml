@@ -69,16 +69,8 @@ spec:
       storage:
         useAllNodes: true
         useAllDevices: false
-        nodes:
-          - name: node01
-            devices:
-              - name: /dev/disk/by-id/nvme-BIWIN_NV7200_1TB_2534220001790
-          - name: node02
-            devices:
-              - name: /dev/disk/by-id/nvme-BIWIN_NV7200_1TB_2534220502974
-          - name: node03
-            devices:
-              - name: /dev/disk/by-id/nvme-BIWIN_NV7200_1TB_2534220201769
+        nodes: []
+        deviceFilter: "^nvme[0-9]+n[0-9]+$"
         config:
           osdsPerDevice: "1"
     cephBlockPools:
