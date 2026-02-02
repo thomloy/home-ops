@@ -36,7 +36,7 @@ storage:
 ui:
   title: Status | Gatus
   header: Status
-  logo: https://avatars.githubusercontent.com/u/213795
+  logo: https://avatars.githubusercontent.com/u/159758010
   link: https://github.com/thomloy
   buttons:
     - name: Github
