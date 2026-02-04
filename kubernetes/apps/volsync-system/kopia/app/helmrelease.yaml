@@ -95,7 +95,7 @@ spec:
       repository:
         type: nfs
         server: expanse.internal
-        path: /mnt/eros/VolsyncKopia
+        path: /mnt/HDD1X4/VolsyncKopia
         globalMounts:
           - path: /repository
       tmpfs:
