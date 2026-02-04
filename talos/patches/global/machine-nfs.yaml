@@ -1,0 +1,4 @@
+machine:
+  install:
+    extensions:
+      - image: ghcr.io/siderolabs/extensions/nfs-utils:v1.12.2

@@ -25,7 +25,7 @@ nodes:
       serial: "23492U801714"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/75d0b5534a40b784a247e68fa4287f161301bf31fcb448d138fc4a60e5b5fdab
+    talosImageURL: factory.talos.dev/installer/81e6553f51b69a414e2b3ab99e61dcc05343f9f199dd8b7611d080cbecd50016
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
@@ -57,7 +57,7 @@ nodes:
       serial: "23492V800631"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/75d0b5534a40b784a247e68fa4287f161301bf31fcb448d138fc4a60e5b5fdab
+    talosImageURL: factory.talos.dev/installer/81e6553f51b69a414e2b3ab99e61dcc05343f9f199dd8b7611d080cbecd50016
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
@@ -78,7 +78,6 @@ nodes:
           kernel:
             modules:
               - name: i915
-              - name: intel-ucode
               - name: mei
               - name: nbd
               - name: thunderbolt
@@ -89,7 +88,7 @@ nodes:
       serial: "23485G808758"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/75d0b5534a40b784a247e68fa4287f161301bf31fcb448d138fc4a60e5b5fdab
+    talosImageURL: factory.talos.dev/installer/81e6553f51b69a414e2b3ab99e61dcc05343f9f199dd8b7611d080cbecd50016
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
