@@ -94,7 +94,9 @@ spec:
             subPath: repository.config
       repository:
         type: nfs
-        server: expanse.internal
+        server: 192.168.42.44
+        searchDomains:
+          - internal
         path: /mnt/HDD1X4/VolsyncKopia
         globalMounts:
           - path: /repository
