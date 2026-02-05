@@ -25,6 +25,8 @@ spec:
               secretKeyRef:
                 name: &secret opnsense-dns-secret
                 key: OPNSENSE_API_KEY
+        args:
+          - --listen-address=:8080
         livenessProbe:
           httpGet:
             path: /healthz
