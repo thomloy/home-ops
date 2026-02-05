@@ -6,7 +6,7 @@ metadata:
   name: opnsense-dns
 spec:
   interval: 1h
-  path: ./kubernetes/apps/network/external-dns/app
+  path: ./kubernetes/apps/network/opnsense-dns/app
   prune: true
   sourceRef:
     kind: GitRepository
