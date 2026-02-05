@@ -1,8 +1,12 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
 metadata:
   name: graphite-exporter
 spec:
+  chartRef:
+    kind: OCIRepository
+    name: graphite-exporter
+  interval: 1h
   replicas: 1
   selector:
     matchLabels:
