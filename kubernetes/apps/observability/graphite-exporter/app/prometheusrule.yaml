@@ -1,0 +1,66 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ups-graphite-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: ups.graphite.rules
+      rules:
+
+        # =========================
+        # UPS sur batterie + < 20 min
+        # =========================
+        - alert: UPSOnBatteryLowRuntime
+          expr: |
+            graphite_truenas_nas_ups_on_battery == 1
+            and
+            graphite_truenas_nas_ups_battery_runtime <= 1200
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "UPS {{ $labels.instance }} running on battery"
+            description: "UPS is on battery with less than 20 minutes of runtime remaining"
+
+        # =========================
+        # Batterie à remplacer
+        # =========================
+        - alert: UPSBatteryReplace
+          expr: |
+            graphite_truenas_nas_ups_battery_health != 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "UPS {{ $labels.instance }} battery needs replacement"
+            description: "UPS reports battery health problem"
+
+        # =========================
+        # Batterie faible (< 20 %)
+        # =========================
+        - alert: UPSLowBatteryCharge
+          expr: |
+            graphite_truenas_nas_ups_battery_charge <= 20
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "UPS {{ $labels.instance }} battery low"
+            description: "UPS battery charge below 20%"
+
+        # =========================
+        # UPS non joignable
+        # =========================
+        - alert: UPSExporterDown
+          expr: |
+            absent(graphite_truenas_nas_ups_status)
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "UPS metrics missing"
+            description: "No UPS metrics received"
+

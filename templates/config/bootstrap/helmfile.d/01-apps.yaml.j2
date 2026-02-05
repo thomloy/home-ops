@@ -11,6 +11,26 @@ releases:
     chart: oci://quay.io/cilium/charts/cilium
     version: 1.18.6
     values: ['./templates/values.yaml.gotmpl']
+    hooks:
+      - # Wait for Cilium CRDs to be available
+        command: bash
+        args:
+          - -c
+          - until kubectl get crd ciliumloadbalancerippools.cilium.io ciliumbgpadvertisements.cilium.io ciliumbgppeerconfigs.cilium.io ciliumbgpclusterconfigs.cilium.io &>/dev/null; do sleep 5; done
+        events:
+          - postsync
+        showlogs: true
+      - # Apply Cilium Resources
+        command: kubectl
+        args:
+          - apply
+          - --namespace=kube-system
+          - --server-side
+          - --field-manager=kustomize-controller
+          - --filename=../../kubernetes/apps/kube-system/cilium/app/networks.yaml
+        events:
+          - postsync
+        showlogs: true
 
   - name: coredns
     namespace: kube-system
@@ -38,6 +58,39 @@ releases:
     #% else %#
     needs: ['kube-system/coredns']
     #% endif %#
+
+    - name: external-secrets
+    namespace: external-secrets
+    chart: oci://ghcr.io/external-secrets/charts/external-secrets
+    version: 1.3.2
+    values: ['./templates/values.yaml.gotmpl']
+    needs: ['cert-manager/cert-manager']
+
+  - name: onepassword
+    namespace: external-secrets
+    chart: oci://ghcr.io/bjw-s-labs/helm/app-template
+    version: 4.6.2
+    values: ['./templates/values.yaml.gotmpl']
+    hooks:
+      - # Wait for ExternalSecrets CRDs to be available
+        command: bash
+        args:
+          - -c
+          - until kubectl get crd clustersecretstores.external-secrets.io &>/dev/null; do sleep 5; done
+        events:
+          - postsync
+        showlogs: true
+      - # Apply ExternalSecret Resources
+        command: kubectl
+        args:
+          - apply
+          - --server-side
+          - --field-manager=kustomize-controller
+          - --filename=../../kubernetes/apps/external-secrets/onepassword/app/clustersecretstore.yaml
+        events:
+          - postsync
+        showlogs: true
+    needs: ['external-secrets/external-secrets']
 
   - name: flux-operator
     namespace: flux-system

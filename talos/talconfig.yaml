@@ -46,7 +46,6 @@ nodes:
           kernel:
             modules:
               - name: i915
-              - name: intel-ucode
               - name: mei
               - name: nbd
               - name: thunderbolt
@@ -109,7 +108,6 @@ nodes:
           kernel:
             modules:
               - name: i915
-              - name: intel-ucode
               - name: mei
               - name: nbd
               - name: thunderbolt
@@ -117,10 +115,11 @@ nodes:
 
 # Global patches
 patches:
-  - "@./patches/global/machine-files.yaml"
+  - "@./patches/global/machine-MutatingAdmissionPolicy.yaml"
   - "@./patches/global/machine-kubelet.yaml"
   - "@./patches/global/machine-labels.yaml"
   - "@./patches/global/machine-network.yaml"
+  - "@./patches/global/machine-runtime-cri-and-nfs.yaml"
   - "@./patches/global/machine-sysctls.yaml"
   - "@./patches/global/machine-time.yaml"
 
