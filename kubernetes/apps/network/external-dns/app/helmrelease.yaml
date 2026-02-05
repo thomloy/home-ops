@@ -30,8 +30,6 @@ spec:
               secretKeyRef:
                 name: *secret
                 key: OPNSENSE_API_SECRET
-        args:
-          - --listen-address=:8080
         livenessProbe:
           httpGet:
             path: /healthz
@@ -44,8 +42,6 @@ spec:
             port: http-webhook
           initialDelaySeconds: 10
           timeoutSeconds: 5
-    extraArgs:
-      - --webhook-provider-url=http://localhost:8080
     triggerLoopOnEvent: true
     policy: sync
     sources:
