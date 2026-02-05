@@ -25,6 +25,11 @@ spec:
               secretKeyRef:
                 name: &secret opnsense-dns-secret
                 key: OPNSENSE_API_KEY
+          - name: OPNSENSE_API_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: *secret
+                key: OPNSENSE_API_SECRET
         args:
           - --listen-address=:8080
         livenessProbe:
