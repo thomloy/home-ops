@@ -1,0 +1,46 @@
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: opnsense-dns
+  interval: 1h
+  values:
+    fullnameOverride: *app
+    provider:
+      name: webhook
+      webhook:
+        image:
+          repository: ghcr.io/crutonjohn/external-dns-opnsense-webhook
+          tag: v1.0.0
+        env:
+          - name: OPNSENSE_HOST
+            value: https://opnsense.internal
+          - name: OPNSENSE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: &secret opnsense-dns-secret
+                key: OPNSENSE_API_KEY
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+    triggerLoopOnEvent: true
+    policy: sync
+    sources:
+      - gateway-httproute
+      - service
+    txtOwnerId: main
+    txtPrefix: k8s.main.
+    domainFilters:
+      - kryzql.space
+    serviceMonitor:
+      enabled: true
+    podAnnotations:
+      secret.reloader.stakater.com/reload: *secret

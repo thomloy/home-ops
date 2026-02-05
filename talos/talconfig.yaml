@@ -8,7 +8,7 @@ endpoint: https://192.168.42.100:6443
 additionalApiServerCertSans: &sans
   - "127.0.0.1"
   - "192.168.42.100"
-  - "k8s.internal"
+  - "k8s.main.internal"
 additionalMachineCertSans: *sans
 
 clusterPodNets: ["10.42.0.0/16"]
