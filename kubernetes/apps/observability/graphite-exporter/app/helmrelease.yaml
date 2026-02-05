@@ -16,17 +16,17 @@ spec:
       labels:
         app: graphite-exporter
     spec:
-      containers:
-        - name: graphite-exporter
-          image: prom/graphite-exporter:v0.15.0
-          args:
-            - "--graphite.listen-address=:2003"
-            - "--web.listen-address=:9108"
-          ports:
-            - name: graphite
-              containerPort: 2003
-            - name: metrics
-              containerPort: 9108
+      chartRef:
+        kind: OCIRepository
+        name: graphite-exporter
+      interval: 1h
+      values:
+        image:
+          repository: prom/graphite-exporter
+          tag: v0.15.0
+        args:
+          - "--graphite.listen-address=:2003"
+          - "--web.listen-address=:9108"
 ---
 apiVersion: v1
 kind: Service
