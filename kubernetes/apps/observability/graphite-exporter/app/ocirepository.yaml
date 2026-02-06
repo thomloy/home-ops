@@ -10,4 +10,4 @@ spec:
     operation: copy
   ref:
     tag: v0.16.0
-  url: oci://ghcr.io/prometheus-community/charts/graphite-exporter
+  url: oci://ghcr.io/bjw-s-labs/helm/app-template
