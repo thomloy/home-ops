@@ -7,7 +7,6 @@ spec:
     kind: OCIRepository
     name: graphite-exporter
   interval: 1h
-  replicas: 1
   selector:
     matchLabels:
       app: graphite-exporter
@@ -21,6 +20,7 @@ spec:
         name: graphite-exporter
       interval: 1h
       values:
+        replicaCount: 1
         image:
           repository: prom/graphite-exporter
           tag: v0.15.0
