@@ -7,7 +7,8 @@ spec:
   interval: 1h
   chart:
     spec:
-      chartRef:
+      chart: .
+      sourceRef:
         kind: OCIRepository
         name: graphite-exporter
         namespace: observability
@@ -27,7 +28,8 @@ metadata:
   namespace: observability
 spec:
   selector:
-    app: graphite-exporter
+    app.kubernetes.io/name: graphite-exporter
+    app.kubernetes.io/instance: graphite-exporter
   ports:
     - name: graphite
       port: 2003
