@@ -6,7 +6,7 @@ metadata:
 spec:
   chartRef:
     kind: OCIRepository
-    name: graphite-explorer
+    name: graphite-exporter
   interval: 1h
   values:
     replicaCount: 1
