@@ -44,6 +44,7 @@ spec:
         ssl: false
         prometheusEndpoint: http://prometheus-operated.observability.svc.cluster.local:9090
       mgr:
+        mgr/crash/warn_recent_interval: "7200"
         modules:
           - name: diskprediction_local
             enabled: true
