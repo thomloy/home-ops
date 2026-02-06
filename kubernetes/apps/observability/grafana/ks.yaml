@@ -25,6 +25,11 @@ spec:
     - name: grafana
     - name: rook-ceph-cluster
       namespace: rook-ceph
+  healthChecks:
+    - apiVersion: ceph.rook.io/v1
+      kind: CephCluster
+      name: rook-ceph
+      namespace: rook-ceph
   interval: 1h
   path: ./kubernetes/apps/observability/grafana/instance
   prune: true
@@ -33,4 +38,5 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: observability
-  wait: false
+  wait: true
+  timeout: 10m
