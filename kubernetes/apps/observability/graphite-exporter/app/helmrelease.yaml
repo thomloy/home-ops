@@ -4,14 +4,10 @@ metadata:
   name: graphite-exporter
   namespace: observability
 spec:
+  chartRef:
+    kind: OCIRepository
+    name: graphite-explorer
   interval: 1h
-  chart:
-    spec:
-      chart: .
-      sourceRef:
-        kind: OCIRepository
-        name: graphite-exporter
-        namespace: observability
   values:
     replicaCount: 1
     image:
