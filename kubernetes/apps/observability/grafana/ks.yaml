@@ -23,7 +23,7 @@ metadata:
 spec:
   dependsOn:
     - name: grafana
-    - name: rook-ceph-cluster
+    - name: rook-ceph
       namespace: rook-ceph
   healthChecks:
     - apiVersion: ceph.rook.io/v1
