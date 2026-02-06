@@ -7,9 +7,6 @@ spec:
     kind: OCIRepository
     name: graphite-exporter
   interval: 1h
-  selector:
-    matchLabels:
-      app: graphite-exporter
   template:
     metadata:
       labels:
