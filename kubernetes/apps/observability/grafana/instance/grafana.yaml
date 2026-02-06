@@ -17,6 +17,7 @@ spec:
       disable_login_form: "false"
     auth.anonymous:
       enabled: "true"
+      org_role: Viewer
     log:
       mode: console
     metrics:
@@ -29,7 +30,8 @@ spec:
       angular_support_enabled: "true"
     server:
       enable_gzip: "true"
-      root_url: https://grafana.kryzql.space
+      root_url: https://grafana.kryzql.space/
+      serve_from_sub_path: false
   deployment:
     spec:
       strategy:
