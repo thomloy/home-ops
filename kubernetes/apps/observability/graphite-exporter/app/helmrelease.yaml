@@ -4,10 +4,11 @@ metadata:
   name: graphite-exporter
   namespace: observability
 spec:
+  interval: 1h
   chartRef:
     kind: OCIRepository
     name: graphite-exporter
-  interval: 1h
+
   values:
     controllers:
       main:
@@ -20,14 +21,26 @@ spec:
             args:
               - "--graphite.listen-address=:2003"
               - "--web.listen-address=:9108"
-              - "--graphite.mapping-config=/etc/graphite-exporter/mapping.yaml"
-    config:
+              - "--graphite.mapping-config=/config/mapping.yaml"
+
+    configMaps:
       mapping:
-        mappings:
-          - match: "truenas.nas.ups.*"
-            name: "ups"
-            labels:
-              source: "truenas"
+        enabled: true
+        data:
+          mapping.yaml: |
+            mappings:
+              - match: "truenas.nas.ups.*"
+                name: "truenas_ups"
+                labels:
+                  source: "truenas"
+
+    persistence:
+      mapping:
+        enabled: true
+        type: configMap
+        name: graphite-exporter-mapping
+        mountPath: /config
+
     service:
       main:
         controller: main
@@ -36,10 +49,10 @@ spec:
             port: 2003
           metrics:
             port: 9108
+
     serviceMonitor:
       main:
         enabled: true
-        serviceName: graphite-exporter
         endpoints:
           - port: metrics
             interval: 30s
