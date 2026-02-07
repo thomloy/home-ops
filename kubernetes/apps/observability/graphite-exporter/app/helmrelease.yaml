@@ -20,6 +20,13 @@ spec:
             args:
               - "--graphite.listen-address=:2003"
               - "--web.listen-address=:9108"
+    config:
+      mapping:
+        mappings:
+          - match: "truenas.nas.ups.*"
+            name: "ups"
+            labels:
+              source: "truenas"
     service:
       main:
         controller: main
