@@ -20,6 +20,7 @@ spec:
             args:
               - "--graphite.listen-address=:2003"
               - "--web.listen-address=:9108"
+              - "--graphite.mapping-config=/etc/graphite-exporter/mapping.yaml"
     config:
       mapping:
         mappings:
