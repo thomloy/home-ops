@@ -63,4 +63,3 @@ spec:
           annotations:
             summary: "UPS metrics missing"
             description: "No UPS metrics received"
-
