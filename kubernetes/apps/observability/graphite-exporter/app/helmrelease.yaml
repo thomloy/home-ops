@@ -20,18 +20,18 @@ spec:
             args:
               - "--graphite.listen-address=:2003"
               - "--web.listen-address=:9108"
-  service:
-    main:
-      controller: main
-      ports:
-        graphite:
-          port: 2003
-        metrics:
-          port: 9108
-  serviceMonitor:
-    main:
-      enabled: true
-      serviceName: graphite-exporter
-      endpoints:
-        - port: metrics
-          interval: 30s
+    service:
+      main:
+        controller: main
+        ports:
+          graphite:
+            port: 2003
+          metrics:
+            port: 9108
+    serviceMonitor:
+      main:
+        enabled: true
+        serviceName: graphite-exporter
+        endpoints:
+          - port: metrics
+            interval: 30s
