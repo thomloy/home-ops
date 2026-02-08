@@ -86,7 +86,7 @@ spec:
         hostnames:
           - "{{ .Release.Name }}.kryzql.space"
         parentRefs:
-          - name: envoy-external
+          - name: envoy-internal
             namespace: network
         rules:
           - # Ref:
