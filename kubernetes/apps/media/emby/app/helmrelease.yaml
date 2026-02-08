@@ -38,7 +38,7 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /identity
+                    path: /health
                     port: &port 8096
                   periodSeconds: 10
                   timeoutSeconds: 5
