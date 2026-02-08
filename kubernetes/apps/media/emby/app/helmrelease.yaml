@@ -104,6 +104,16 @@ spec:
     persistence:
       config:
         existingClaim: "{{ .Release.Name }}"
+        advancedMounts:
+          emby:
+            app:
+              - path: /config
+      config-cache:
+        existingClaim: emby-cache
+        advancedMounts:
+          emby:
+            app:
+              - path: /config/cache
       media:
         type: nfs
         server: NAS.internal
