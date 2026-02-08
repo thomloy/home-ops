@@ -54,10 +54,10 @@ spec:
               requests:
                 cpu: 100m
               limits:
-                memory: 16Gi
+                memory: 8Gi
     defaultPodOptions:
       resourceClaims:
-        - name: gpu
+        - name: ${APP}-gpu
           resourceClaimTemplateName: emby
       securityContext:
         runAsNonRoot: true
