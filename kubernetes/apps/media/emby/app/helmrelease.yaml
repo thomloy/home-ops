@@ -14,6 +14,10 @@ spec:
       emby:
         annotations:
           reloader.stakater.com/auto: "true"
+        pod:
+          resourceClaims:
+            - name: gpu
+              resourceClaimTemplateName: emby-gpu
         containers:
           app:
             image:
