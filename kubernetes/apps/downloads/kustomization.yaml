@@ -4,16 +4,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: downloads
 components:
-  - ../../components/flux-alerts
+  - ../../components/alerts/alertmanager
 resources:
   - ./namespace.yaml
-  - ./autobrr/ks.yaml
-  - ./bazarr/ks.yaml
-  - ./prowlarr/ks.yaml
-  - ./qbittorrent/ks.yaml
-  - ./qui/ks.yaml
   - ./radarr/ks.yaml
-  - ./recyclarr/ks.yaml
-  - ./sabnzbd/ks.yaml
-  - ./shelfmark/ks.yaml
   - ./sonarr/ks.yaml
