@@ -9,6 +9,7 @@ spec:
     labels:
       app.kubernetes.io/name: radarr
   components:
+    - ../../../../components/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
     - name: rook-ceph-cluster

@@ -9,6 +9,7 @@ spec:
     labels:
       app.kubernetes.io/name: emby
   components:
+    - ../../../../components/nfs-scaler
     - ../../../../components/gpu
     - ../../../../components/volsync
   dependsOn:
