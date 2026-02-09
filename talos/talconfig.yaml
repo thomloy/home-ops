@@ -45,8 +45,6 @@ nodes:
         machine:
           kernel:
             modules:
-              - name: i915
-              - name: mei
               - name: nbd
               - name: thunderbolt
               - name: thunderbolt_net
@@ -76,8 +74,6 @@ nodes:
         machine:
           kernel:
             modules:
-              - name: i915
-              - name: mei
               - name: nbd
               - name: thunderbolt
               - name: thunderbolt_net
@@ -107,8 +103,6 @@ nodes:
         machine:
           kernel:
             modules:
-              - name: i915
-              - name: mei
               - name: nbd
               - name: thunderbolt
               - name: thunderbolt_net

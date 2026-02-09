@@ -1,4 +1,4 @@
 machine:
   nodeLabels:
     topology.kubernetes.io/region: homelab-main
-    topology.kubernetes.io/zone: mesh
+    node.kubernetes.io/gpu: "true"
