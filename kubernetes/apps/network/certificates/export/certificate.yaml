@@ -8,6 +8,7 @@ spec:
   dnsNames:
     - "kryzql.space"
     - "*.kryzql.space"
+    - "bootstrap.kryzql.space"
   duration: 160h
   issuerRef:
     name: letsencrypt-production
