@@ -6,7 +6,6 @@ metadata:
   name: "kryzql-space-production"
 spec:
   dnsNames:
-    - "kryzql.space"
     - "*.kryzql.space"
   duration: 160h
   issuerRef:
