@@ -1,6 +1,7 @@
 # Secrets
 *.pub
 *.key
+*.sops.*
 *.decrypted~*.yaml
 /1password-credentials.json
 /age.key
