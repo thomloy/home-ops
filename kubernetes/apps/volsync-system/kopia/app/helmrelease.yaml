@@ -21,7 +21,7 @@ spec:
               tag: 0.22.3@sha256:17ab64542280197a5368247deaefadc3e3bbe15714ab666c2455a06824e86efd
             env:
               KOPIA_WEB_ENABLED: true
-              KOPIA_WEB_PORT: &port 8080
+              KOPIA_WEB_PORT: &port 80
               TZ: Europe/Paris
             envFrom:
               - secretRef:
@@ -47,9 +47,9 @@ spec:
               capabilities: {drop: ["ALL"]}
             resources:
               requests:
-                cpu: 50m
+                cpu: 10m
               limits:
-                memory: 2Gi
+                memory: 1Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
