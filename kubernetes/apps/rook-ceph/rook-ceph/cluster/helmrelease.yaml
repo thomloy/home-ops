@@ -60,7 +60,7 @@ spec:
         provider: host
         addressRanges:
           public:
-            - 192.168.42.0/24 # LAN
+            - 169.254.255.0/24 # mesh TB 4.0
           cluster:
             - 169.254.255.0/24 # mesh TB 4.0
         connections:
@@ -72,8 +72,7 @@ spec:
       storage:
         useAllNodes: true
         useAllDevices: false
-        nodes: []
-        deviceFilter: "^nvme[0-9]+n[0-9]+$"
+        devicePathFilter: ^/dev/disk/by-id/nvme-BIWIN_NV7200_1TB_.*
         config:
           osdsPerDevice: "1"
     cephBlockPools:
@@ -113,11 +112,11 @@ spec:
         spec:
           metadataPool:
             replicated:
-              size: 3
+              size: 2
           dataPools:
             - failureDomain: host
               replicated:
-                size: 3
+                size: 2
               name: data0
           metadataServer:
             activeCount: 1
