@@ -11,8 +11,7 @@ spec:
   values:
     crds:
       enabled: true
-    dns01RecursiveNameservers:
-      - "https://cloudflare-dns.com:443/dns-query"
+    dns01RecursiveNameservers: https://cloudflare-dns.com:443/dns-query
     dns01RecursiveNameserversOnly: true
     prometheus:
       enabled: true
