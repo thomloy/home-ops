@@ -84,30 +84,13 @@ spec:
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] == 401"]
         hostnames:
-          - "{{ .Release.Name }}.kryzql.space"
+          - emby.kryzql.space
         parentRefs:
           - name: envoy-internal
             namespace: network
-        rules:
-          - # Ref:
-            backendRefs:
-              - identifier: app
-                port: *port
-            filters:
-              - type: RequestHeaderModifier
-                requestHeaderModifier:
-                  remove:
-                    - Range
-            matches:
-              - path:
-                  type: PathPrefix
-                  value: /library/streams
-          - backendRefs:
-              - identifier: app
-                port: *port
     persistence:
       config:
-        existingClaim: "{{ .Release.Name }}"
+        existingClaim: emby
         advancedMounts:
           emby:
             app:
@@ -127,3 +110,12 @@ spec:
             readOnly: true
       tmp:
         type: emptyDir
+        advancedMounts:
+          emby:
+            app:
+              - path: /transcode
+                subPath: transcode
+              - path: /config/logs
+                subPath: logs
+              - path: /tmp
+                subPath: tmp
