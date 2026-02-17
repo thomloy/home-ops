@@ -18,6 +18,12 @@ spec:
           resourceClaims:
             - name: gpu
               resourceClaimTemplateName: emby-gpu
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
         containers:
           app:
             image:
@@ -25,7 +31,7 @@ spec:
               tag: 4.9.3.0@sha256:7c33d88d0186ad7abcc6e53566e9db8766687daa5510cddc13094e25bc5a5dfb
             env:
               TZ: Europe/Paris
-              EMBY_ADVERTISE_URL: https://emby.kryzql.space:443,http://192.168.42.110:8096,http://emby.media.svc.cluster.local:8096
+              DOTNET_SYSTEM_IO_DISABLEFILELOCKING: "true"
             probes:
               liveness:
                 enabled: true
@@ -59,16 +65,6 @@ spec:
                 cpu: 100m
               limits:
                 memory: 8Gi
-    defaultPodOptions:
-      resourceClaims:
-        - name: ${APP}-gpu
-          resourceClaimTemplateName: emby
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
     service:
       app:
         type: LoadBalancer
