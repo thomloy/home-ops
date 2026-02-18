@@ -92,8 +92,7 @@ spec:
         path: /mnt/HDD1X4/media
         server: 192.168.42.44
         globalMounts:
-          - path: /Downloads/qbittorrent
-            subPath: Downloads/qbittorrent
+          - path: /media
       tmp:
         type: emptyDir
         globalMounts:
