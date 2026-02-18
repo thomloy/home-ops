@@ -84,6 +84,6 @@ spec:
             namespace: network
     persistence:
       config:
-        existingClaim: prowlarr
+        existingClaim: prowlarr-config
       tmp:
         type: emptyDir
