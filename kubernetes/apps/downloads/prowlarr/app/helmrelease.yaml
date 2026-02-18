@@ -78,12 +78,12 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.kryzql.space"
+          - prowlarr.kryzql.space
         parentRefs:
           - name: envoy-internal
             namespace: network
     persistence:
       config:
-        existingClaim: "{{ .Release.Name }}"
+        existingClaim: prowlarr
       tmp:
         type: emptyDir
