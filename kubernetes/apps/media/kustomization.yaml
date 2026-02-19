@@ -9,4 +9,5 @@ components:
 
 resources:
   - ./namespace.yaml
+  - ./audiobookshelf/ks.yaml
   - ./emby/ks.yaml
