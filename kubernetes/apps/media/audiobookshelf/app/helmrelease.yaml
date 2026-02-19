@@ -89,11 +89,8 @@ spec:
         type: nfs
         server: 192.168.42.44
         path: /mnt/HDD1X4/media
-        advancedMounts:
-          audiobookshelf:
-            app:
-              - path: /data/nas-media/Library
-                subPath: Library
+        globalMounts:
+          - path: /media
     route:
       app:
         hostnames:
