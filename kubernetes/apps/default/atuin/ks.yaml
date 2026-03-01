@@ -15,6 +15,8 @@ spec:
   postBuild:
     substitute:
       APP: atuin
+      VOLSYNC_CLAIM: atuin
+      VOLSYNC_CAPACITY: 5Gi
   prune: true
   sourceRef:
     kind: GitRepository
