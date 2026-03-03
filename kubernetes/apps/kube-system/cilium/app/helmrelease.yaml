@@ -15,7 +15,7 @@ spec:
       # Ref: https://github.com/siderolabs/talos/issues/10002
       hostLegacyRouting: true
     bgpControlPlane:
-      enabled: false
+      enabled: true
     cni:
       # Required for pairing with Multus CNI
       exclusive: false
@@ -40,13 +40,13 @@ spec:
     ipv4NativeRoutingCIDR: "10.42.0.0/16"
     k8sServiceHost: 127.0.0.1
     k8sServicePort: 7445
-    kubeProxyReplacement: false
+    kubeProxyReplacement: true
     kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
     l2announcements:
       enabled: true
     loadBalancer:
       algorithm: maglev
-      mode: "snat"
+      mode: "dsr"
     localRedirectPolicy: true
     operator:
       dashboards:
