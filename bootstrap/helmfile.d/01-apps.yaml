@@ -27,7 +27,7 @@ releases:
           - --namespace=kube-system
           - --server-side
           - --field-manager=kustomize-controller
-          - --filename=../../kubernetes/apps/kube-system/cilium/app/networks.yaml
+          - --filename=../../kubernetes/apps/kube-system/cilium/config/
         events:
           - postsync
         showlogs: true
