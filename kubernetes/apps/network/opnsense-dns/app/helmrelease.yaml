@@ -8,7 +8,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: opnsense-dns
-  interval: 1h
+  interval: 5m
   values:
     fullnameOverride: *app
     provider:
@@ -45,6 +45,7 @@ spec:
     triggerLoopOnEvent: true
     policy: sync
     sources:
+      - gateway
       - gateway-httproute
       - service
     txtOwnerId: main
