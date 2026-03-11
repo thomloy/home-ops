@@ -27,6 +27,7 @@ releases:
           - --namespace=kube-system
           - --server-side
           - --field-manager=kustomize-controller
+          - --kustomize
           - --filename=../../kubernetes/apps/kube-system/cilium/config/
         events:
           - postsync
