@@ -3,9 +3,20 @@
 apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
 metadata:
-  name: pool
+  name: services
 spec:
   allowFirstLastIPs: "Yes"
   blocks:
-    - start: 192.168.42.210
-      stop: 192.168.42.240
+    - start: 192.168.42.50
+      stop: 192.168.42.109
+    - start: 192.168.42.121
+      stop: 192.168.42.199
+---
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: gateways
+spec:
+  blocks:
+    - start: 192.168.42.110
+      stop: 192.168.42.120
