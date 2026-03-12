@@ -103,12 +103,10 @@ spec:
               "enableActions": false
             }
     persistence:
-      config-file:
-        type: configMap
-        identifier: config
+      config:
+        type: emptyDir
         globalMounts:
-          - path: /config/repository.config
-            subPath: repository.config
+          - path: /config
       repository:
         type: nfs
         server: 192.168.42.44
