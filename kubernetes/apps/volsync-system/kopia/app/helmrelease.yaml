@@ -18,15 +18,13 @@ spec:
 
         initContainers:
           copy-config:
-            containers:
-              copy-config:
-                image: busybox
-                tag: "1.36"
-                command:
-                  - sh
-                  - -c
-                  - |
-                    cp /configmap/repository.config /config/repository.config
+            image:
+              repository: busybox
+              tag: "1.36"
+            command:
+              - sh
+              - -c
+              - cp /configmap/repository.config /config/repository.config
 
         containers:
           app:
