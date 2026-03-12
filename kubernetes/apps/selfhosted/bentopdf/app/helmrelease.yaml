@@ -18,6 +18,14 @@ spec:
             image:
               repository: ghcr.io/alam00000/bentopdf
               tag: 2.5.0@sha256:c3729000f885059680cee9d49df50b21410cf80896be06f7e070de8f85a37816
+              pullPolicy: IfNotPresent
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
             env:
               TZ: Europe/Paris
             securityContext:
