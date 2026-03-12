@@ -44,17 +44,13 @@ spec:
         runAsGroup: 0
     service:
       app:
-        annotations:
-          teleport.dev/name: "{{ .Release.Name }}"
-        labels:
-          teleport: enabled
         ports:
           http:
-            port: &port 8080
+            port: 8080
     route:
       app:
         hostnames:
-          - "pdf.kryzql.space"
+          - pdf.kryzql.space
         parentRefs:
           - name: envoy-internal
             namespace: network
