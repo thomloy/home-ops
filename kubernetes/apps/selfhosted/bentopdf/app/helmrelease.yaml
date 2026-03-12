@@ -30,7 +30,10 @@ spec:
               TZ: Europe/Paris
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: true
             resources:
               requests:
                 cpu: 10m
