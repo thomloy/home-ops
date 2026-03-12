@@ -45,7 +45,6 @@ spec:
     triggerLoopOnEvent: true
     policy: sync
     sources:
-      - gateway
       - gateway-httproute
       - service
     txtOwnerId: main
