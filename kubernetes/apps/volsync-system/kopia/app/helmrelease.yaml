@@ -108,6 +108,12 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config
+      config-file:
+        type: configMap
+        identifier: config
+        globalMounts:
+          - path: /config/repository.config
+            subPath: repository.config
       repository:
         type: nfs
         server: 192.168.42.44
