@@ -39,9 +39,9 @@ spec:
                 memory: 256Mi
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: false
-        runAsUser: 0
-        runAsGroup: 0
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
     service:
       app:
         ports:
@@ -57,8 +57,6 @@ spec:
     persistence:
       tmpfs:
         type: emptyDir
-        advancedMounts:
-          bentopdf:
-            app:
+        globalMounts:
               - path: /tmp
                 subPath: tmp
