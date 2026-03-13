@@ -9,3 +9,4 @@ resources:
   - ./namespace.yaml
   - ./it-tools/ks.yaml
   - ./bentopdf/ks.yaml
+  - ./paperless/ks.yaml
