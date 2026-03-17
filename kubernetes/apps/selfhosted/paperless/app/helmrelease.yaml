@@ -191,7 +191,7 @@ spec:
             app:
               - path: /usr/src/paperless/data
               - path: /usr/src/paperless/media
-          workers:
+          worker:
             worker:
               - path: /usr/src/paperless/data
               - path: /usr/src/paperless/media
