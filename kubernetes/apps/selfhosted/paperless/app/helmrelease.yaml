@@ -13,7 +13,7 @@ spec:
     controllers:
       paperless:
         replicas: 1
-        strategy: RollingUpdate
+        strategy: Recreate
         pod:
           topologySpreadConstraints:
             - maxSkew: 1
@@ -79,7 +79,7 @@ spec:
 
 
       worker:
-        replicas: 2
+        replicas: 1
         pod:
           topologySpreadConstraints:
             - maxSkew: 1
