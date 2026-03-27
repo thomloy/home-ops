@@ -42,8 +42,7 @@ spec:
       securityContext:
         runAsNonRoot: false
         runAsUser: 0
-    serviceAccount:
-      name: tailscale
+      serviceAccountName: tailscale
     persistence:
       tun:
         type: hostPath
