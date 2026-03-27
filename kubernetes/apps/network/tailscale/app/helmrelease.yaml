@@ -23,7 +23,7 @@ spec:
               tag: v1.82.0
             env:
               TS_KUBE_SECRET: tailscale-state
-              TS_USERSPACE: "false"
+              TS_USERSPACE: "true"
               TS_AUTH_ONCE: "true"
               TS_HOSTNAME: homelab
               TS_EXTRA_ARGS: "--advertise-exit-node"
@@ -43,9 +43,3 @@ spec:
       securityContext:
         runAsNonRoot: false
         runAsUser: 0
-    persistence:
-      tun:
-        type: hostPath
-        hostPath: /dev/net/tun
-        globalMounts:
-          - path: /dev/net/tun
