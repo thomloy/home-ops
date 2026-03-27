@@ -58,10 +58,8 @@ spec:
       network:
         provider: host
         addressRanges:
-          public:
-            - 169.254.255.0/24 # mesh TB 4.0
           cluster:
-            - 169.254.255.0/24 # mesh TB 4.0
+            - 169.254.255.0/24 # mesh TB 4.0 (réplication inter-OSD)
         connections:
           requireMsgr2: true
       resources:
