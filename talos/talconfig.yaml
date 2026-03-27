@@ -48,6 +48,7 @@ nodes:
               - name: nbd
               - name: thunderbolt
               - name: thunderbolt_net
+      - "@./patches/tb-mesh/node01.yaml"
   - hostname: "node02"
     ipAddress: "192.168.42.42"
     installDiskSelector:
@@ -77,6 +78,7 @@ nodes:
               - name: nbd
               - name: thunderbolt
               - name: thunderbolt_net
+      - "@./patches/tb-mesh/node02.yaml"
   - hostname: "node03"
     ipAddress: "192.168.42.43"
     installDiskSelector:
@@ -106,6 +108,7 @@ nodes:
               - name: nbd
               - name: thunderbolt
               - name: thunderbolt_net
+      - "@./patches/tb-mesh/node03.yaml"
 
 # Global patches
 patches:
