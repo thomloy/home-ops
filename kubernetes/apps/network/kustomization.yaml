@@ -12,4 +12,6 @@ resources:
   - ./cloudflare-dns/ks.yaml
   - ./cloudflare-tunnel/ks.yaml
   - ./envoy-gateway/ks.yaml
+  - ./echo/ks.yaml
   - ./opnsense-dns/ks.yaml
+  - ./tailscale/ks.yaml
