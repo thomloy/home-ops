@@ -14,6 +14,8 @@ spec:
       tailscale:
         annotations:
           reloader.stakater.com/auto: "true"
+        serviceAccount:
+          name: tailscale
         containers:
           app:
             image:
@@ -42,9 +44,6 @@ spec:
       securityContext:
         runAsNonRoot: false
         runAsUser: 0
-    serviceAccount:
-      create: false
-      name: tailscale
     persistence:
       tun:
         type: hostPath
