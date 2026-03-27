@@ -15,7 +15,7 @@ spec:
     cacheAccessModes:
       - ${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}
     cacheCapacity: ${VOLSYNC_CAPACITY:=5Gi}
-    cacheStorageClassName: ${VOLSYNC_CACHE_STORAGECLASS:=openebs-hostpath}
+    cacheStorageClassName: ${VOLSYNC_CACHE_STORAGECLASS:=ceph-block}
     capacity: ${VOLSYNC_CAPACITY:=5Gi}
     cleanupCachePVC: true
     cleanupTempPVC: true
@@ -29,7 +29,7 @@ spec:
       - mountPath: repository
         volumeSource:
           nfs:
-            path: /mnt/HDD1X4/Kopia
+            path: /mnt/HDD1X4/VolsyncKopia
             server: 192.168.42.44
     repository: ${APP}-volsync-secret
     sourceIdentity:
