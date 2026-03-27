@@ -22,6 +22,10 @@ spec:
           http_listen 0.0.0.0
           http_port {{ .Values.metricsPort }}
           health_check on
+          storage.path /var/log/flb-storage/
+          storage.sync normal
+          storage.checksum off
+          storage.backlog.mem_limit 50M
 
       inputs: |-
         [INPUT]
@@ -32,6 +36,7 @@ spec:
           tag kubernetes.*
           skip_empty_lines on
           skip_long_lines on
+          storage.type filesystem
 
       filters: |-
         [FILTER]
@@ -84,6 +89,19 @@ spec:
           json_date_format iso8601
           compress gzip
           log_response_payload false
+          storage.total_limit_size 2G
+    extraVolumes:
+      - name: flb-storage
+        hostPath:
+          path: /var/lib/fluent-bit/storage
+          type: DirectoryOrCreate
+    extraVolumeMounts:
+      - name: flb-storage
+        mountPath: /var/log/flb-storage
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
     dashboards:
       enabled: true
     serviceMonitor:
