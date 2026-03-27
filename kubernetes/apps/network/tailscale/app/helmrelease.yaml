@@ -25,7 +25,6 @@ spec:
               TS_KUBE_SECRET: tailscale-state
               TS_USERSPACE: "false"
               TS_AUTH_ONCE: "true"
-              TS_ROUTES: "192.168.42.0/24,10.42.0.0/16,10.43.0.0/16"
               TS_HOSTNAME: homelab
               TS_EXTRA_ARGS: "--advertise-exit-node"
             envFrom:
