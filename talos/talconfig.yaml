@@ -109,6 +109,7 @@ nodes:
 
 # Global patches
 patches:
+  - "@./patches/global/machine-features.yaml"
   - "@./patches/global/machine-MutatingAdmissionPolicy.yaml"
   - "@./patches/global/machine-kubelet.yaml"
   - "@./patches/global/machine-labels.yaml"
