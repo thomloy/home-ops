@@ -71,9 +71,6 @@ spec:
               resources:
                 requests:
                   storage: 50Gi
-    prometheus-blackbox-exporter:
-      enabled: true
-      fullnameOverride: blackbox-exporter
     prometheus-node-exporter:
       fullnameOverride: node-exporter
     kube-state-metrics:
