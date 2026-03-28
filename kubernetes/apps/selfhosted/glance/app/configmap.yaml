@@ -20,8 +20,51 @@ data:
       # ── Home ───────────────────────────────────────────────────────────────
       - name: home
         columns:
-          # Col 1 : search + services (tabbed) + reddit (tabbed)
+          # Col 1 : nodes (CPU+RAM via Prometheus) + infra monitor
           - size: small
+            widgets:
+              - type: custom-api
+                title: node01
+                cache: 30s
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.41%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.41%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.41%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
+                template: |
+                  {{ range .data.result }}<p>{{ .metric.t }}: {{ index .value 1 }}%</p>{{ end }}
+
+              - type: custom-api
+                title: node02
+                cache: 30s
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.42%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.42%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.42%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
+                template: |
+                  {{ range .data.result }}<p>{{ .metric.t }}: {{ index .value 1 }}%</p>{{ end }}
+
+              - type: custom-api
+                title: node03
+                cache: 30s
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.43%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.43%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.43%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
+                template: |
+                  {{ range .data.result }}<p>{{ .metric.t }}: {{ index .value 1 }}%</p>{{ end }}
+
+              - type: monitor
+                title: Infrastructure
+                sites:
+                  - title: Grafana
+                    url: http://grafana-service.observability.svc.cluster.local:3000
+                    icon: si:grafana
+                  - title: Prometheus
+                    url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
+                    icon: si:prometheus
+                  - title: TrueNAS
+                    url: http://192.168.42.44
+                    icon: si:truenas
+                  - title: Gatus
+                    url: https://status.kryzql.space
+                    icon: si:statuspage
+                  - title: Flux
+                    url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
+                    icon: si:flux
+
+          # Col 2 : search + services + reddit
+          - size: full
             widgets:
               - type: search
                 search-engine: duckduckgo
@@ -62,18 +105,6 @@ data:
                   - type: monitor
                     title: Other
                     sites:
-                      - title: Grafana
-                        url: http://grafana-service.observability.svc.cluster.local:3000
-                        icon: si:grafana
-                      - title: Prometheus
-                        url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
-                        icon: si:prometheus
-                      - title: Gatus
-                        url: https://status.kryzql.space
-                        icon: si:statuspage
-                      - title: TrueNAS
-                        url: http://192.168.42.44
-                        icon: si:truenas
                       - title: Paperless
                         url: http://paperless.selfhosted.svc.cluster.local:8000
                         icon: si:paperlessngx
@@ -114,62 +145,31 @@ data:
                     show-thumbnails: false
                     limit: 7
                     collapse-after: 5
-
-          # Col 2 : actualités reddit (tabbed)
-          - size: small
-            widgets:
-              - type: group
-                widgets:
                   - type: reddit
                     title: r/news
                     subreddit: worldnews
                     style: vertical-list
                     show-thumbnails: false
-                    limit: 8
-                    collapse-after: 6
+                    limit: 7
+                    collapse-after: 5
                   - type: reddit
                     title: r/technology
                     subreddit: technology
                     style: vertical-list
                     show-thumbnails: false
-                    limit: 8
-                    collapse-after: 6
-                  - type: reddit
-                    title: r/science
-                    subreddit: science
-                    style: vertical-list
-                    show-thumbnails: false
-                    limit: 8
-                    collapse-after: 6
-                  - type: rss
-                    title: GitHub Blog
-                    style: detailed-list
-                    limit: 8
+                    limit: 7
                     collapse-after: 5
-                    feeds:
-                      - url: https://github.blog/feed/
-                        title: GitHub Blog
-                      - url: https://kubernetes.io/feed.xml
-                        title: Kubernetes Blog
 
-          # Col 3 : nodes + bookmarks
+          # Col 3 : météo + bookmarks
           - size: small
             widgets:
-              - type: monitor
-                title: Nodes
-                sites:
-                  - title: node01
-                    url: http://192.168.42.41:9100/
-                    icon: si:kubernetes
-                  - title: node02
-                    url: http://192.168.42.42:9100/
-                    icon: si:kubernetes
-                  - title: node03
-                    url: http://192.168.42.43:9100/
-                    icon: si:kubernetes
+              - type: weather
+                location: Paris, France
+                units: metric
+                hide-location: false
 
               - type: bookmarks
-                title: Bookmarks
+                title: Liens
                 groups:
                   - title: Infrastructure
                     links:
@@ -182,29 +182,6 @@ data:
                       - title: Status
                         url: https://status.kryzql.space
                         icon: si:statuspage
-                  - title: Tools
-                    links:
-                      - title: Paperless
-                        url: https://paperless.kryzql.space
-                        icon: si:paperlessngx
-                      - title: Mealie
-                        url: https://mealie.kryzql.space
-                        icon: si:mealie
-                      - title: IT-Tools
-                        url: https://it-tools.kryzql.space
-                        icon: si:ittools
-
-          # Col 4 : F1 + météo + speedtest + liens médias
-          - size: small
-            widgets:
-              - type: weather
-                location: Paris, France
-                units: metric
-                hide-location: false
-
-              - type: bookmarks
-                title: Médias
-                groups:
                   - title: Médias
                     links:
                       - title: Emby
@@ -225,6 +202,17 @@ data:
                       - title: qBittorrent
                         url: https://qbittorrent.kryzql.space
                         icon: si:qbittorrent
+                  - title: Outils
+                    links:
+                      - title: Paperless
+                        url: https://paperless.kryzql.space
+                        icon: si:paperlessngx
+                      - title: Mealie
+                        url: https://mealie.kryzql.space
+                        icon: si:mealie
+                      - title: IT-Tools
+                        url: https://it-tools.kryzql.space
+                        icon: si:ittools
 
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
@@ -264,6 +252,8 @@ data:
                         url: http://qbittorrent.downloads.svc.cluster.local:8080
                         icon: si:qbittorrent
 
+          - size: full
+            widgets:
               - type: group
                 widgets:
                   - type: reddit
@@ -321,20 +311,28 @@ data:
         columns:
           - size: small
             widgets:
-              - type: monitor
-                title: Nodes
-                sites:
-                  - title: node01
-                    url: http://192.168.42.41:9100/
-                    icon: si:kubernetes
-                  - title: node02
-                    url: http://192.168.42.42:9100/
-                    icon: si:kubernetes
-                  - title: node03
-                    url: http://192.168.42.43:9100/
-                    icon: si:kubernetes
+              - type: custom-api
+                title: node01
+                cache: 30s
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.41%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.41%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.41%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
+                template: |
+                  {{ range .data.result }}<p>{{ .metric.t }}: {{ index .value 1 }}%</p>{{ end }}
 
-          - size: small
+              - type: custom-api
+                title: node02
+                cache: 30s
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.42%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.42%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.42%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
+                template: |
+                  {{ range .data.result }}<p>{{ .metric.t }}: {{ index .value 1 }}%</p>{{ end }}
+
+              - type: custom-api
+                title: node03
+                cache: 30s
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.43%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.43%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.43%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
+                template: |
+                  {{ range .data.result }}<p>{{ .metric.t }}: {{ index .value 1 }}%</p>{{ end }}
+
+          - size: full
             widgets:
               - type: monitor
                 title: Tous les services
@@ -388,3 +386,16 @@ data:
                     url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
                     icon: si:flux
 
+          - size: small
+            widgets:
+              - type: bookmarks
+                title: Liens rapides
+                groups:
+                  - title: Infrastructure
+                    links:
+                      - title: home-ops
+                        url: https://github.com/thomloy/home-ops
+                        icon: si:github
+                      - title: Grafana
+                        url: https://grafana.kryzql.space
+                        icon: si:grafana
