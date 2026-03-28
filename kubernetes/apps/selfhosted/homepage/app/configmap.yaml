@@ -11,26 +11,53 @@ data:
     headerStyle: underlined
     target: _blank
     layout:
-      Infrastructure:
+      # Home tab - 2 columns
+      Monitoring:
         tab: Home
-        style: row
-        columns: 4
-        icon: mdi-lan
-      Media:
+        style: column
+        icon: mdi-chart-line
+      System:
+        tab: Home
+        style: column
+        icon: mdi-server-network
+
+      # Media tab - 2 columns
+      Video:
         tab: Media
-        style: row
-        columns: 2
+        style: column
         icon: mdi-television-play
-      Downloads:
+      Audio:
+        tab: Media
+        style: column
+        icon: mdi-headphones
+
+      # Downloads tab - 3 columns
+      Movies & Series:
         tab: Downloads
-        style: row
-        columns: 3
-        icon: mdi-download-circle
-      Selfhosted:
+        style: column
+        icon: mdi-movie-open
+      Downloaders:
+        tab: Downloads
+        style: column
+        icon: mdi-download
+      Indexers:
+        tab: Downloads
+        style: column
+        icon: mdi-magnify
+
+      # Tools tab - 3 columns
+      Documents:
         tab: Tools
-        style: row
-        columns: 3
-        icon: mdi-server
+        style: column
+        icon: mdi-file-document
+      Kitchen:
+        tab: Tools
+        style: column
+        icon: mdi-chef-hat
+      Dev:
+        tab: Tools
+        style: column
+        icon: mdi-code-braces
 
   widgets.yaml: |
     - datetime:
@@ -46,7 +73,7 @@ data:
         focus: false
 
   bookmarks.yaml: |
-    - Dev:
+    - Quick Links:
         - home-ops:
             - href: https://github.com/thomloy/home-ops
               icon: github.svg
@@ -57,16 +84,24 @@ data:
               description: Monitoring
 
   services.yaml: |
-    - Infrastructure:
+    # ── Home ──────────────────────────────────────────────
+    - Monitoring:
         - Grafana:
             href: https://grafana.kryzql.space
-            description: Monitoring
+            description: Dashboards
             icon: grafana.svg
             siteMonitor: http://grafana-service.observability.svc.cluster.local:3000
         - Gatus:
             href: https://status.kryzql.space
-            description: Status
+            description: Status page
             icon: gatus.svg
+        - Prometheus:
+            href: https://grafana.kryzql.space
+            description: Metrics
+            icon: prometheus.svg
+            siteMonitor: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090
+
+    - System:
         - TrueNAS:
             href: http://192.168.42.44
             description: NAS
@@ -78,19 +113,23 @@ data:
             icon: flux-cd.svg
             siteMonitor: http://source-controller.flux-system.svc.cluster.local:9090
 
-    - Media:
+    # ── Media ─────────────────────────────────────────────
+    - Video:
         - Emby:
             href: https://emby.kryzql.space
             description: Media server
             icon: emby.svg
             siteMonitor: http://emby.media.svc.cluster.local:8096
+
+    - Audio:
         - Audiobookshelf:
             href: https://audiobookshelf.kryzql.space
-            description: Audiobooks
+            description: Audiobooks & podcasts
             icon: audiobookshelf.svg
             siteMonitor: http://audiobookshelf.media.svc.cluster.local:80
 
-    - Downloads:
+    # ── Downloads ─────────────────────────────────────────
+    - Movies & Series:
         - Radarr:
             href: https://radarr.kryzql.space
             description: Movies
@@ -109,14 +148,13 @@ data:
               url: http://sonarr.downloads.svc.cluster.local:8989
               key: "{{HOMEPAGE_VAR_SONARR_API_KEY}}"
               enableQueue: true
-        - Prowlarr:
-            href: https://prowlarr.kryzql.space
-            description: Indexers
-            icon: prowlarr.svg
-            widget:
-              type: prowlarr
-              url: http://prowlarr.downloads.svc.cluster.local:80
-              key: "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}"
+        - Bazarr:
+            href: https://bazarr.kryzql.space
+            description: Subtitles
+            icon: bazarr.svg
+            siteMonitor: http://bazarr.downloads.svc.cluster.local:80
+
+    - Downloaders:
         - Sabnzbd:
             href: https://sabnzbd.kryzql.space
             description: Usenet
@@ -130,23 +168,33 @@ data:
             description: Torrents
             icon: qbittorrent.svg
             siteMonitor: http://qbittorrent.downloads.svc.cluster.local:8080
-        - Bazarr:
-            href: https://bazarr.kryzql.space
-            description: Subtitles
-            icon: bazarr.svg
-            siteMonitor: http://bazarr.downloads.svc.cluster.local:80
 
-    - Selfhosted:
+    - Indexers:
+        - Prowlarr:
+            href: https://prowlarr.kryzql.space
+            description: Indexer manager
+            icon: prowlarr.svg
+            widget:
+              type: prowlarr
+              url: http://prowlarr.downloads.svc.cluster.local:80
+              key: "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}"
+
+    # ── Tools ─────────────────────────────────────────────
+    - Documents:
         - Paperless:
             href: https://paperless.kryzql.space
-            description: Documents
+            description: Document management
             icon: paperless-ngx.svg
             siteMonitor: http://paperless.selfhosted.svc.cluster.local:8000
+
+    - Kitchen:
         - Mealie:
             href: https://mealie.kryzql.space
             description: Recipes
             icon: mealie.svg
             siteMonitor: http://mealie.default.svc.cluster.local:9000
+
+    - Dev:
         - IT-Tools:
             href: https://it-tools.kryzql.space
             description: Dev tools
