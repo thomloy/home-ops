@@ -19,7 +19,7 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/glanceapp/glance
+              repository: glanceapp/glance
               tag: v0.8.4
             resources:
               requests:
