@@ -5,47 +5,52 @@ metadata:
   name: homepage-config
 data:
   settings.yaml: |
-    title: Home
-    favicon: https://avatars.githubusercontent.com/u/108814145
+    title: Homelab
     theme: dark
-    color: slate
-    headerStyle: clean
+    color: zinc
+    headerStyle: boxed
+    target: _blank
     layout:
       Media:
         style: row
-        columns: 4
+        columns: 2
+        icon: mdi-television-play
       Downloads:
         style: row
-        columns: 4
+        columns: 3
+        icon: mdi-download-circle
       Selfhosted:
         style: row
-        columns: 4
+        columns: 3
+        icon: mdi-server
       Infrastructure:
         style: row
         columns: 4
+        icon: mdi-lan
 
   widgets.yaml: |
-    - greeting:
-        text_size: xl
-        text: Homelab
     - datetime:
         text_size: l
         format:
           timeStyle: short
-          dateStyle: short
+          dateStyle: long
           hourCycle: h23
+          locale: fr-FR
     - search:
         provider: google
         target: _blank
+        focus: false
 
   bookmarks.yaml: |
-    - Links:
-        - GitHub:
+    - Dev:
+        - home-ops:
             - href: https://github.com/thomloy/home-ops
               icon: github.svg
+              description: GitOps repo
         - Grafana:
             - href: https://grafana.kryzql.space
               icon: grafana.svg
+              description: Monitoring
 
   services.yaml: |
     - Media:
@@ -53,12 +58,12 @@ data:
             href: https://emby.kryzql.space
             description: Media server
             icon: emby.svg
-            siteMonitor: http://emby.media.svc.cluster.local:8096
+            ping: http://emby.media.svc.cluster.local:8096
         - Audiobookshelf:
             href: https://audiobookshelf.kryzql.space
             description: Audiobooks
             icon: audiobookshelf.svg
-            siteMonitor: http://audiobookshelf.media.svc.cluster.local:80
+            ping: http://audiobookshelf.media.svc.cluster.local:80
 
     - Downloads:
         - Radarr:
@@ -69,6 +74,7 @@ data:
               type: radarr
               url: http://radarr.downloads.svc.cluster.local:7878
               key: "{{HOMEPAGE_VAR_RADARR_API_KEY}}"
+              enableQueue: true
         - Sonarr:
             href: https://sonarr.kryzql.space
             description: Series
@@ -77,6 +83,7 @@ data:
               type: sonarr
               url: http://sonarr.downloads.svc.cluster.local:8989
               key: "{{HOMEPAGE_VAR_SONARR_API_KEY}}"
+              enableQueue: true
         - Prowlarr:
             href: https://prowlarr.kryzql.space
             description: Indexers
@@ -87,7 +94,7 @@ data:
               key: "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}"
         - Sabnzbd:
             href: https://sabnzbd.kryzql.space
-            description: Usenet downloader
+            description: Usenet
             icon: sabnzbd.svg
             widget:
               type: sabnzbd
@@ -95,52 +102,49 @@ data:
               key: "{{HOMEPAGE_VAR_SABNZBD_API_KEY}}"
         - qBittorrent:
             href: https://qbittorrent.kryzql.space
-            description: Torrent downloader
+            description: Torrents
             icon: qbittorrent.svg
-            siteMonitor: http://qbittorrent.downloads.svc.cluster.local:8080
+            ping: http://qbittorrent.downloads.svc.cluster.local:8080
         - Bazarr:
             href: https://bazarr.kryzql.space
             description: Subtitles
             icon: bazarr.svg
-            siteMonitor: http://bazarr.downloads.svc.cluster.local:80
+            ping: http://bazarr.downloads.svc.cluster.local:80
 
     - Selfhosted:
         - Paperless:
             href: https://paperless.kryzql.space
-            description: Document management
+            description: Documents
             icon: paperless-ngx.svg
-            siteMonitor: http://paperless.selfhosted.svc.cluster.local:8000
+            ping: http://paperless.selfhosted.svc.cluster.local:8000
         - Mealie:
             href: https://mealie.kryzql.space
             description: Recipes
             icon: mealie.svg
-            siteMonitor: http://mealie.default.svc.cluster.local:9000
+            ping: http://mealie.default.svc.cluster.local:9000
         - IT-Tools:
             href: https://it-tools.kryzql.space
             description: Dev tools
             icon: it-tools.svg
-            siteMonitor: http://it-tools.selfhosted.svc.cluster.local:8080
+            ping: http://it-tools.selfhosted.svc.cluster.local:8080
 
     - Infrastructure:
         - Grafana:
             href: https://grafana.kryzql.space
             description: Monitoring
             icon: grafana.svg
-            siteMonitor: http://grafana-service.observability.svc.cluster.local:3000
+            ping: http://grafana-service.observability.svc.cluster.local:3000
         - Gatus:
             href: https://status.kryzql.space
-            description: Status page
+            description: Status
             icon: gatus.svg
-            siteMonitor: http://gatus.observability.svc.cluster.local:80
         - TrueNAS:
             href: http://192.168.42.44
             description: NAS
             icon: truenas-scale.svg
-            siteMonitor: http://192.168.42.44
+            ping: http://192.168.42.44
         - Flux:
-            href: https://grafana.kryzql.space
+            href: https://github.com/thomloy/home-ops
             description: GitOps
             icon: flux-cd.svg
-            widget:
-              type: flux
-              url: http://source-controller.flux-system.svc.cluster.local:9090
+            ping: http://source-controller.flux-system.svc.cluster.local:9090
