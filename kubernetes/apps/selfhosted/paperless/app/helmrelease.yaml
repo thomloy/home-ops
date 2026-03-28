@@ -81,6 +81,13 @@ spec:
       worker:
         replicas: 1
         pod:
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/controller: paperless
+                  topologyKey: kubernetes.io/hostname
           topologySpreadConstraints:
             - maxSkew: 1
               topologyKey: kubernetes.io/hostname
