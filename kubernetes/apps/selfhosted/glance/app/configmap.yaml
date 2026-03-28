@@ -4,55 +4,27 @@ kind: ConfigMap
 metadata:
   name: glance-config
 data:
-  custom.css: |
-    html { font-size: 12px; }
-    .widget { padding: 0.6rem 0.8rem; }
-    .size-h2, h2 { font-size: 1rem; }
-    .monitor-site-icon-and-name img, .monitor-site-icon-and-name svg { width: 1.1rem; height: 1.1rem; }
   glance.yml: |
     server:
       port: 8080
 
     theme:
-      background-color: 240 10 7
-      primary-color: 217 92 83
-      positive-color: 145 63 55
-      negative-color: 0 72 60
-      custom-css-file: /app/config/custom.css
+      light: true
+      background-color: 28 40 77
+      primary-color: 155 100 20
+      negative-color: 0 100 60
+      contrast-multiplier: 1.1
+      text-saturation-multiplier: 0.5
 
     pages:
       # ── Home ───────────────────────────────────────────────────────────────
       - name: home
         columns:
-          # Col 1 : server-stats + infra monitor
+          # Col 1 : search + services (tabbed) + reddit (tabbed)
           - size: small
             widgets:
-              - type: server-stats
-
-              - type: monitor
-                title: Infrastructure
-                sites:
-                  - title: Grafana
-                    url: http://grafana-service.observability.svc.cluster.local:3000
-                    icon: si:grafana
-                  - title: Prometheus
-                    url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
-                    icon: si:prometheus
-                  - title: TrueNAS
-                    url: http://192.168.42.44
-                    icon: si:truenas
-                  - title: Gatus
-                    url: https://status.kryzql.space
-                    icon: si:statuspage
-                  - title: Flux
-                    url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
-                    icon: si:flux
-
-          # Col 2 : search + services (tabbed) + reddit (tabbed)
-          - size: full
-            widgets:
               - type: search
-                search-engine: google
+                search-engine: duckduckgo
                 new-tab: true
 
               - type: group
@@ -142,24 +114,62 @@ data:
                     show-thumbnails: false
                     limit: 7
                     collapse-after: 5
+
+          # Col 2 : actualités reddit (tabbed)
+          - size: small
+            widgets:
+              - type: group
+                widgets:
                   - type: reddit
                     title: r/news
                     subreddit: worldnews
                     style: vertical-list
                     show-thumbnails: false
-                    limit: 7
+                    limit: 8
+                    collapse-after: 6
+                  - type: reddit
+                    title: r/technology
+                    subreddit: technology
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 8
+                    collapse-after: 6
+                  - type: reddit
+                    title: r/science
+                    subreddit: science
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 8
+                    collapse-after: 6
+                  - type: rss
+                    title: GitHub Blog
+                    style: detailed-list
+                    limit: 8
                     collapse-after: 5
+                    feeds:
+                      - url: https://github.blog/feed/
+                        title: GitHub Blog
+                      - url: https://kubernetes.io/feed.xml
+                        title: Kubernetes Blog
 
-          # Col 3 : météo + bookmarks
+          # Col 3 : nodes + bookmarks
           - size: small
             widgets:
-              - type: weather
-                location: Paris, France
-                units: metric
-                hide-location: false
+              - type: monitor
+                title: Nodes
+                sites:
+                  - title: node01
+                    url: http://192.168.42.41:9100/
+                    icon: si:kubernetes
+                  - title: node02
+                    url: http://192.168.42.42:9100/
+                    icon: si:kubernetes
+                  - title: node03
+                    url: http://192.168.42.43:9100/
+                    icon: si:kubernetes
 
               - type: bookmarks
-                title: Liens
+                title: Bookmarks
                 groups:
                   - title: Infrastructure
                     links:
@@ -172,6 +182,29 @@ data:
                       - title: Status
                         url: https://status.kryzql.space
                         icon: si:statuspage
+                  - title: Tools
+                    links:
+                      - title: Paperless
+                        url: https://paperless.kryzql.space
+                        icon: si:paperlessngx
+                      - title: Mealie
+                        url: https://mealie.kryzql.space
+                        icon: si:mealie
+                      - title: IT-Tools
+                        url: https://it-tools.kryzql.space
+                        icon: si:ittools
+
+          # Col 4 : F1 + météo + speedtest + liens médias
+          - size: small
+            widgets:
+              - type: weather
+                location: Paris, France
+                units: metric
+                hide-location: false
+
+              - type: bookmarks
+                title: Médias
+                groups:
                   - title: Médias
                     links:
                       - title: Emby
@@ -192,22 +225,11 @@ data:
                       - title: qBittorrent
                         url: https://qbittorrent.kryzql.space
                         icon: si:qbittorrent
-                  - title: Outils
-                    links:
-                      - title: Paperless
-                        url: https://paperless.kryzql.space
-                        icon: si:paperlessngx
-                      - title: Mealie
-                        url: https://mealie.kryzql.space
-                        icon: si:mealie
-                      - title: IT-Tools
-                        url: https://it-tools.kryzql.space
-                        icon: si:ittools
 
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
         columns:
-          - size: full
+          - size: small
             widgets:
               - type: group
                 widgets:
@@ -299,9 +321,20 @@ data:
         columns:
           - size: small
             widgets:
-              - type: server-stats
+              - type: monitor
+                title: Nodes
+                sites:
+                  - title: node01
+                    url: http://192.168.42.41:9100/
+                    icon: si:kubernetes
+                  - title: node02
+                    url: http://192.168.42.42:9100/
+                    icon: si:kubernetes
+                  - title: node03
+                    url: http://192.168.42.43:9100/
+                    icon: si:kubernetes
 
-          - size: full
+          - size: small
             widgets:
               - type: monitor
                 title: Tous les services
