@@ -185,7 +185,7 @@ spec:
 
     persistence:
       data:
-        existingClaim: volsync-paperless-dst-dest
+        existingClaim: paperless
         advancedMounts:
           paperless:
             app:
