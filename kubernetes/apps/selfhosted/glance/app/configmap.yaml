@@ -15,6 +15,7 @@ data:
       negative-color: 0 72 60
 
     pages:
+      # ── Accueil ────────────────────────────────────────────────────────────
       - name: Accueil
         columns:
           - size: small
@@ -29,6 +30,8 @@ data:
                 search-engine: google
                 new-tab: true
 
+          - size: full
+            widgets:
               - type: bookmarks
                 groups:
                   - title: Infrastructure
@@ -50,6 +53,28 @@ data:
                       - title: Audiobookshelf
                         url: https://audiobookshelf.kryzql.space
                         icon: si:audiobookshelf
+                  - title: Arrr Stack
+                    links:
+                      - title: Radarr
+                        url: https://radarr.kryzql.space
+                        icon: si:radarr
+                      - title: Sonarr
+                        url: https://sonarr.kryzql.space
+                        icon: si:sonarr
+                      - title: Bazarr
+                        url: https://bazarr.kryzql.space
+                        icon: si:bazarr
+                      - title: Prowlarr
+                        url: https://prowlarr.kryzql.space
+                        icon: si:prowlarr
+                  - title: Téléchargeurs
+                    links:
+                      - title: Sabnzbd
+                        url: https://sabnzbd.kryzql.space
+                        icon: si:sabnzbd
+                      - title: qBittorrent
+                        url: https://qbittorrent.kryzql.space
+                        icon: si:qbittorrent
                   - title: Outils
                     links:
                       - title: Paperless
@@ -62,31 +87,68 @@ data:
                         url: https://it-tools.kryzql.space
                         icon: si:ittools
 
-          - size: full
-            widgets:
               - type: monitor
-                title: Monitoring
+                title: Services
                 sites:
                   - title: Grafana
                     url: http://grafana-service.observability.svc.cluster.local:3000
                     icon: si:grafana
-                  - title: Gatus
-                    url: https://status.kryzql.space
-                    icon: si:statuspage
                   - title: Prometheus
                     url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
                     icon: si:prometheus
-
-              - type: monitor
-                title: Système
-                sites:
                   - title: TrueNAS
                     url: http://192.168.42.44
                     icon: si:truenas
-                  - title: Flux
-                    url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
-                    icon: si:flux
+                  - title: Emby
+                    url: http://emby.media.svc.cluster.local:8096
+                    icon: si:emby
+                  - title: Audiobookshelf
+                    url: http://audiobookshelf.media.svc.cluster.local:80
+                    icon: si:audiobookshelf
+                  - title: Radarr
+                    url: http://radarr.downloads.svc.cluster.local:7878
+                    icon: si:radarr
+                  - title: Sonarr
+                    url: http://sonarr.downloads.svc.cluster.local:8989
+                    icon: si:sonarr
+                  - title: Prowlarr
+                    url: http://prowlarr.downloads.svc.cluster.local:80
+                    icon: si:prowlarr
+                  - title: Sabnzbd
+                    url: http://sabnzbd.downloads.svc.cluster.local:80
+                    icon: si:sabnzbd
+                  - title: qBittorrent
+                    url: http://qbittorrent.downloads.svc.cluster.local:8080
+                    icon: si:qbittorrent
+                  - title: Paperless
+                    url: http://paperless.selfhosted.svc.cluster.local:8000
+                    icon: si:paperlessngx
+                  - title: Mealie
+                    url: http://mealie.default.svc.cluster.local:9000
+                    icon: si:mealie
+                  - title: IT-Tools
+                    url: http://it-tools.selfhosted.svc.cluster.local:8080
+                    icon: si:ittools
 
+          - size: small
+            widgets:
+              - type: weather
+                location: Paris, France
+                units: metric
+                hide-location: false
+
+              - type: rss
+                title: Selfhosted & Tech
+                style: detailed-list
+                limit: 8
+                collapse-after: 5
+                feeds:
+                  - url: https://www.reddit.com/r/selfhosted/.rss
+                    title: r/selfhosted
+                  - url: https://www.reddit.com/r/homelab/.rss
+                    title: r/homelab
+
+      # ── Médias ─────────────────────────────────────────────────────────────
       - name: Médias
         columns:
           - size: small
@@ -114,6 +176,29 @@ data:
                     url: http://audiobookshelf.media.svc.cluster.local:80
                     icon: si:audiobookshelf
 
+              - type: rss
+                title: Cinéma & Séries
+                style: horizontal-cards
+                limit: 10
+                feeds:
+                  - url: https://www.allocine.fr/rss/news.xml
+                    title: AlloCiné
+                  - url: https://www.reddit.com/r/france/.rss
+                    title: r/france
+
+          - size: small
+            widgets:
+              - type: rss
+                title: Sorties
+                style: detailed-list
+                limit: 6
+                feeds:
+                  - url: https://www.imdb.com/list/ls566670958/rss
+                    title: IMDB
+                  - url: https://www.reddit.com/r/NetflixBestOf/.rss
+                    title: Netflix
+
+      # ── Téléchargements ────────────────────────────────────────────────────
       - name: Téléchargements
         columns:
           - size: small
@@ -160,10 +245,6 @@ data:
                   - title: Prowlarr
                     url: http://prowlarr.downloads.svc.cluster.local:80
                     icon: si:prowlarr
-
-              - type: monitor
-                title: Téléchargeurs
-                sites:
                   - title: Sabnzbd
                     url: http://sabnzbd.downloads.svc.cluster.local:80
                     icon: si:sabnzbd
@@ -171,6 +252,17 @@ data:
                     url: http://qbittorrent.downloads.svc.cluster.local:8080
                     icon: si:qbittorrent
 
+          - size: small
+            widgets:
+              - type: rss
+                title: Releases
+                style: detailed-list
+                limit: 8
+                feeds:
+                  - url: https://www.reddit.com/r/trackers/.rss
+                    title: r/trackers
+
+      # ── Outils ─────────────────────────────────────────────────────────────
       - name: Outils
         columns:
           - size: small
@@ -203,3 +295,15 @@ data:
                   - title: IT-Tools
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
                     icon: si:ittools
+
+          - size: small
+            widgets:
+              - type: rss
+                title: Dev & Open Source
+                style: detailed-list
+                limit: 8
+                feeds:
+                  - url: https://github.blog/feed/
+                    title: GitHub Blog
+                  - url: https://www.reddit.com/r/opensource/.rss
+                    title: r/opensource
