@@ -78,52 +78,6 @@ spec:
                 memory: 3Gi
 
 
-      worker:
-        replicas: 1
-        pod:
-          affinity:
-            podAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-                - labelSelector:
-                    matchLabels:
-                      app.kubernetes.io/controller: paperless
-                  topologyKey: kubernetes.io/hostname
-          topologySpreadConstraints:
-            - maxSkew: 1
-              topologyKey: kubernetes.io/hostname
-              whenUnsatisfiable: ScheduleAnyway
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: paperless
-
-        containers:
-          worker:
-            image:
-              repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: 2.20.10
-            command:
-              - /usr/src/paperless/src/manage.py
-              - document_consumer
-
-            env:
-              PAPERLESS_REDIS: redis://paperless-redis:6379
-
-              PAPERLESS_TIKA_ENABLED: "1"
-              PAPERLESS_TIKA_ENDPOINT: http://paperless-tika:9998
-              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg:3000
-
-              PAPERLESS_CONSUMPTION_DIR: /usr/src/paperless/consume
-              PAPERLESS_DATA_DIR: /usr/src/paperless/data
-              PAPERLESS_MEDIA_ROOT: /usr/src/paperless/media
-
-              PAPERLESS_OCR_LANGUAGE: fra
-              PAPERLESS_OCR_LANGUAGES: fra
-            resources:
-              requests:
-                cpu: 500m
-                memory: 1Gi
-              limits:
-                memory: 3Gi
 
 
       redis:
@@ -198,10 +152,6 @@ spec:
             app:
               - path: /usr/src/paperless/data
               - path: /usr/src/paperless/media
-          worker:
-            worker:
-              - path: /usr/src/paperless/data
-              - path: /usr/src/paperless/media
 
       consume:
         type: nfs
@@ -210,9 +160,6 @@ spec:
         advancedMounts:
           paperless:
             app:
-              - path: /usr/src/paperless/consume
-          worker:
-            worker:
               - path: /usr/src/paperless/consume
 
     route:
