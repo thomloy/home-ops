@@ -46,7 +46,7 @@ spec:
         type: configMap
         name: glance-config
         globalMounts:
-          - path: /app/glance.yml
+          - path: /app/config/glance.yml
             subPath: glance.yml
 
     route:
