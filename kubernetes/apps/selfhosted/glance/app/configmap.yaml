@@ -156,13 +156,18 @@ data:
                       - url: https://kubernetes.io/feed.xml
                         title: Kubernetes Blog
 
-          # Col 3 : servers + bookmarks
+          # Col 3 : servers + météo + bookmarks
           - size: small
             widgets:
               - type: server-stats
 
+              - type: weather
+                location: Paris, France
+                units: metric
+                hide-location: false
+
               - type: bookmarks
-                title: Bookmarks
+                title: Liens
                 groups:
                   - title: Infrastructure
                     links:
@@ -175,29 +180,6 @@ data:
                       - title: Status
                         url: https://status.kryzql.space
                         icon: si:statuspage
-                  - title: Tools
-                    links:
-                      - title: Paperless
-                        url: https://paperless.kryzql.space
-                        icon: si:paperlessngx
-                      - title: Mealie
-                        url: https://mealie.kryzql.space
-                        icon: si:mealie
-                      - title: IT-Tools
-                        url: https://it-tools.kryzql.space
-                        icon: si:ittools
-
-          # Col 4 : F1 + météo + speedtest + liens médias
-          - size: small
-            widgets:
-              - type: weather
-                location: Paris, France
-                units: metric
-                hide-location: false
-
-              - type: bookmarks
-                title: Médias
-                groups:
                   - title: Médias
                     links:
                       - title: Emby
@@ -218,6 +200,17 @@ data:
                       - title: qBittorrent
                         url: https://qbittorrent.kryzql.space
                         icon: si:qbittorrent
+                  - title: Outils
+                    links:
+                      - title: Paperless
+                        url: https://paperless.kryzql.space
+                        icon: si:paperlessngx
+                      - title: Mealie
+                        url: https://mealie.kryzql.space
+                        icon: si:mealie
+                      - title: IT-Tools
+                        url: https://it-tools.kryzql.space
+                        icon: si:ittools
 
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
