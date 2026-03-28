@@ -40,7 +40,7 @@ spec:
     serviceMonitor:
       main:
         enabled: true
-        serviceName: graphite-exporter
+        serviceName: graphite-exporter-main
         endpoints:
           - port: metrics
             interval: 30s
