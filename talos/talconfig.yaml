@@ -112,6 +112,7 @@ nodes:
 
 # Global patches
 patches:
+  - "@./patches/tb-mesh/tb-kernel-module.yaml"
   - "@./patches/global/machine-features.yaml"
   - "@./patches/global/machine-MutatingAdmissionPolicy.yaml"
   - "@./patches/global/machine-kubelet.yaml"
