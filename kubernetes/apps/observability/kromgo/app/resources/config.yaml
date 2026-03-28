@@ -77,6 +77,15 @@ metrics:
       - {color: "red", min: 361, max: 9999}
     title: Uptime
 
+  - name: cluster_power_usage
+    query: round(truenas_nas_nut_ups_load_load, 0.1)
+    suffix: "%"
+    colors:
+      - {color: "green", min: 0, max: 60}
+      - {color: "orange", min: 61, max: 80}
+      - {color: "red", min: 81, max: 9999}
+    title: Power
+
   - name: cluster_alert_count
     query: sum(grafana_alerting_alerts{state=~"alerting|error"})
     colors:
