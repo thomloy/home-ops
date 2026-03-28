@@ -51,12 +51,12 @@ metrics:
     title: Memory
 
   - name: cluster_power_usage
-    query: round(upsHighPrecOutputLoad, 0.1)
-    suffix: "w"
+    query: round(truenas_nas_nut_ups_load_load, 0.1)
+    suffix: "%"
     colors:
-      - {color: "green", min: 0, max: 400}
-      - {color: "orange", min: 401, max: 750}
-      - {color: "red", min: 751, max: 9999}
+      - {color: "green", min: 0, max: 60}
+      - {color: "orange", min: 61, max: 80}
+      - {color: "red", min: 81, max: 9999}
     title: Power
 
   - name: cluster_age_days
@@ -78,7 +78,7 @@ metrics:
     title: Uptime
 
   - name: cluster_alert_count
-    query: alertmanager_alerts{state="active"} - 1 # Ignore Watchdog
+    query: clamp_min((alertmanager_alerts{state="active"} or vector(1)) - 1, 0) # Ignore Watchdog
     colors:
       - {color: "green", min: 0, max: 0}
       - {color: "red", min: 1, max: 9999}
