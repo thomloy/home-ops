@@ -4,6 +4,11 @@ kind: ConfigMap
 metadata:
   name: glance-config
 data:
+  custom.css: |
+    html { font-size: 14px; }
+    .widget { padding: 0.6rem 0.8rem; }
+    .size-h2, h2 { font-size: 1rem; }
+    .monitor-site-icon-and-name img, .monitor-site-icon-and-name svg { width: 1.1rem; height: 1.1rem; }
   glance.yml: |
     server:
       port: 8080
@@ -13,6 +18,7 @@ data:
       primary-color: 217 92 83
       positive-color: 145 63 55
       negative-color: 0 72 60
+      custom-css-file: /app/config/custom.css
 
     pages:
       # ── Home ───────────────────────────────────────────────────────────────
