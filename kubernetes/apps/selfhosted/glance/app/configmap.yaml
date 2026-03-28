@@ -15,39 +15,148 @@ data:
       negative-color: 0 72 60
 
     pages:
-      # ── Accueil ────────────────────────────────────────────────────────────
-      - name: Accueil
+      # ── Home ───────────────────────────────────────────────────────────────
+      - name: home
         columns:
-          # Colonne gauche : stats serveur + statuts clés
-          - size: small
-            widgets:
-              - type: server-stats
-
-              - type: monitor
-                title: Infrastructure
-                sites:
-                  - title: Grafana
-                    url: http://grafana-service.observability.svc.cluster.local:3000
-                    icon: si:grafana
-                  - title: Prometheus
-                    url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
-                    icon: si:prometheus
-                  - title: TrueNAS
-                    url: http://192.168.42.44
-                    icon: si:truenas
-                  - title: Gatus
-                    url: https://status.kryzql.space
-                    icon: si:statuspage
-
-          # Colonne centrale : recherche + favoris + services + rss
+          # Col 1 : search + services (tabbed) + reddit (tabbed)
           - size: full
             widgets:
               - type: search
                 search-engine: google
                 new-tab: true
 
+              - type: group
+                widgets:
+                  - type: monitor
+                    title: Media
+                    sites:
+                      - title: Emby
+                        url: http://emby.media.svc.cluster.local:8096
+                        icon: si:emby
+                      - title: Audiobookshelf
+                        url: http://audiobookshelf.media.svc.cluster.local:80
+                        icon: si:audiobookshelf
+                  - type: monitor
+                    title: Arr
+                    sites:
+                      - title: Radarr
+                        url: http://radarr.downloads.svc.cluster.local:7878
+                        icon: si:radarr
+                      - title: Sonarr
+                        url: http://sonarr.downloads.svc.cluster.local:8989
+                        icon: si:sonarr
+                      - title: Bazarr
+                        url: http://bazarr.downloads.svc.cluster.local:80
+                        icon: si:bazarr
+                      - title: Prowlarr
+                        url: http://prowlarr.downloads.svc.cluster.local:80
+                        icon: si:prowlarr
+                      - title: Sabnzbd
+                        url: http://sabnzbd.downloads.svc.cluster.local:80
+                        icon: si:sabnzbd
+                      - title: qBittorrent
+                        url: http://qbittorrent.downloads.svc.cluster.local:8080
+                        icon: si:qbittorrent
+                  - type: monitor
+                    title: Other
+                    sites:
+                      - title: Grafana
+                        url: http://grafana-service.observability.svc.cluster.local:3000
+                        icon: si:grafana
+                      - title: Prometheus
+                        url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
+                        icon: si:prometheus
+                      - title: Gatus
+                        url: https://status.kryzql.space
+                        icon: si:statuspage
+                      - title: TrueNAS
+                        url: http://192.168.42.44
+                        icon: si:truenas
+                      - title: Paperless
+                        url: http://paperless.selfhosted.svc.cluster.local:8000
+                        icon: si:paperlessngx
+                      - title: Mealie
+                        url: http://mealie.default.svc.cluster.local:9000
+                        icon: si:mealie
+                      - title: IT-Tools
+                        url: http://it-tools.selfhosted.svc.cluster.local:8080
+                        icon: si:ittools
+
+              - type: group
+                widgets:
+                  - type: reddit
+                    title: r/selfhosted
+                    subreddit: selfhosted
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 7
+                    collapse-after: 5
+                  - type: reddit
+                    title: r/homelab
+                    subreddit: homelab
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 7
+                    collapse-after: 5
+                  - type: reddit
+                    title: r/kubernetes
+                    subreddit: kubernetes
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 7
+                    collapse-after: 5
+                  - type: reddit
+                    title: r/france
+                    subreddit: france
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 7
+                    collapse-after: 5
+
+          # Col 2 : actualités reddit (tabbed)
+          - size: full
+            widgets:
+              - type: group
+                widgets:
+                  - type: reddit
+                    title: r/news
+                    subreddit: worldnews
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 8
+                    collapse-after: 6
+                  - type: reddit
+                    title: r/technology
+                    subreddit: technology
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 8
+                    collapse-after: 6
+                  - type: reddit
+                    title: r/science
+                    subreddit: science
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 8
+                    collapse-after: 6
+                  - type: rss
+                    title: GitHub Blog
+                    style: detailed-list
+                    limit: 8
+                    collapse-after: 5
+                    feeds:
+                      - url: https://github.blog/feed/
+                        title: GitHub Blog
+                      - url: https://kubernetes.io/feed.xml
+                        title: Kubernetes Blog
+
+          # Col 3 : servers + bookmarks
+          - size: small
+            widgets:
+              - type: server-stats
+
               - type: bookmarks
-                title: Favoris
+                title: Bookmarks
                 groups:
                   - title: Infrastructure
                     links:
@@ -60,37 +169,7 @@ data:
                       - title: Status
                         url: https://status.kryzql.space
                         icon: si:statuspage
-                  - title: Médias
-                    links:
-                      - title: Emby
-                        url: https://emby.kryzql.space
-                        icon: si:emby
-                      - title: Audiobookshelf
-                        url: https://audiobookshelf.kryzql.space
-                        icon: si:audiobookshelf
-                  - title: Arrr Stack
-                    links:
-                      - title: Radarr
-                        url: https://radarr.kryzql.space
-                        icon: si:radarr
-                      - title: Sonarr
-                        url: https://sonarr.kryzql.space
-                        icon: si:sonarr
-                      - title: Bazarr
-                        url: https://bazarr.kryzql.space
-                        icon: si:bazarr
-                      - title: Prowlarr
-                        url: https://prowlarr.kryzql.space
-                        icon: si:prowlarr
-                  - title: Téléchargeurs
-                    links:
-                      - title: Sabnzbd
-                        url: https://sabnzbd.kryzql.space
-                        icon: si:sabnzbd
-                      - title: qBittorrent
-                        url: https://qbittorrent.kryzql.space
-                        icon: si:qbittorrent
-                  - title: Outils
+                  - title: Tools
                     links:
                       - title: Paperless
                         url: https://paperless.kryzql.space
@@ -102,56 +181,11 @@ data:
                         url: https://it-tools.kryzql.space
                         icon: si:ittools
 
-              - type: monitor
-                title: Services
-                sites:
-                  - title: Emby
-                    url: http://emby.media.svc.cluster.local:8096
-                    icon: si:emby
-                  - title: Audiobookshelf
-                    url: http://audiobookshelf.media.svc.cluster.local:80
-                    icon: si:audiobookshelf
-                  - title: Radarr
-                    url: http://radarr.downloads.svc.cluster.local:7878
-                    icon: si:radarr
-                  - title: Sonarr
-                    url: http://sonarr.downloads.svc.cluster.local:8989
-                    icon: si:sonarr
-                  - title: Prowlarr
-                    url: http://prowlarr.downloads.svc.cluster.local:80
-                    icon: si:prowlarr
-                  - title: Sabnzbd
-                    url: http://sabnzbd.downloads.svc.cluster.local:80
-                    icon: si:sabnzbd
-                  - title: qBittorrent
-                    url: http://qbittorrent.downloads.svc.cluster.local:8080
-                    icon: si:qbittorrent
-                  - title: Paperless
-                    url: http://paperless.selfhosted.svc.cluster.local:8000
-                    icon: si:paperlessngx
-                  - title: Mealie
-                    url: http://mealie.default.svc.cluster.local:9000
-                    icon: si:mealie
-                  - title: IT-Tools
-                    url: http://it-tools.selfhosted.svc.cluster.local:8080
-                    icon: si:ittools
-
-              - type: rss
-                title: RSS — Now
-                style: detailed-list
-                limit: 10
-                collapse-after: 5
-                feeds:
-                  - url: https://www.reddit.com/r/selfhosted/.rss
-                    title: r/selfhosted
-                  - url: https://www.reddit.com/r/homelab/.rss
-                    title: r/homelab
-                  - url: https://www.reddit.com/r/france/.rss
-                    title: r/france
-
-          # Colonne droite : météo + speedtest + liens
+          # Col 4 : F1 + météo + speedtest + liens médias
           - size: small
             widgets:
+              - type: f1
+
               - type: weather
                 location: Paris, France
                 units: metric
@@ -160,23 +194,91 @@ data:
               - type: speedtest
 
               - type: bookmarks
-                title: Liens
+                title: Médias
                 groups:
-                  - title: Serveurs
+                  - title: Médias
                     links:
-                      - title: TrueNAS
-                        url: http://192.168.42.44
-                        icon: si:truenas
-                      - title: node01
-                        url: http://192.168.42.41
-                      - title: node02
-                        url: http://192.168.42.42
-                      - title: node03
-                        url: http://192.168.42.43
+                      - title: Emby
+                        url: https://emby.kryzql.space
+                        icon: si:emby
+                      - title: Audiobookshelf
+                        url: https://audiobookshelf.kryzql.space
+                        icon: si:audiobookshelf
+                      - title: Radarr
+                        url: https://radarr.kryzql.space
+                        icon: si:radarr
+                      - title: Sonarr
+                        url: https://sonarr.kryzql.space
+                        icon: si:sonarr
+                      - title: Sabnzbd
+                        url: https://sabnzbd.kryzql.space
+                        icon: si:sabnzbd
+                      - title: qBittorrent
+                        url: https://qbittorrent.kryzql.space
+                        icon: si:qbittorrent
 
-      # ── Médias ─────────────────────────────────────────────────────────────
-      - name: Médias
+      # ── Media ──────────────────────────────────────────────────────────────
+      - name: media
         columns:
+          - size: full
+            widgets:
+              - type: group
+                widgets:
+                  - type: monitor
+                    title: Media
+                    sites:
+                      - title: Emby
+                        url: http://emby.media.svc.cluster.local:8096
+                        icon: si:emby
+                      - title: Audiobookshelf
+                        url: http://audiobookshelf.media.svc.cluster.local:80
+                        icon: si:audiobookshelf
+                  - type: monitor
+                    title: Arr
+                    sites:
+                      - title: Radarr
+                        url: http://radarr.downloads.svc.cluster.local:7878
+                        icon: si:radarr
+                      - title: Sonarr
+                        url: http://sonarr.downloads.svc.cluster.local:8989
+                        icon: si:sonarr
+                      - title: Bazarr
+                        url: http://bazarr.downloads.svc.cluster.local:80
+                        icon: si:bazarr
+                      - title: Prowlarr
+                        url: http://prowlarr.downloads.svc.cluster.local:80
+                        icon: si:prowlarr
+                      - title: Sabnzbd
+                        url: http://sabnzbd.downloads.svc.cluster.local:80
+                        icon: si:sabnzbd
+                      - title: qBittorrent
+                        url: http://qbittorrent.downloads.svc.cluster.local:8080
+                        icon: si:qbittorrent
+
+              - type: group
+                widgets:
+                  - type: reddit
+                    title: r/movies
+                    subreddit: movies
+                    style: vertical-list
+                    show-thumbnails: true
+                    limit: 7
+                    collapse-after: 5
+                  - type: reddit
+                    title: r/NetflixBestOf
+                    subreddit: NetflixBestOf
+                    style: vertical-list
+                    show-thumbnails: true
+                    limit: 7
+                    collapse-after: 5
+                  - type: reddit
+                    title: r/MovieSuggestions
+                    subreddit: MovieSuggestions
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 7
+                    collapse-after: 5
+
           - size: small
             widgets:
               - type: bookmarks
@@ -189,48 +291,6 @@ data:
                       - title: Audiobookshelf
                         url: https://audiobookshelf.kryzql.space
                         icon: si:audiobookshelf
-
-          - size: full
-            widgets:
-              - type: monitor
-                title: État des services
-                sites:
-                  - title: Emby
-                    url: http://emby.media.svc.cluster.local:8096
-                    icon: si:emby
-                  - title: Audiobookshelf
-                    url: http://audiobookshelf.media.svc.cluster.local:80
-                    icon: si:audiobookshelf
-
-              - type: rss
-                title: Cinéma & Séries
-                style: horizontal-cards
-                limit: 12
-                feeds:
-                  - url: https://www.reddit.com/r/NetflixBestOf/.rss
-                    title: r/NetflixBestOf
-                  - url: https://www.reddit.com/r/MovieSuggestions/.rss
-                    title: r/MovieSuggestions
-
-          - size: small
-            widgets:
-              - type: rss
-                title: Actualités
-                style: detailed-list
-                limit: 6
-                feeds:
-                  - url: https://www.reddit.com/r/movies/.rss
-                    title: r/movies
-
-      # ── Téléchargements ────────────────────────────────────────────────────
-      - name: Téléchargements
-        columns:
-          - size: small
-            widgets:
-              - type: bookmarks
-                groups:
-                  - title: Arrr Stack
-                    links:
                       - title: Radarr
                         url: https://radarr.kryzql.space
                         icon: si:radarr
@@ -240,11 +300,6 @@ data:
                       - title: Bazarr
                         url: https://bazarr.kryzql.space
                         icon: si:bazarr
-                      - title: Prowlarr
-                        url: https://prowlarr.kryzql.space
-                        icon: si:prowlarr
-                  - title: Téléchargeurs
-                    links:
                       - title: Sabnzbd
                         url: https://sabnzbd.kryzql.space
                         icon: si:sabnzbd
@@ -252,11 +307,36 @@ data:
                         url: https://qbittorrent.kryzql.space
                         icon: si:qbittorrent
 
+      # ── Stats ──────────────────────────────────────────────────────────────
+      - name: stats
+        columns:
+          - size: small
+            widgets:
+              - type: server-stats
+
           - size: full
             widgets:
               - type: monitor
-                title: État des services
+                title: Tous les services
                 sites:
+                  - title: Grafana
+                    url: http://grafana-service.observability.svc.cluster.local:3000
+                    icon: si:grafana
+                  - title: Prometheus
+                    url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
+                    icon: si:prometheus
+                  - title: Gatus
+                    url: https://status.kryzql.space
+                    icon: si:statuspage
+                  - title: TrueNAS
+                    url: http://192.168.42.44
+                    icon: si:truenas
+                  - title: Emby
+                    url: http://emby.media.svc.cluster.local:8096
+                    icon: si:emby
+                  - title: Audiobookshelf
+                    url: http://audiobookshelf.media.svc.cluster.local:80
+                    icon: si:audiobookshelf
                   - title: Radarr
                     url: http://radarr.downloads.svc.cluster.local:7878
                     icon: si:radarr
@@ -275,49 +355,6 @@ data:
                   - title: qBittorrent
                     url: http://qbittorrent.downloads.svc.cluster.local:8080
                     icon: si:qbittorrent
-
-              - type: rss
-                title: Releases
-                style: detailed-list
-                limit: 8
-                feeds:
-                  - url: https://www.reddit.com/r/trackers/.rss
-                    title: r/trackers
-
-          - size: small
-            widgets:
-              - type: rss
-                title: Tech
-                style: detailed-list
-                limit: 6
-                feeds:
-                  - url: https://www.reddit.com/r/technology/.rss
-                    title: r/technology
-
-      # ── Outils ─────────────────────────────────────────────────────────────
-      - name: Outils
-        columns:
-          - size: small
-            widgets:
-              - type: bookmarks
-                groups:
-                  - title: Applications
-                    links:
-                      - title: Paperless
-                        url: https://paperless.kryzql.space
-                        icon: si:paperlessngx
-                      - title: Mealie
-                        url: https://mealie.kryzql.space
-                        icon: si:mealie
-                      - title: IT-Tools
-                        url: https://it-tools.kryzql.space
-                        icon: si:ittools
-
-          - size: full
-            widgets:
-              - type: monitor
-                title: État des services
-                sites:
                   - title: Paperless
                     url: http://paperless.selfhosted.svc.cluster.local:8000
                     icon: si:paperlessngx
@@ -327,25 +364,10 @@ data:
                   - title: IT-Tools
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
                     icon: si:ittools
-
-              - type: rss
-                title: Dev & Open Source
-                style: detailed-list
-                limit: 8
-                feeds:
-                  - url: https://github.blog/feed/
-                    title: GitHub Blog
-                  - url: https://www.reddit.com/r/opensource/.rss
-                    title: r/opensource
+                  - title: Flux
+                    url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
+                    icon: si:flux
 
           - size: small
             widgets:
-              - type: rss
-                title: DevOps
-                style: detailed-list
-                limit: 6
-                feeds:
-                  - url: https://www.reddit.com/r/devops/.rss
-                    title: r/devops
-                  - url: https://www.reddit.com/r/kubernetes/.rss
-                    title: r/kubernetes
+              - type: speedtest
