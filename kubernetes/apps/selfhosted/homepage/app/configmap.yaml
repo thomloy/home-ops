@@ -11,22 +11,26 @@ data:
     headerStyle: underlined
     target: _blank
     layout:
+      Infrastructure:
+        tab: Home
+        style: row
+        columns: 4
+        icon: mdi-lan
       Media:
+        tab: Media
         style: row
         columns: 2
         icon: mdi-television-play
       Downloads:
+        tab: Downloads
         style: row
         columns: 3
         icon: mdi-download-circle
       Selfhosted:
+        tab: Tools
         style: row
         columns: 3
         icon: mdi-server
-      Infrastructure:
-        style: row
-        columns: 4
-        icon: mdi-lan
 
   widgets.yaml: |
     - datetime:
@@ -53,6 +57,27 @@ data:
               description: Monitoring
 
   services.yaml: |
+    - Infrastructure:
+        - Grafana:
+            href: https://grafana.kryzql.space
+            description: Monitoring
+            icon: grafana.svg
+            siteMonitor: http://grafana-service.observability.svc.cluster.local:3000
+        - Gatus:
+            href: https://status.kryzql.space
+            description: Status
+            icon: gatus.svg
+        - TrueNAS:
+            href: http://192.168.42.44
+            description: NAS
+            icon: truenas-scale.svg
+            siteMonitor: http://192.168.42.44
+        - Flux:
+            href: https://github.com/thomloy/home-ops
+            description: GitOps
+            icon: flux-cd.svg
+            siteMonitor: http://source-controller.flux-system.svc.cluster.local:9090
+
     - Media:
         - Emby:
             href: https://emby.kryzql.space
@@ -127,24 +152,3 @@ data:
             description: Dev tools
             icon: it-tools.svg
             siteMonitor: http://it-tools.selfhosted.svc.cluster.local:8080
-
-    - Infrastructure:
-        - Grafana:
-            href: https://grafana.kryzql.space
-            description: Monitoring
-            icon: grafana.svg
-            siteMonitor: http://grafana-service.observability.svc.cluster.local:3000
-        - Gatus:
-            href: https://status.kryzql.space
-            description: Status
-            icon: gatus.svg
-        - TrueNAS:
-            href: http://192.168.42.44
-            description: NAS
-            icon: truenas-scale.svg
-            siteMonitor: http://192.168.42.44
-        - Flux:
-            href: https://github.com/thomloy/home-ops
-            description: GitOps
-            icon: flux-cd.svg
-            siteMonitor: http://source-controller.flux-system.svc.cluster.local:9090
