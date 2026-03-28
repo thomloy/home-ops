@@ -190,8 +190,6 @@ data:
           # Col 4 : F1 + météo + speedtest + liens médias
           - size: small
             widgets:
-              - type: f1
-
               - type: weather
                 location: Paris, France
                 units: metric
