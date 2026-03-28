@@ -195,8 +195,6 @@ data:
                 units: metric
                 hide-location: false
 
-              - type: speedtest
-
               - type: bookmarks
                 title: Médias
                 groups:
@@ -372,6 +370,3 @@ data:
                     url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
                     icon: si:flux
 
-          - size: small
-            widgets:
-              - type: speedtest
