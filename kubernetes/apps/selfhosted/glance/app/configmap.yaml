@@ -118,6 +118,13 @@ data:
                     show-thumbnails: false
                     limit: 7
                     collapse-after: 5
+                  - type: reddit
+                    title: r/news
+                    subreddit: worldnews
+                    style: vertical-list
+                    show-thumbnails: false
+                    limit: 7
+                    collapse-after: 5
 
           # Col 2 : actualités reddit (tabbed)
           - size: full
@@ -145,16 +152,6 @@ data:
                     show-thumbnails: false
                     limit: 8
                     collapse-after: 6
-                  - type: rss
-                    title: GitHub Blog
-                    style: detailed-list
-                    limit: 8
-                    collapse-after: 5
-                    feeds:
-                      - url: https://github.blog/feed/
-                        title: GitHub Blog
-                      - url: https://kubernetes.io/feed.xml
-                        title: Kubernetes Blog
 
           # Col 3 : servers + météo + bookmarks
           - size: small
