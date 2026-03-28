@@ -121,6 +121,7 @@ patches:
   - "@./patches/global/machine-runtime-cri-and-nfs.yaml"
   - "@./patches/global/machine-sysctls.yaml"
   - "@./patches/global/machine-time.yaml"
+  - "@./patches/global/machine-nut-client.yaml"
 
 # Controller patches
 controlPlane:

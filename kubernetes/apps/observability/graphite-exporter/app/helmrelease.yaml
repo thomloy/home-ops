@@ -30,6 +30,12 @@ spec:
             port: 2003
           metrics:
             port: 9108
+      lb:
+        controller: main
+        type: LoadBalancer
+        ports:
+          graphite:
+            port: 2003
 
     serviceMonitor:
       main:
