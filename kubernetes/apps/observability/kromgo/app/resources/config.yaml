@@ -51,12 +51,12 @@ metrics:
     title: Memory
 
   - name: cluster_power_usage
-    query: round(truenas_nas_nut_ups_load_load, 0.1)
-    suffix: "%"
+    query: round(truenas_nas_nut_ups_load_load / 100 * 510, 1)
+    suffix: "W"
     colors:
-      - {color: "green", min: 0, max: 60}
-      - {color: "orange", min: 61, max: 80}
-      - {color: "red", min: 81, max: 9999}
+      - {color: "green", min: 0, max: 306}
+      - {color: "orange", min: 307, max: 408}
+      - {color: "red", min: 409, max: 9999}
     title: Power
 
   - name: cluster_age_days
