@@ -126,34 +126,7 @@ data:
                     limit: 7
                     collapse-after: 5
 
-          # Col 2 : actualités reddit (tabbed)
-          - size: full
-            widgets:
-              - type: group
-                widgets:
-                  - type: reddit
-                    title: r/news
-                    subreddit: worldnews
-                    style: vertical-list
-                    show-thumbnails: false
-                    limit: 8
-                    collapse-after: 6
-                  - type: reddit
-                    title: r/technology
-                    subreddit: technology
-                    style: vertical-list
-                    show-thumbnails: false
-                    limit: 8
-                    collapse-after: 6
-                  - type: reddit
-                    title: r/science
-                    subreddit: science
-                    style: vertical-list
-                    show-thumbnails: false
-                    limit: 8
-                    collapse-after: 6
-
-          # Col 3 : servers + météo + bookmarks
+          # Col 2 : servers + météo + bookmarks
           - size: small
             widgets:
               - type: server-stats
