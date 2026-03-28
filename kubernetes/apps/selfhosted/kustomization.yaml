@@ -11,3 +11,4 @@ resources:
   - ./bentopdf/ks.yaml
   - ./paperless/ks.yaml
   - ./homepage/ks.yaml
+  - ./glance/ks.yaml

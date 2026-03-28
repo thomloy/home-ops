@@ -1,0 +1,205 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-config
+data:
+  glance.yml: |
+    server:
+      port: 8080
+
+    theme:
+      background-color: 240 10 7
+      primary-color: 217 92 83
+      positive-color: 145 63 55
+      negative-color: 0 72 60
+
+    pages:
+      - name: Accueil
+        columns:
+          - size: small
+            widgets:
+              - type: clock
+                hour-format: 24h
+                timezones:
+                  - timezone: Europe/Paris
+                    label: Paris
+
+              - type: search
+                search-engine: google
+                new-tab: true
+
+              - type: bookmarks
+                groups:
+                  - title: Infrastructure
+                    links:
+                      - title: home-ops
+                        url: https://github.com/thomloy/home-ops
+                        icon: si:github
+                      - title: Grafana
+                        url: https://grafana.kryzql.space
+                        icon: si:grafana
+                      - title: Status
+                        url: https://status.kryzql.space
+                        icon: si:statuspage
+                  - title: Médias
+                    links:
+                      - title: Emby
+                        url: https://emby.kryzql.space
+                        icon: si:emby
+                      - title: Audiobookshelf
+                        url: https://audiobookshelf.kryzql.space
+                        icon: si:audiobookshelf
+                  - title: Outils
+                    links:
+                      - title: Paperless
+                        url: https://paperless.kryzql.space
+                        icon: si:paperlessngx
+                      - title: Mealie
+                        url: https://mealie.kryzql.space
+                        icon: si:mealie
+                      - title: IT-Tools
+                        url: https://it-tools.kryzql.space
+                        icon: si:ittools
+
+          - size: full
+            widgets:
+              - type: monitor
+                title: Monitoring
+                sites:
+                  - title: Grafana
+                    url: http://grafana-service.observability.svc.cluster.local:3000
+                    icon: si:grafana
+                  - title: Gatus
+                    url: https://status.kryzql.space
+                    icon: si:statuspage
+                  - title: Prometheus
+                    url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
+                    icon: si:prometheus
+
+              - type: monitor
+                title: Système
+                sites:
+                  - title: TrueNAS
+                    url: http://192.168.42.44
+                    icon: si:truenas
+                  - title: Flux
+                    url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
+                    icon: si:flux
+
+      - name: Médias
+        columns:
+          - size: small
+            widgets:
+              - type: bookmarks
+                groups:
+                  - title: Médias
+                    links:
+                      - title: Emby
+                        url: https://emby.kryzql.space
+                        icon: si:emby
+                      - title: Audiobookshelf
+                        url: https://audiobookshelf.kryzql.space
+                        icon: si:audiobookshelf
+
+          - size: full
+            widgets:
+              - type: monitor
+                title: État des services
+                sites:
+                  - title: Emby
+                    url: http://emby.media.svc.cluster.local:8096
+                    icon: si:emby
+                  - title: Audiobookshelf
+                    url: http://audiobookshelf.media.svc.cluster.local:80
+                    icon: si:audiobookshelf
+
+      - name: Téléchargements
+        columns:
+          - size: small
+            widgets:
+              - type: bookmarks
+                groups:
+                  - title: Arrr Stack
+                    links:
+                      - title: Radarr
+                        url: https://radarr.kryzql.space
+                        icon: si:radarr
+                      - title: Sonarr
+                        url: https://sonarr.kryzql.space
+                        icon: si:sonarr
+                      - title: Bazarr
+                        url: https://bazarr.kryzql.space
+                        icon: si:bazarr
+                      - title: Prowlarr
+                        url: https://prowlarr.kryzql.space
+                        icon: si:prowlarr
+                  - title: Téléchargeurs
+                    links:
+                      - title: Sabnzbd
+                        url: https://sabnzbd.kryzql.space
+                        icon: si:sabnzbd
+                      - title: qBittorrent
+                        url: https://qbittorrent.kryzql.space
+                        icon: si:qbittorrent
+
+          - size: full
+            widgets:
+              - type: monitor
+                title: Arrr Stack
+                sites:
+                  - title: Radarr
+                    url: http://radarr.downloads.svc.cluster.local:7878
+                    icon: si:radarr
+                  - title: Sonarr
+                    url: http://sonarr.downloads.svc.cluster.local:8989
+                    icon: si:sonarr
+                  - title: Bazarr
+                    url: http://bazarr.downloads.svc.cluster.local:80
+                    icon: si:bazarr
+                  - title: Prowlarr
+                    url: http://prowlarr.downloads.svc.cluster.local:80
+                    icon: si:prowlarr
+
+              - type: monitor
+                title: Téléchargeurs
+                sites:
+                  - title: Sabnzbd
+                    url: http://sabnzbd.downloads.svc.cluster.local:80
+                    icon: si:sabnzbd
+                  - title: qBittorrent
+                    url: http://qbittorrent.downloads.svc.cluster.local:8080
+                    icon: si:qbittorrent
+
+      - name: Outils
+        columns:
+          - size: small
+            widgets:
+              - type: bookmarks
+                groups:
+                  - title: Applications
+                    links:
+                      - title: Paperless
+                        url: https://paperless.kryzql.space
+                        icon: si:paperlessngx
+                      - title: Mealie
+                        url: https://mealie.kryzql.space
+                        icon: si:mealie
+                      - title: IT-Tools
+                        url: https://it-tools.kryzql.space
+                        icon: si:ittools
+
+          - size: full
+            widgets:
+              - type: monitor
+                title: État des services
+                sites:
+                  - title: Paperless
+                    url: http://paperless.selfhosted.svc.cluster.local:8000
+                    icon: si:paperlessngx
+                  - title: Mealie
+                    url: http://mealie.default.svc.cluster.local:9000
+                    icon: si:mealie
+                  - title: IT-Tools
+                    url: http://it-tools.selfhosted.svc.cluster.local:8080
+                    icon: si:ittools
