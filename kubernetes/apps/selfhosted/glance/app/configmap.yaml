@@ -28,21 +28,21 @@ data:
                 cache: 30s
                 url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.41%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.41%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.41%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
                 template: |
-                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" | String }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" | String }}%</p>
+                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" }}%</p>
 
               - type: custom-api
                 title: node02
                 cache: 30s
                 url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.42%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.42%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.42%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
                 template: |
-                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" | String }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" | String }}%</p>
+                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" }}%</p>
 
               - type: custom-api
                 title: node03
                 cache: 30s
                 url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.43%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.43%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.43%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
                 template: |
-                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" | String }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" | String }}%</p>
+                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" }}%</p>
 
               - type: monitor
                 title: Infrastructure
@@ -316,21 +316,21 @@ data:
                 cache: 30s
                 url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.41%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.41%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.41%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
                 template: |
-                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" | String }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" | String }}%</p>
+                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" }}%</p>
 
               - type: custom-api
                 title: node02
                 cache: 30s
                 url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.42%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.42%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.42%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
                 template: |
-                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" | String }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" | String }}%</p>
+                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" }}%</p>
 
               - type: custom-api
                 title: node03
                 cache: 30s
                 url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(round(100-avg(rate(node_cpu_seconds_total%7Bmode%3D%22idle%22%2Cinstance%3D%22192.168.42.43%3A9100%22%7D%5B5m%5D))*100%2C0.1)%2C%22t%22%2C%22CPU%22%2C%22%22%2C%22%22)+or+label_replace(round((1-node_memory_MemAvailable_bytes%7Binstance%3D%22192.168.42.43%3A9100%22%7D/node_memory_MemTotal_bytes%7Binstance%3D%22192.168.42.43%3A9100%22%7D)*100%2C0.1)%2C%22t%22%2C%22RAM%22%2C%22%22%2C%22%22)"
                 template: |
-                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" | String }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" | String }}%</p>
+                  <p>CPU: {{ .JSON.Get "data.result.#[metric.t==\"CPU\"].value.1" }}%</p><p>RAM: {{ .JSON.Get "data.result.#[metric.t==\"RAM\"].value.1" }}%</p>
 
           - size: full
             widgets:
