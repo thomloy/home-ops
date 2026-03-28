@@ -8,7 +8,7 @@ data:
     title: Homelab
     theme: dark
     color: zinc
-    headerStyle: boxed
+    headerStyle: underlined
     target: _blank
     layout:
       Media:
@@ -58,12 +58,12 @@ data:
             href: https://emby.kryzql.space
             description: Media server
             icon: emby.svg
-            ping: http://emby.media.svc.cluster.local:8096
+            siteMonitor: http://emby.media.svc.cluster.local:8096
         - Audiobookshelf:
             href: https://audiobookshelf.kryzql.space
             description: Audiobooks
             icon: audiobookshelf.svg
-            ping: http://audiobookshelf.media.svc.cluster.local:80
+            siteMonitor: http://audiobookshelf.media.svc.cluster.local:80
 
     - Downloads:
         - Radarr:
@@ -104,36 +104,36 @@ data:
             href: https://qbittorrent.kryzql.space
             description: Torrents
             icon: qbittorrent.svg
-            ping: http://qbittorrent.downloads.svc.cluster.local:8080
+            siteMonitor: http://qbittorrent.downloads.svc.cluster.local:8080
         - Bazarr:
             href: https://bazarr.kryzql.space
             description: Subtitles
             icon: bazarr.svg
-            ping: http://bazarr.downloads.svc.cluster.local:80
+            siteMonitor: http://bazarr.downloads.svc.cluster.local:80
 
     - Selfhosted:
         - Paperless:
             href: https://paperless.kryzql.space
             description: Documents
             icon: paperless-ngx.svg
-            ping: http://paperless.selfhosted.svc.cluster.local:8000
+            siteMonitor: http://paperless.selfhosted.svc.cluster.local:8000
         - Mealie:
             href: https://mealie.kryzql.space
             description: Recipes
             icon: mealie.svg
-            ping: http://mealie.default.svc.cluster.local:9000
+            siteMonitor: http://mealie.default.svc.cluster.local:9000
         - IT-Tools:
             href: https://it-tools.kryzql.space
             description: Dev tools
             icon: it-tools.svg
-            ping: http://it-tools.selfhosted.svc.cluster.local:8080
+            siteMonitor: http://it-tools.selfhosted.svc.cluster.local:8080
 
     - Infrastructure:
         - Grafana:
             href: https://grafana.kryzql.space
             description: Monitoring
             icon: grafana.svg
-            ping: http://grafana-service.observability.svc.cluster.local:3000
+            siteMonitor: http://grafana-service.observability.svc.cluster.local:3000
         - Gatus:
             href: https://status.kryzql.space
             description: Status
@@ -142,9 +142,9 @@ data:
             href: http://192.168.42.44
             description: NAS
             icon: truenas-scale.svg
-            ping: http://192.168.42.44
+            siteMonitor: http://192.168.42.44
         - Flux:
             href: https://github.com/thomloy/home-ops
             description: GitOps
             icon: flux-cd.svg
-            ping: http://source-controller.flux-system.svc.cluster.local:9090
+            siteMonitor: http://source-controller.flux-system.svc.cluster.local:9090
