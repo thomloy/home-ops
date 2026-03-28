@@ -1,0 +1,141 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nextcloud
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: nextcloud
+  values:
+    controllers:
+      nextcloud:
+        replicas: 1
+        strategy: Recreate
+
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        pod:
+          securityContext:
+            fsGroup: 33
+            fsGroupChangePolicy: "OnRootMismatch"
+            runAsGroup: 33
+            runAsUser: 33
+
+        containers:
+          app:
+            image:
+              repository: nextcloud
+              tag: "31"
+            env:
+              POSTGRES_HOST: nextcloud-postgres-rw
+              POSTGRES_DB: nextcloud
+              POSTGRES_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: nextcloud-postgres-app
+                    key: username
+              POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: nextcloud-postgres-app
+                    key: password
+              NEXTCLOUD_ADMIN_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: nextcloud-secret
+                    key: NEXTCLOUD_ADMIN_USER
+              NEXTCLOUD_ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: nextcloud-secret
+                    key: NEXTCLOUD_ADMIN_PASSWORD
+              REDIS_HOST: nextcloud-valkey
+              NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.kryzql.space
+              OVERWRITEPROTOCOL: https
+              OVERWRITECLIURL: https://nextcloud.kryzql.space
+              NEXTCLOUD_DATA_DIR: /nc-data
+              PHP_MEMORY_LIMIT: 1024M
+              PHP_UPLOAD_LIMIT: 10G
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+
+          cron:
+            image:
+              repository: nextcloud
+              tag: "31"
+            command:
+              - /bin/sh
+              - -c
+              - while true; do php -f /var/www/html/cron.php; sleep 300; done
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+
+      valkey:
+        containers:
+          valkey:
+            image:
+              repository: ghcr.io/valkey-io/valkey
+              tag: 9.0.3
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+
+    service:
+      app:
+        controller: nextcloud
+        ports:
+          http:
+            port: 80
+      valkey:
+        controller: valkey
+        ports:
+          valkey:
+            port: 6379
+
+    persistence:
+      data:
+        existingClaim: nextcloud
+        advancedMounts:
+          nextcloud:
+            app:
+              - path: /var/www/html
+            cron:
+              - path: /var/www/html
+
+      nc-data:
+        type: nfs
+        server: 192.168.42.44
+        path: /mnt/HDD1X4/apps/nextcloud/data
+        advancedMounts:
+          nextcloud:
+            app:
+              - path: /nc-data
+            cron:
+              - path: /nc-data
+
+    route:
+      app:
+        hostnames:
+          - nextcloud.kryzql.space
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
