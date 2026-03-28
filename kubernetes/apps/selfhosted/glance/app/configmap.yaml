@@ -24,7 +24,31 @@ data:
       # ── Home ───────────────────────────────────────────────────────────────
       - name: home
         columns:
-          # Col 1 : search + services (tabbed) + reddit (tabbed)
+          # Col 1 : server-stats + infra monitor
+          - size: small
+            widgets:
+              - type: server-stats
+
+              - type: monitor
+                title: Infrastructure
+                sites:
+                  - title: Grafana
+                    url: http://grafana-service.observability.svc.cluster.local:3000
+                    icon: si:grafana
+                  - title: Prometheus
+                    url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
+                    icon: si:prometheus
+                  - title: TrueNAS
+                    url: http://192.168.42.44
+                    icon: si:truenas
+                  - title: Gatus
+                    url: https://status.kryzql.space
+                    icon: si:statuspage
+                  - title: Flux
+                    url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
+                    icon: si:flux
+
+          # Col 2 : search + services (tabbed) + reddit (tabbed)
           - size: full
             widgets:
               - type: search
@@ -126,11 +150,9 @@ data:
                     limit: 7
                     collapse-after: 5
 
-          # Col 2 : servers + météo + bookmarks
+          # Col 3 : météo + bookmarks
           - size: small
             widgets:
-              - type: server-stats
-
               - type: weather
                 location: Paris, France
                 units: metric
