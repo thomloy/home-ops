@@ -6,6 +6,7 @@ namespace: actions-runner
 
 components:
   - ../../components/alerts
+  - ../../components/sops
 
 resources:
   - ./namespace.yaml

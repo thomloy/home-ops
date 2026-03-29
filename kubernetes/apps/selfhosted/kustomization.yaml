@@ -5,6 +5,7 @@ kind: Kustomization
 namespace: selfhosted
 components:
   - ../../components/alerts
+  - ../../components/sops
 resources:
   - ./namespace.yaml
   - ./it-tools/ks.yaml
