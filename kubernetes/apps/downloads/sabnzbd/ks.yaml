@@ -7,7 +7,7 @@ metadata:
 spec:
   commonMetadata:
     labels:
-      app.kubernetes.io/name: radarr
+      app.kubernetes.io/name: sabnzbd
   components:
     - ../../../../components/nfs-scaler
     - ../../../../components/volsync
@@ -19,7 +19,8 @@ spec:
   postBuild:
     substitute:
       APP: sabnzbd
-      VOLSYNC_CAPACITY: 1Gi
+      VOLSYNC_CLAIM: sabnzbd-config
+      VOLSYNC_CAPACITY: 2Gi
   prune: true
   sourceRef:
     kind: GitRepository
