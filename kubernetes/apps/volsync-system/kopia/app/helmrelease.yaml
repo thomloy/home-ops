@@ -9,6 +9,10 @@ spec:
     kind: OCIRepository
     name: kopia
   interval: 1h
+  install:
+    timeout: 15m
+  upgrade:
+    timeout: 15m
   values:
     controllers:
       kopia:
