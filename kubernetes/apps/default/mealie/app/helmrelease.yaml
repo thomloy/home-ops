@@ -33,7 +33,7 @@ spec:
               tag: v3.11.0@sha256:d99fc2844c04288526d6cbecc9ac1b6c32d8ea6054236d56857107bbaf70ea5c
             env:
               TZ: "Europe/Paris"
-              BASE_URL: https://mealie.kryzql.space
+              BASE_URL: https://mealie.${SECRET_DOMAIN}
             resources:
               requests:
                 memory: 250Mi
@@ -51,7 +51,7 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.kryzql.space"
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
         parentRefs:
           - name: envoy-internal
             namespace: network

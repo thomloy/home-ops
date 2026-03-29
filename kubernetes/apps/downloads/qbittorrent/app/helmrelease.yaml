@@ -99,7 +99,7 @@ spec:
     route:
       app:
         hostnames:
-          - qbittorrent.kryzql.space
+          - qbittorrent.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network

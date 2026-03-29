@@ -43,7 +43,7 @@ data:
                     url: http://NAS.internal
                     icon: si:truenas
                   - title: Gatus
-                    url: https://status.kryzql.space
+                    url: https://status.${SECRET_DOMAIN}
                     icon: si:statuspage
                   - title: Flux
                     url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
@@ -163,41 +163,41 @@ data:
                         url: https://github.com/thomloy/home-ops
                         icon: si:github
                       - title: Grafana
-                        url: https://grafana.kryzql.space
+                        url: https://grafana.${SECRET_DOMAIN}
                         icon: si:grafana
                       - title: Status
-                        url: https://status.kryzql.space
+                        url: https://status.${SECRET_DOMAIN}
                         icon: si:statuspage
                   - title: Médias
                     links:
                       - title: Emby
-                        url: https://emby.kryzql.space
+                        url: https://emby.${SECRET_DOMAIN}
                         icon: si:emby
                       - title: Audiobookshelf
-                        url: https://audiobookshelf.kryzql.space
+                        url: https://audiobookshelf.${SECRET_DOMAIN}
                         icon: si:audiobookshelf
                       - title: Radarr
-                        url: https://radarr.kryzql.space
+                        url: https://radarr.${SECRET_DOMAIN}
                         icon: si:radarr
                       - title: Sonarr
-                        url: https://sonarr.kryzql.space
+                        url: https://sonarr.${SECRET_DOMAIN}
                         icon: si:sonarr
                       - title: Sabnzbd
-                        url: https://sabnzbd.kryzql.space
+                        url: https://sabnzbd.${SECRET_DOMAIN}
                         icon: si:sabnzbd
                       - title: qBittorrent
-                        url: https://qbittorrent.kryzql.space
+                        url: https://qbittorrent.${SECRET_DOMAIN}
                         icon: si:qbittorrent
                   - title: Outils
                     links:
                       - title: Paperless
-                        url: https://paperless.kryzql.space
+                        url: https://paperless.${SECRET_DOMAIN}
                         icon: si:paperlessngx
                       - title: Mealie
-                        url: https://mealie.kryzql.space
+                        url: https://mealie.${SECRET_DOMAIN}
                         icon: si:mealie
                       - title: IT-Tools
-                        url: https://it-tools.kryzql.space
+                        url: https://it-tools.${SECRET_DOMAIN}
                         icon: si:ittools
 
       # ── Media ──────────────────────────────────────────────────────────────
@@ -271,25 +271,25 @@ data:
                   - title: Médias
                     links:
                       - title: Emby
-                        url: https://emby.kryzql.space
+                        url: https://emby.${SECRET_DOMAIN}
                         icon: si:emby
                       - title: Audiobookshelf
-                        url: https://audiobookshelf.kryzql.space
+                        url: https://audiobookshelf.${SECRET_DOMAIN}
                         icon: si:audiobookshelf
                       - title: Radarr
-                        url: https://radarr.kryzql.space
+                        url: https://radarr.${SECRET_DOMAIN}
                         icon: si:radarr
                       - title: Sonarr
-                        url: https://sonarr.kryzql.space
+                        url: https://sonarr.${SECRET_DOMAIN}
                         icon: si:sonarr
                       - title: Bazarr
-                        url: https://bazarr.kryzql.space
+                        url: https://bazarr.${SECRET_DOMAIN}
                         icon: si:bazarr
                       - title: Sabnzbd
-                        url: https://sabnzbd.kryzql.space
+                        url: https://sabnzbd.${SECRET_DOMAIN}
                         icon: si:sabnzbd
                       - title: qBittorrent
-                        url: https://qbittorrent.kryzql.space
+                        url: https://qbittorrent.${SECRET_DOMAIN}
                         icon: si:qbittorrent
 
       # ── Stats ──────────────────────────────────────────────────────────────
@@ -317,7 +317,7 @@ data:
                     url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
                     icon: si:prometheus
                   - title: Gatus
-                    url: https://status.kryzql.space
+                    url: https://status.${SECRET_DOMAIN}
                     icon: si:statuspage
                   - title: TrueNAS
                     url: http://NAS.internal
@@ -370,5 +370,5 @@ data:
                         url: https://github.com/thomloy/home-ops
                         icon: si:github
                       - title: Grafana
-                        url: https://grafana.kryzql.space
+                        url: https://grafana.${SECRET_DOMAIN}
                         icon: si:grafana

@@ -47,9 +47,9 @@ spec:
                     name: nextcloud-secret
                     key: NEXTCLOUD_ADMIN_PASSWORD
               REDIS_HOST: nextcloud-valkey
-              NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.kryzql.space
+              NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.${SECRET_DOMAIN}
               OVERWRITEPROTOCOL: https
-              OVERWRITECLIURL: https://nextcloud.kryzql.space
+              OVERWRITECLIURL: https://nextcloud.${SECRET_DOMAIN}
               NEXTCLOUD_DATA_DIR: /nc-data
               PHP_MEMORY_LIMIT: 1024M
               PHP_UPLOAD_LIMIT: 10G
@@ -124,7 +124,7 @@ spec:
     route:
       app:
         hostnames:
-          - nextcloud.kryzql.space
+          - nextcloud.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network

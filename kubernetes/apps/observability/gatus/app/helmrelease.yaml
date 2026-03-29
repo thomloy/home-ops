@@ -92,8 +92,8 @@ spec:
         annotations:
           gatus.home-operations.com/enabled: "false"
         hostnames:
-          - "{{ .Release.Name }}.kryzql.space"
-          - status.kryzql.space
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - status.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-external
             namespace: network

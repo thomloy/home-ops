@@ -71,7 +71,7 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.kryzql.space"
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
         parentRefs:
           - name: envoy-internal
             namespace: network

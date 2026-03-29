@@ -79,7 +79,7 @@ spec:
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] == 401"]
         hostnames:
-          - emby.kryzql.space
+          - emby.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network

@@ -52,7 +52,7 @@ spec:
     route:
       app:
         hostnames:
-          - glance.kryzql.space
+          - glance.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network

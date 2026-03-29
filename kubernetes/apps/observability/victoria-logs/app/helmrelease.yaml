@@ -20,7 +20,7 @@ spec:
       route:
         enabled: true
         hostnames:
-          - victoria-logs.kryzql.space
+          - victoria-logs.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network
