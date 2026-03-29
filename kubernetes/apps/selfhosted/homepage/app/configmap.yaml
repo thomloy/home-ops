@@ -103,10 +103,10 @@ data:
 
     - System:
         - TrueNAS:
-            href: http://NAS.internal
+            href: http://192.168.42.44
             description: NAS
             icon: truenas-scale.svg
-            siteMonitor: http://NAS.internal
+            siteMonitor: http://192.168.42.44
         - Flux:
             href: https://github.com/thomloy/home-ops
             description: GitOps

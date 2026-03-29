@@ -94,7 +94,7 @@ spec:
             subPath: repository.config
       repository:
         type: nfs
-        server: NAS.internal
+        server: 192.168.42.44
         path: /mnt/HDD1X4/VolsyncKopia
         globalMounts:
           - path: /repository

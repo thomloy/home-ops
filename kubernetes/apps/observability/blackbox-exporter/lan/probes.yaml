@@ -14,7 +14,7 @@ spec:
         - jetkvm-1.internal
         - jetkvm-2.internal
         - jetkvm-3.internal
-        - NAS.internal
+        - 192.168.42.44
         - node01.internal
         - node02.internal
         - node03.internal
@@ -35,7 +35,7 @@ spec:
   targets:
     staticConfig:
       static:
-        - NAS.internal:2049
+        - 192.168.42.44:2049
   metricRelabelings:
     - targetLabel: service
       replacement: blackbox-exporter-lan

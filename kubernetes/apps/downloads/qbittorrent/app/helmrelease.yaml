@@ -88,7 +88,7 @@ spec:
       downloads:
         type: nfs
         path: /mnt/HDD1X4/media
-        server: NAS.internal
+        server: 192.168.42.44
         globalMounts:
           - path: /media
       tmp:

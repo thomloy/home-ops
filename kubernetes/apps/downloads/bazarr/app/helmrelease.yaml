@@ -77,7 +77,7 @@ spec:
         existingClaim: bazarr-config
       media:
         type: nfs
-        server: NAS.internal
+        server: 192.168.42.44
         path: /mnt/HDD1X4/media
         globalMounts:
           - path: /media

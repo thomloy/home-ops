@@ -10,7 +10,7 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    server: NAS.internal
+    server: 192.168.42.44
     path: /mnt/HDD1X4/apps/immich/library
   claimRef:
     name: immich-library
