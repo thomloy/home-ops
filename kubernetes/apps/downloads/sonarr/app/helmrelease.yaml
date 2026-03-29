@@ -86,7 +86,7 @@ spec:
     route:
       app:
         hostnames:
-          - sonarr.${SECRET_DOMAIN}
+          - sonarr.kryzql.space
         parentRefs:
           - name: envoy-internal
             namespace: network

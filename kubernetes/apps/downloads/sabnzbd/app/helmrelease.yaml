@@ -25,7 +25,7 @@ spec:
                 sabnzbd.downloads.svc,
                 sabnzbd.downloads.svc.cluster,
                 sabnzbd.downloads.svc.cluster.local,
-                sabnzbd.${SECRET_DOMAIN}
+                sabnzbd.kryzql.space
               TZ: Europe/Paris
             envFrom:
               - secretRef:
@@ -77,7 +77,7 @@ spec:
     route:
       app:
         hostnames:
-          - sabnzbd.${SECRET_DOMAIN}
+          - sabnzbd.kryzql.space
         parentRefs:
           - name: envoy-internal
             namespace: network

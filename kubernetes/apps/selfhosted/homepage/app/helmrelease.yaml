@@ -61,7 +61,7 @@ spec:
     route:
       app:
         hostnames:
-          - homepage.${SECRET_DOMAIN}
+          - homepage.kryzql.space
         parentRefs:
           - name: envoy-internal
             namespace: network

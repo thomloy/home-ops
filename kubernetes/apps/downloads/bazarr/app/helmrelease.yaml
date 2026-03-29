@@ -68,7 +68,7 @@ spec:
     route:
       app:
         hostnames:
-          - bazarr.${SECRET_DOMAIN}
+          - bazarr.kryzql.space
         parentRefs:
           - name: envoy-internal
             namespace: network

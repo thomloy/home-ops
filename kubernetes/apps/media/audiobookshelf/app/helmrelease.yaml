@@ -94,7 +94,7 @@ spec:
     route:
       app:
         hostnames:
-          - audiobookshelf.${SECRET_DOMAIN}
+          - audiobookshelf.kryzql.space
         parentRefs:
           - name: envoy-internal
             namespace: network

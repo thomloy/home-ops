@@ -18,7 +18,7 @@ spec:
     route:
       dashboard:
         host:
-          name: rook.${SECRET_DOMAIN}
+          name: rook.kryzql.space
           path: /
           pathType: PathPrefix
         parentRefs:

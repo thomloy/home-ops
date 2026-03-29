@@ -6,8 +6,8 @@ metadata:
   name: "kryzql-space"
 spec:
   dnsNames:
-    - ${SECRET_DOMAIN}
-    - "*.${SECRET_DOMAIN}"
+    - kryzql.space
+    - "*.kryzql.space"
   duration: 160h
   issuerRef:
     name: letsencrypt-production

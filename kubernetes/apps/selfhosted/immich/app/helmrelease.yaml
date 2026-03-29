@@ -32,7 +32,7 @@ spec:
       route:
         app:
           hostnames:
-            - immich.${SECRET_DOMAIN}
+            - immich.kryzql.space
           parentRefs:
             - name: envoy-internal
               namespace: network
