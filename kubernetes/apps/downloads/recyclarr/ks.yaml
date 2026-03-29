@@ -18,7 +18,7 @@ spec:
   postBuild:
     substitute:
       APP: recyclarr
-      VOLSYNC_CLAIM: recyclarr-config
+      VOLSYNC_CLAIM: recyclarr
   prune: true
   sourceRef:
     kind: GitRepository

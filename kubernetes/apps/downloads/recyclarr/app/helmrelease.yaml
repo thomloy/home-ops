@@ -50,7 +50,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     persistence:
       config:
-        existingClaim: recyclarr-config
+        existingClaim: recyclarr
       config-file:
         type: configMap
         name: "{{ .Release.Name }}-configmap"
