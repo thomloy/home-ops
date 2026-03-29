@@ -155,7 +155,7 @@ spec:
 
       consume:
         type: nfs
-        server: 192.168.42.44
+        server: ${NAS_IP}
         path: /mnt/HDD1X4/apps/paperless/incoming
         advancedMounts:
           paperless:

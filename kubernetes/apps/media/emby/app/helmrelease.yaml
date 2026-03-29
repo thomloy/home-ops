@@ -98,7 +98,7 @@ spec:
               - path: /config/cache
       media:
         type: nfs
-        server: 192.168.42.44
+        server: ${NAS_IP}
         path: /mnt/HDD1X4/media
         globalMounts:
           - path: /media
