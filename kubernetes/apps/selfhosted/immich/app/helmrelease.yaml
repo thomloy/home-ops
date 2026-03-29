@@ -29,17 +29,16 @@ spec:
                     secretKeyRef:
                       name: immich-postgres-app
                       key: uri
+      route:
+        app:
+          hostnames:
+            - immich.kryzql.space
+          parentRefs:
+            - name: envoy-internal
+              namespace: network
 
     machine-learning:
       enabled: true
 
     valkey:
       enabled: true
-
-    route:
-      app:
-        hostnames:
-          - immich.kryzql.space
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
