@@ -9,5 +9,4 @@ components:
 resources:
   - ./namespace.yaml
   - ./atuin/ks.yaml
-  - ./echo/ks.yaml
   - ./mealie/ks.yaml
