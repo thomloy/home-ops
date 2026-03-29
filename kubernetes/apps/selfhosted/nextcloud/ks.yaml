@@ -8,8 +8,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: nextcloud
-  components:
-    - ../../../../components/volsync
   dependsOn:
     - name: cloudnative-pg
       namespace: database
@@ -17,13 +15,6 @@ spec:
       namespace: rook-ceph
   interval: 1h
   path: "./kubernetes/apps/selfhosted/nextcloud/app"
-  postBuild:
-    substitute:
-      APP: nextcloud
-      APP_UID: "33"
-      APP_GID: "33"
-      VOLSYNC_CLAIM: nextcloud
-      VOLSYNC_CAPACITY: 15Gi
   prune: true
   sourceRef:
     kind: GitRepository

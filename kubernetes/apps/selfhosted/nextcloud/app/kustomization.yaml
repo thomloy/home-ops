@@ -6,4 +6,5 @@ resources:
   - ./ocirepository.yaml
   - ./cluster.yaml
   - ./externalsecret.yaml
+  - ./pvc.yaml
   - ./helmrelease.yaml
