@@ -31,7 +31,7 @@ spec:
 
             env:
 
-              PAPERLESS_URL: https://paperless.kryzql.space
+              PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
               PAPERLESS_TIME_ZONE: Europe/Paris
 
               PAPERLESS_REDIS: redis://paperless-redis:6379
@@ -155,7 +155,7 @@ spec:
 
       consume:
         type: nfs
-        server: 192.168.42.44
+        server: NAS.internal
         path: /mnt/HDD1X4/apps/paperless/incoming
         advancedMounts:
           paperless:
@@ -165,7 +165,7 @@ spec:
     route:
       app:
         hostnames:
-          - paperless.kryzql.space
+          - paperless.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network

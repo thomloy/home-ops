@@ -75,7 +75,7 @@ spec:
       media:
         type: nfs
         path: /mnt/HDD1X4/media
-        server: 192.168.42.44
+        server: NAS.internal
         globalMounts:
           - path: /media
       tmp:
@@ -86,7 +86,7 @@ spec:
     route:
       app:
         hostnames:
-          - sonarr.kryzql.space
+          - sonarr.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network

@@ -13,6 +13,6 @@ spec:
       volumeSource:
         nfs:
           path: /mnt/HDD1X4/VolsyncKopia
-          server: 192.168.42.44
+          server: NAS.internal
   repository:
     repository: volsync-maintenance-secret

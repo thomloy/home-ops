@@ -79,7 +79,7 @@ spec:
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] == 401"]
         hostnames:
-          - emby.kryzql.space
+          - emby.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -98,7 +98,7 @@ spec:
               - path: /config/cache
       media:
         type: nfs
-        server: 192.168.42.44
+        server: NAS.internal
         path: /mnt/HDD1X4/media
         globalMounts:
           - path: /media

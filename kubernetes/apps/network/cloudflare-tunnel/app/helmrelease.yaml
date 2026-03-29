@@ -69,10 +69,10 @@ spec:
         data:
           config.yaml: |-
             ingress:
-              - hostname: "*.kryzql.space"
+              - hostname: "*.${SECRET_DOMAIN}"
                 originRequest:
                   http2Origin: true
-                  originServerName: external.kryzql.space
+                  originServerName: external.${SECRET_DOMAIN}
                 service: https://envoy-external.{{ .Release.Namespace }}.svc.cluster.local:443
               - service: http_status:404
     persistence:

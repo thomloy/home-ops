@@ -79,7 +79,7 @@ data:
               icon: github.svg
               description: GitOps repo
         - Grafana:
-            - href: https://grafana.kryzql.space
+            - href: https://grafana.${SECRET_DOMAIN}
               icon: grafana.svg
               description: Monitoring
 
@@ -87,26 +87,26 @@ data:
     # ── Home ──────────────────────────────────────────────
     - Monitoring:
         - Grafana:
-            href: https://grafana.kryzql.space
+            href: https://grafana.${SECRET_DOMAIN}
             description: Dashboards
             icon: grafana.svg
             siteMonitor: http://grafana-service.observability.svc.cluster.local:3000
         - Gatus:
-            href: https://status.kryzql.space
+            href: https://status.${SECRET_DOMAIN}
             description: Status page
             icon: gatus.svg
         - Prometheus:
-            href: https://grafana.kryzql.space
+            href: https://grafana.${SECRET_DOMAIN}
             description: Metrics
             icon: prometheus.svg
             siteMonitor: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090
 
     - System:
         - TrueNAS:
-            href: http://192.168.42.44
+            href: http://NAS.internal
             description: NAS
             icon: truenas-scale.svg
-            siteMonitor: http://192.168.42.44
+            siteMonitor: http://NAS.internal
         - Flux:
             href: https://github.com/thomloy/home-ops
             description: GitOps
@@ -116,14 +116,14 @@ data:
     # ── Media ─────────────────────────────────────────────
     - Video:
         - Emby:
-            href: https://emby.kryzql.space
+            href: https://emby.${SECRET_DOMAIN}
             description: Media server
             icon: emby.svg
             siteMonitor: http://emby.media.svc.cluster.local:8096
 
     - Audio:
         - Audiobookshelf:
-            href: https://audiobookshelf.kryzql.space
+            href: https://audiobookshelf.${SECRET_DOMAIN}
             description: Audiobooks & podcasts
             icon: audiobookshelf.svg
             siteMonitor: http://audiobookshelf.media.svc.cluster.local:80
@@ -131,7 +131,7 @@ data:
     # ── Downloads ─────────────────────────────────────────
     - Movies & Series:
         - Radarr:
-            href: https://radarr.kryzql.space
+            href: https://radarr.${SECRET_DOMAIN}
             description: Movies
             icon: radarr.svg
             widget:
@@ -140,7 +140,7 @@ data:
               key: "{{HOMEPAGE_VAR_RADARR_API_KEY}}"
               enableQueue: true
         - Sonarr:
-            href: https://sonarr.kryzql.space
+            href: https://sonarr.${SECRET_DOMAIN}
             description: Series
             icon: sonarr.svg
             widget:
@@ -149,14 +149,14 @@ data:
               key: "{{HOMEPAGE_VAR_SONARR_API_KEY}}"
               enableQueue: true
         - Bazarr:
-            href: https://bazarr.kryzql.space
+            href: https://bazarr.${SECRET_DOMAIN}
             description: Subtitles
             icon: bazarr.svg
             siteMonitor: http://bazarr.downloads.svc.cluster.local:80
 
     - Downloaders:
         - Sabnzbd:
-            href: https://sabnzbd.kryzql.space
+            href: https://sabnzbd.${SECRET_DOMAIN}
             description: Usenet
             icon: sabnzbd.svg
             widget:
@@ -164,14 +164,14 @@ data:
               url: http://sabnzbd.downloads.svc.cluster.local:80
               key: "{{HOMEPAGE_VAR_SABNZBD_API_KEY}}"
         - qBittorrent:
-            href: https://qbittorrent.kryzql.space
+            href: https://qbittorrent.${SECRET_DOMAIN}
             description: Torrents
             icon: qbittorrent.svg
             siteMonitor: http://qbittorrent.downloads.svc.cluster.local:8080
 
     - Indexers:
         - Prowlarr:
-            href: https://prowlarr.kryzql.space
+            href: https://prowlarr.${SECRET_DOMAIN}
             description: Indexer manager
             icon: prowlarr.svg
             widget:
@@ -182,21 +182,21 @@ data:
     # ── Tools ─────────────────────────────────────────────
     - Documents:
         - Paperless:
-            href: https://paperless.kryzql.space
+            href: https://paperless.${SECRET_DOMAIN}
             description: Document management
             icon: paperless-ngx.svg
             siteMonitor: http://paperless.selfhosted.svc.cluster.local:8000
 
     - Kitchen:
         - Mealie:
-            href: https://mealie.kryzql.space
+            href: https://mealie.${SECRET_DOMAIN}
             description: Recipes
             icon: mealie.svg
             siteMonitor: http://mealie.default.svc.cluster.local:9000
 
     - Dev:
         - IT-Tools:
-            href: https://it-tools.kryzql.space
+            href: https://it-tools.${SECRET_DOMAIN}
             description: Dev tools
             icon: it-tools.svg
             siteMonitor: http://it-tools.selfhosted.svc.cluster.local:8080

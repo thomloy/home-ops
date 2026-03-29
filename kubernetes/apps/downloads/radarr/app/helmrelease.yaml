@@ -80,7 +80,7 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.kryzql.space"
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -89,7 +89,7 @@ spec:
         existingClaim: radarr-config
       media:
         type: nfs
-        server: 192.168.42.44
+        server: NAS.internal
         path: /mnt/HDD1X4/media
         globalMounts:
           - path: /media

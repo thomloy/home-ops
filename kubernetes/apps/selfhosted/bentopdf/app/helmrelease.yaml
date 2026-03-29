@@ -44,7 +44,7 @@ spec:
     route:
       app:
         hostnames:
-          - pdf.kryzql.space
+          - pdf.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network

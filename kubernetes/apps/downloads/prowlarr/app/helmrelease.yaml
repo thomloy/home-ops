@@ -78,7 +78,7 @@ spec:
     route:
       app:
         hostnames:
-          - prowlarr.kryzql.space
+          - prowlarr.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network

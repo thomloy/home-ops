@@ -4,7 +4,7 @@ kind: ExtensionServiceConfig
 name: nut-client
 configFiles:
   - content: |
-      MONITOR ups@192.168.42.44 1 upsmon upsmon secondary
+      MONITOR ups@NAS.internal 1 upsmon upsmon secondary
       MINSUPPLIES 1
       SHUTDOWNCMD "/sbin/poweroff"
       POLLFREQ 5

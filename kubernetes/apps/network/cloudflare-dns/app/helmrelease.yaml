@@ -35,7 +35,7 @@ spec:
     txtPrefix: k8s.
     txtOwnerId: default
     domainFilters:
-      - kryzql.space
+      - ${SECRET_DOMAIN}
     serviceMonitor:
       enabled: true
     podAnnotations:
