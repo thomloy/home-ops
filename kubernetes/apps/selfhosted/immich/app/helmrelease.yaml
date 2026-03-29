@@ -35,3 +35,11 @@ spec:
 
     valkey:
       enabled: true
+
+    route:
+      app:
+        hostnames:
+          - immich.kryzql.space
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
