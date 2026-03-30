@@ -22,7 +22,7 @@ spec:
           app:
             image:
               repository: nextcloud
-              tag: "31"
+              tag: "33"
             env:
               POSTGRES_HOST: nextcloud-postgres-rw
               POSTGRES_DB: nextcloud
@@ -63,7 +63,7 @@ spec:
           cron:
             image:
               repository: nextcloud
-              tag: "31"
+              tag: "33"
             command:
               - /bin/sh
               - -c
