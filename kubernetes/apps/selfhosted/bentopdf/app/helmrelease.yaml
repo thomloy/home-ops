@@ -50,14 +50,15 @@ spec:
           - name: envoy-internal
             namespace: network
     persistence:
-      tmpfs:
+      nginx-cache:
         type: emptyDir
         globalMounts:
-          - subPath: cache
-            path: /var/cache/nginx
-          - subPath: tmp
-            path: /etc/nginx/tmp
-          - subPath: nginx-logs
-            path: /var/lib/nginx/logs
-          - subPath: nginx-tmp
-            path: /var/lib/nginx/tmp
+          - path: /var/cache/nginx
+      nginx-tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /var/lib/nginx/tmp
+      nginx-logs:
+        type: emptyDir
+        globalMounts:
+          - path: /var/lib/nginx/logs
