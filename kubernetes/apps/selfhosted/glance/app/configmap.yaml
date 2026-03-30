@@ -72,19 +72,19 @@ data:
                     sites:
                       - title: Radarr
                         url: http://radarr.downloads.svc.cluster.local:7878
-                        icon: si:radarr
+                        icon: di:radarr
                       - title: Sonarr
                         url: http://sonarr.downloads.svc.cluster.local:8989
                         icon: si:sonarr
                       - title: Bazarr
                         url: http://bazarr.downloads.svc.cluster.local:80
-                        icon: si:bazarr
+                        icon: di:bazarr
                       - title: Prowlarr
                         url: http://prowlarr.downloads.svc.cluster.local:80
-                        icon: si:prowlarr
+                        icon: di:prowlarr
                       - title: Sabnzbd
                         url: http://sabnzbd.downloads.svc.cluster.local:80
-                        icon: si:sabnzbd
+                        icon: di:sabnzbd
                       - title: qBittorrent
                         url: http://qbittorrent.downloads.svc.cluster.local:8080
                         icon: si:qbittorrent
@@ -178,13 +178,13 @@ data:
                         icon: si:audiobookshelf
                       - title: Radarr
                         url: https://radarr.${SECRET_DOMAIN}
-                        icon: si:radarr
+                        icon: di:radarr
                       - title: Sonarr
                         url: https://sonarr.${SECRET_DOMAIN}
                         icon: si:sonarr
                       - title: Sabnzbd
                         url: https://sabnzbd.${SECRET_DOMAIN}
-                        icon: si:sabnzbd
+                        icon: di:sabnzbd
                       - title: qBittorrent
                         url: https://qbittorrent.${SECRET_DOMAIN}
                         icon: si:qbittorrent
@@ -221,19 +221,19 @@ data:
                     sites:
                       - title: Radarr
                         url: http://radarr.downloads.svc.cluster.local:7878
-                        icon: si:radarr
+                        icon: di:radarr
                       - title: Sonarr
                         url: http://sonarr.downloads.svc.cluster.local:8989
                         icon: si:sonarr
                       - title: Bazarr
                         url: http://bazarr.downloads.svc.cluster.local:80
-                        icon: si:bazarr
+                        icon: di:bazarr
                       - title: Prowlarr
                         url: http://prowlarr.downloads.svc.cluster.local:80
-                        icon: si:prowlarr
+                        icon: di:prowlarr
                       - title: Sabnzbd
                         url: http://sabnzbd.downloads.svc.cluster.local:80
-                        icon: si:sabnzbd
+                        icon: di:sabnzbd
                       - title: qBittorrent
                         url: http://qbittorrent.downloads.svc.cluster.local:8080
                         icon: si:qbittorrent
@@ -278,16 +278,16 @@ data:
                         icon: si:audiobookshelf
                       - title: Radarr
                         url: https://radarr.${SECRET_DOMAIN}
-                        icon: si:radarr
+                        icon: di:radarr
                       - title: Sonarr
                         url: https://sonarr.${SECRET_DOMAIN}
                         icon: si:sonarr
                       - title: Bazarr
                         url: https://bazarr.${SECRET_DOMAIN}
-                        icon: si:bazarr
+                        icon: di:bazarr
                       - title: Sabnzbd
                         url: https://sabnzbd.${SECRET_DOMAIN}
-                        icon: si:sabnzbd
+                        icon: di:sabnzbd
                       - title: qBittorrent
                         url: https://qbittorrent.${SECRET_DOMAIN}
                         icon: si:qbittorrent
@@ -330,19 +330,19 @@ data:
                     icon: si:audiobookshelf
                   - title: Radarr
                     url: http://radarr.downloads.svc.cluster.local:7878
-                    icon: si:radarr
+                    icon: di:radarr
                   - title: Sonarr
                     url: http://sonarr.downloads.svc.cluster.local:8989
                     icon: si:sonarr
                   - title: Bazarr
                     url: http://bazarr.downloads.svc.cluster.local:80
-                    icon: si:bazarr
+                    icon: di:bazarr
                   - title: Prowlarr
                     url: http://prowlarr.downloads.svc.cluster.local:80
-                    icon: si:prowlarr
+                    icon: di:prowlarr
                   - title: Sabnzbd
                     url: http://sabnzbd.downloads.svc.cluster.local:80
-                    icon: si:sabnzbd
+                    icon: di:sabnzbd
                   - title: qBittorrent
                     url: http://qbittorrent.downloads.svc.cluster.local:8080
                     icon: si:qbittorrent
