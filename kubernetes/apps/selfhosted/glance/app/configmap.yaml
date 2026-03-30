@@ -44,10 +44,10 @@ data:
                     icon: di:truenas
                   - title: Gatus
                     url: https://status.${SECRET_DOMAIN}
-                    icon: di:statuspage
+                    icon: di:gatus
                   - title: Flux
-                    url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
-                    icon: di:flux
+                    url: http://source-controller.flux-system.svc.cluster.local:80/healthz
+                    icon: di:flux-cd
 
           # Col 2 : search + services + reddit
           - size: full
@@ -167,7 +167,7 @@ data:
                         icon: di:grafana
                       - title: Status
                         url: https://status.${SECRET_DOMAIN}
-                        icon: di:statuspage
+                        icon: di:gatus
                   - title: Médias
                     links:
                       - title: Emby
@@ -318,7 +318,7 @@ data:
                     icon: di:prometheus
                   - title: Gatus
                     url: https://status.${SECRET_DOMAIN}
-                    icon: di:statuspage
+                    icon: di:gatus
                   - title: TrueNAS
                     url: http://${NAS_IP}
                     icon: di:truenas
@@ -356,8 +356,8 @@ data:
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
                     icon: di:it-tools
                   - title: Flux
-                    url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
-                    icon: di:flux
+                    url: http://source-controller.flux-system.svc.cluster.local:80/healthz
+                    icon: di:flux-cd
 
           - size: small
             widgets:
