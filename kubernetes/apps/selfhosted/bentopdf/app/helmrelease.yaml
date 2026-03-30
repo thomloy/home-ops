@@ -60,3 +60,7 @@ spec:
             path: /var/cache/nginx
           - subPath: tmp
             path: /etc/nginx/tmp
+          - subPath: nginx-logs
+            path: /var/lib/nginx/logs
+          - subPath: nginx-tmp
+            path: /var/lib/nginx/tmp
