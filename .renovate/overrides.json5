@@ -13,5 +13,11 @@
       matchPackageNames: ["/factory\\.talos\\.dev/"],
       overridePackageName: "ghcr.io/siderolabs/installer",
     },
+    {
+      description: "Nextcloud: upgrade one major version at a time",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["nextcloud"],
+      separateMultipleMajor: true,
+    },
   ],
 }
