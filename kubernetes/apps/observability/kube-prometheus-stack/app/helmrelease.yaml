@@ -22,7 +22,7 @@ spec:
           annotations:
             gatus.home-operations.com/endpoint: |-
               conditions: ["[STATUS] == 200"]
-              url: https://alertmanager.${SECRET_DOMAIN}/-/healthy
+              url: http://kube-prometheus-stack-alertmanager.observability.svc.cluster.local:9093/-/healthy
           hostnames:
             - alertmanager.${SECRET_DOMAIN}
           parentRefs:
