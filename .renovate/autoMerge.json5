@@ -2,12 +2,11 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   packageRules: [
     {
-      description: "Auto-merge trusted container digests",
+      description: "Auto-merge container minor and patch updates",
       matchDatasources: ["docker"],
       automerge: true,
       automergeType: "pr",
-      matchUpdateTypes: ["digest"],
-      matchPackageNames: ["/home-operations/"],
+      matchUpdateTypes: ["minor", "patch", "digest"],
       ignoreTests: false,
     },
     {
