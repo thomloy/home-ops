@@ -35,19 +35,19 @@ data:
                 sites:
                   - title: Grafana
                     url: http://grafana-service.observability.svc.cluster.local:3000
-                    icon: si:grafana
+                    icon: di:grafana
                   - title: Prometheus
                     url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
-                    icon: si:prometheus
+                    icon: di:prometheus
                   - title: TrueNAS
                     url: http://${NAS_IP}
-                    icon: si:truenas
+                    icon: di:truenas
                   - title: Gatus
                     url: https://status.${SECRET_DOMAIN}
-                    icon: si:statuspage
+                    icon: di:statuspage
                   - title: Flux
                     url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
-                    icon: si:flux
+                    icon: di:flux
 
           # Col 2 : search + services + reddit
           - size: full
@@ -63,10 +63,10 @@ data:
                     sites:
                       - title: Emby
                         url: http://emby.media.svc.cluster.local:8096
-                        icon: si:emby
+                        icon: di:emby
                       - title: Audiobookshelf
                         url: http://audiobookshelf.media.svc.cluster.local:80
-                        icon: si:audiobookshelf
+                        icon: di:audiobookshelf
                   - type: monitor
                     title: Arr
                     sites:
@@ -75,7 +75,7 @@ data:
                         icon: di:radarr
                       - title: Sonarr
                         url: http://sonarr.downloads.svc.cluster.local:8989
-                        icon: si:sonarr
+                        icon: di:sonarr
                       - title: Bazarr
                         url: http://bazarr.downloads.svc.cluster.local:80
                         icon: di:bazarr
@@ -87,19 +87,19 @@ data:
                         icon: di:sabnzbd
                       - title: qBittorrent
                         url: http://qbittorrent.downloads.svc.cluster.local:8080
-                        icon: si:qbittorrent
+                        icon: di:qbittorrent
                   - type: monitor
                     title: Other
                     sites:
                       - title: Paperless
                         url: http://paperless.selfhosted.svc.cluster.local:8000
-                        icon: si:paperlessngx
+                        icon: di:paperlessngx
                       - title: Mealie
                         url: http://mealie.default.svc.cluster.local:9000
-                        icon: si:mealie
+                        icon: di:mealie
                       - title: IT-Tools
                         url: http://it-tools.selfhosted.svc.cluster.local:8080
-                        icon: si:ittools
+                        icon: di:ittools
 
               - type: group
                 widgets:
@@ -161,44 +161,44 @@ data:
                     links:
                       - title: home-ops
                         url: https://github.com/thomloy/home-ops
-                        icon: si:github
+                        icon: di:github
                       - title: Grafana
                         url: https://grafana.${SECRET_DOMAIN}
-                        icon: si:grafana
+                        icon: di:grafana
                       - title: Status
                         url: https://status.${SECRET_DOMAIN}
-                        icon: si:statuspage
+                        icon: di:statuspage
                   - title: Médias
                     links:
                       - title: Emby
                         url: https://emby.${SECRET_DOMAIN}
-                        icon: si:emby
+                        icon: di:emby
                       - title: Audiobookshelf
                         url: https://audiobookshelf.${SECRET_DOMAIN}
-                        icon: si:audiobookshelf
+                        icon: di:audiobookshelf
                       - title: Radarr
                         url: https://radarr.${SECRET_DOMAIN}
                         icon: di:radarr
                       - title: Sonarr
                         url: https://sonarr.${SECRET_DOMAIN}
-                        icon: si:sonarr
+                        icon: di:sonarr
                       - title: Sabnzbd
                         url: https://sabnzbd.${SECRET_DOMAIN}
                         icon: di:sabnzbd
                       - title: qBittorrent
                         url: https://qbittorrent.${SECRET_DOMAIN}
-                        icon: si:qbittorrent
+                        icon: di:qbittorrent
                   - title: Outils
                     links:
                       - title: Paperless
                         url: https://paperless.${SECRET_DOMAIN}
-                        icon: si:paperlessngx
+                        icon: di:paperlessngx
                       - title: Mealie
                         url: https://mealie.${SECRET_DOMAIN}
-                        icon: si:mealie
+                        icon: di:mealie
                       - title: IT-Tools
                         url: https://it-tools.${SECRET_DOMAIN}
-                        icon: si:ittools
+                        icon: di:ittools
 
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
@@ -212,10 +212,10 @@ data:
                     sites:
                       - title: Emby
                         url: http://emby.media.svc.cluster.local:8096
-                        icon: si:emby
+                        icon: di:emby
                       - title: Audiobookshelf
                         url: http://audiobookshelf.media.svc.cluster.local:80
-                        icon: si:audiobookshelf
+                        icon: di:audiobookshelf
                   - type: monitor
                     title: Arr
                     sites:
@@ -224,7 +224,7 @@ data:
                         icon: di:radarr
                       - title: Sonarr
                         url: http://sonarr.downloads.svc.cluster.local:8989
-                        icon: si:sonarr
+                        icon: di:sonarr
                       - title: Bazarr
                         url: http://bazarr.downloads.svc.cluster.local:80
                         icon: di:bazarr
@@ -236,7 +236,7 @@ data:
                         icon: di:sabnzbd
                       - title: qBittorrent
                         url: http://qbittorrent.downloads.svc.cluster.local:8080
-                        icon: si:qbittorrent
+                        icon: di:qbittorrent
 
           - size: full
             widgets:
@@ -272,16 +272,16 @@ data:
                     links:
                       - title: Emby
                         url: https://emby.${SECRET_DOMAIN}
-                        icon: si:emby
+                        icon: di:emby
                       - title: Audiobookshelf
                         url: https://audiobookshelf.${SECRET_DOMAIN}
-                        icon: si:audiobookshelf
+                        icon: di:audiobookshelf
                       - title: Radarr
                         url: https://radarr.${SECRET_DOMAIN}
                         icon: di:radarr
                       - title: Sonarr
                         url: https://sonarr.${SECRET_DOMAIN}
-                        icon: si:sonarr
+                        icon: di:sonarr
                       - title: Bazarr
                         url: https://bazarr.${SECRET_DOMAIN}
                         icon: di:bazarr
@@ -290,7 +290,7 @@ data:
                         icon: di:sabnzbd
                       - title: qBittorrent
                         url: https://qbittorrent.${SECRET_DOMAIN}
-                        icon: si:qbittorrent
+                        icon: di:qbittorrent
 
       # ── Stats ──────────────────────────────────────────────────────────────
       - name: stats
@@ -312,28 +312,28 @@ data:
                 sites:
                   - title: Grafana
                     url: http://grafana-service.observability.svc.cluster.local:3000
-                    icon: si:grafana
+                    icon: di:grafana
                   - title: Prometheus
                     url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
-                    icon: si:prometheus
+                    icon: di:prometheus
                   - title: Gatus
                     url: https://status.${SECRET_DOMAIN}
-                    icon: si:statuspage
+                    icon: di:statuspage
                   - title: TrueNAS
                     url: http://${NAS_IP}
-                    icon: si:truenas
+                    icon: di:truenas
                   - title: Emby
                     url: http://emby.media.svc.cluster.local:8096
-                    icon: si:emby
+                    icon: di:emby
                   - title: Audiobookshelf
                     url: http://audiobookshelf.media.svc.cluster.local:80
-                    icon: si:audiobookshelf
+                    icon: di:audiobookshelf
                   - title: Radarr
                     url: http://radarr.downloads.svc.cluster.local:7878
                     icon: di:radarr
                   - title: Sonarr
                     url: http://sonarr.downloads.svc.cluster.local:8989
-                    icon: si:sonarr
+                    icon: di:sonarr
                   - title: Bazarr
                     url: http://bazarr.downloads.svc.cluster.local:80
                     icon: di:bazarr
@@ -345,19 +345,19 @@ data:
                     icon: di:sabnzbd
                   - title: qBittorrent
                     url: http://qbittorrent.downloads.svc.cluster.local:8080
-                    icon: si:qbittorrent
+                    icon: di:qbittorrent
                   - title: Paperless
                     url: http://paperless.selfhosted.svc.cluster.local:8000
-                    icon: si:paperlessngx
+                    icon: di:paperlessngx
                   - title: Mealie
                     url: http://mealie.default.svc.cluster.local:9000
-                    icon: si:mealie
+                    icon: di:mealie
                   - title: IT-Tools
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
-                    icon: si:ittools
+                    icon: di:ittools
                   - title: Flux
                     url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
-                    icon: si:flux
+                    icon: di:flux
 
           - size: small
             widgets:
@@ -368,7 +368,7 @@ data:
                     links:
                       - title: home-ops
                         url: https://github.com/thomloy/home-ops
-                        icon: si:github
+                        icon: di:github
                       - title: Grafana
                         url: https://grafana.${SECRET_DOMAIN}
-                        icon: si:grafana
+                        icon: di:grafana
