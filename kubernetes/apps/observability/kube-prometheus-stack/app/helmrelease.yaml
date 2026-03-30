@@ -19,6 +19,10 @@ spec:
       route:
         main:
           enabled: true
+          annotations:
+            gatus.home-operations.com/endpoint: |-
+              conditions: ["[STATUS] == 200"]
+              url: https://alertmanager.${SECRET_DOMAIN}/-/healthy
           hostnames:
             - alertmanager.${SECRET_DOMAIN}
           parentRefs:
