@@ -93,13 +93,13 @@ data:
                     sites:
                       - title: Paperless
                         url: http://paperless.selfhosted.svc.cluster.local:8000
-                        icon: di:paperlessngx
+                        icon: di:paperless-ngx
                       - title: Mealie
                         url: http://mealie.default.svc.cluster.local:9000
                         icon: di:mealie
                       - title: IT-Tools
                         url: http://it-tools.selfhosted.svc.cluster.local:8080
-                        icon: di:ittools
+                        icon: di:it-tools
 
               - type: group
                 widgets:
@@ -192,13 +192,13 @@ data:
                     links:
                       - title: Paperless
                         url: https://paperless.${SECRET_DOMAIN}
-                        icon: di:paperlessngx
+                        icon: di:paperless-ngx
                       - title: Mealie
                         url: https://mealie.${SECRET_DOMAIN}
                         icon: di:mealie
                       - title: IT-Tools
                         url: https://it-tools.${SECRET_DOMAIN}
-                        icon: di:ittools
+                        icon: di:it-tools
 
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
@@ -348,13 +348,13 @@ data:
                     icon: di:qbittorrent
                   - title: Paperless
                     url: http://paperless.selfhosted.svc.cluster.local:8000
-                    icon: di:paperlessngx
+                    icon: di:paperless-ngx
                   - title: Mealie
                     url: http://mealie.default.svc.cluster.local:9000
                     icon: di:mealie
                   - title: IT-Tools
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
-                    icon: di:ittools
+                    icon: di:it-tools
                   - title: Flux
                     url: http://source-controller.flux-system.svc.cluster.local:9090/healthz
                     icon: di:flux
