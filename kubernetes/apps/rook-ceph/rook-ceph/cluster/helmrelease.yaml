@@ -17,6 +17,10 @@ spec:
       enabled: true
     route:
       dashboard:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            ui:
+              hide-hostname: true
         host:
           name: rook.${SECRET_DOMAIN}
           path: /

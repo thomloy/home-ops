@@ -31,6 +31,10 @@ spec:
                       key: uri
       route:
         app:
+          annotations:
+            gatus.home-operations.com/endpoint: |-
+              ui:
+                hide-hostname: true
           hostnames:
             - immich.${SECRET_DOMAIN}
           parentRefs:

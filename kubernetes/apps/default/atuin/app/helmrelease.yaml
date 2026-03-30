@@ -74,6 +74,8 @@ spec:
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] < 500"]
             url: https://atuin.${SECRET_DOMAIN}/healthz
+            ui:
+              hide-hostname: true
         hostnames:
           - "{{ .Release.Name }}.${SECRET_DOMAIN}"
         parentRefs:

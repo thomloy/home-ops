@@ -164,6 +164,10 @@ spec:
 
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            ui:
+              hide-hostname: true
         hostnames:
           - paperless.${SECRET_DOMAIN}
         parentRefs:

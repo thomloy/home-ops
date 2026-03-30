@@ -77,6 +77,10 @@ spec:
             port: *port
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            ui:
+              hide-hostname: true
         hostnames:
           - prowlarr.${SECRET_DOMAIN}
         parentRefs:

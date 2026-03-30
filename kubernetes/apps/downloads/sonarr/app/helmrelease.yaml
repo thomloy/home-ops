@@ -85,6 +85,10 @@ spec:
             subPath: tmp
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            ui:
+              hide-hostname: true
         hostnames:
           - sonarr.${SECRET_DOMAIN}
         parentRefs:

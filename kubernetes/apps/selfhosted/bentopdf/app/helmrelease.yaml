@@ -43,6 +43,10 @@ spec:
             port: 8080
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            ui:
+              hide-hostname: true
         hostnames:
           - pdf.${SECRET_DOMAIN}
         parentRefs:

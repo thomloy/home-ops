@@ -19,6 +19,10 @@ spec:
       retentionPeriod: 14d
       route:
         enabled: true
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            ui:
+              hide-hostname: true
         hostnames:
           - victoria-logs.${SECRET_DOMAIN}
         parentRefs:

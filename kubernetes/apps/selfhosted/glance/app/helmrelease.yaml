@@ -51,6 +51,10 @@ spec:
 
     route:
       app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            ui:
+              hide-hostname: true
         hostnames:
           - glance.${SECRET_DOMAIN}
         parentRefs:

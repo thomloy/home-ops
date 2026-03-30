@@ -78,6 +78,8 @@ spec:
         annotations:
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] < 500"]
+            ui:
+              hide-hostname: true
         hostnames:
           - emby.${SECRET_DOMAIN}
         parentRefs:
