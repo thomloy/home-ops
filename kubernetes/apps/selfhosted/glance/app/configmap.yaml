@@ -256,19 +256,21 @@ data:
               - type: group
                 widgets:
                   - type: rss
-                    title: Films au cinéma
+                    title: Films
                     limit: 7
                     collapse-after: 5
                     feeds:
-                      - url: https://www.allocine.fr/rss/filmssortie.rss
-                        title: AlloCiné
+                      - url: https://www.premiere.fr/rss.xml
+                        title: Première
+                      - url: https://www.comingsoon.net/feed
+                        title: ComingSoon
                   - type: rss
                     title: Séries
                     limit: 7
                     collapse-after: 5
                     feeds:
-                      - url: https://www.allocine.fr/rss/seriessortie.rss
-                        title: AlloCiné
+                      - url: https://www.tvline.com/feed/
+                        title: TVLine
 
           - size: small
             widgets:
