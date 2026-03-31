@@ -21,6 +21,9 @@ spec:
             image:
               repository: glanceapp/glance
               tag: v0.8.4
+            envFrom:
+              - secretRef:
+                  name: glance-secret
             resources:
               requests:
                 cpu: 10m
