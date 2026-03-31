@@ -205,60 +205,26 @@ data:
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
         columns:
-          - size: small
-            widgets:
-              - type: group
-                widgets:
-                  - type: monitor
-                    title: Media
-                    sites:
-                      - title: Emby
-                        url: http://emby.media.svc.cluster.local:8096
-                        icon: di:emby
-                      - title: Audiobookshelf
-                        url: http://audiobookshelf.media.svc.cluster.local:80
-                        icon: di:audiobookshelf
-                  - type: monitor
-                    title: Arr
-                    sites:
-                      - title: Radarr
-                        url: http://radarr.downloads.svc.cluster.local:7878
-                        icon: di:radarr
-                      - title: Sonarr
-                        url: http://sonarr.downloads.svc.cluster.local:8989
-                        icon: di:sonarr
-                      - title: Bazarr
-                        url: http://bazarr.downloads.svc.cluster.local:80
-                        icon: di:bazarr
-                      - title: Prowlarr
-                        url: http://prowlarr.downloads.svc.cluster.local:80
-                        icon: di:prowlarr
-                      - title: Sabnzbd
-                        url: http://sabnzbd.downloads.svc.cluster.local:80
-                        icon: di:sabnzbd
-                      - title: qBittorrent
-                        url: http://qbittorrent.downloads.svc.cluster.local:8080
-                        icon: di:qbittorrent
-
           - size: full
             widgets:
               - type: search
-                search-engine: https://radarr.${SECRET_DOMAIN}/add/new?term={query}
+                search-engine: https://radarr.${SECRET_DOMAIN}/add/new?term={QUERY}
                 new-tab: true
                 bangs:
                   - title: Sonarr
                     shortcut: "!s"
-                    url: https://sonarr.${SECRET_DOMAIN}/add/new?term={query}
+                    url: https://sonarr.${SECRET_DOMAIN}/add/new?term={QUERY}
                   - title: IMDB
                     shortcut: "!i"
-                    url: https://www.imdb.com/find?q={query}
+                    url: https://www.imdb.com/find?q={QUERY}
 
               - type: group
                 widgets:
                   - type: rss
                     title: Films
-                    limit: 7
+                    limit: 10
                     collapse-after: 5
+                    show-thumbnails: true
                     feeds:
                       - url: https://www.premiere.fr/rss.xml
                         title: Première
@@ -266,39 +232,12 @@ data:
                         title: ComingSoon
                   - type: rss
                     title: Séries
-                    limit: 7
+                    limit: 10
                     collapse-after: 5
+                    show-thumbnails: true
                     feeds:
                       - url: https://www.tvline.com/feed/
                         title: TVLine
-
-          - size: small
-            widgets:
-              - type: bookmarks
-                groups:
-                  - title: Médias
-                    links:
-                      - title: Emby
-                        url: https://emby.${SECRET_DOMAIN}
-                        icon: di:emby
-                      - title: Audiobookshelf
-                        url: https://audiobookshelf.${SECRET_DOMAIN}
-                        icon: di:audiobookshelf
-                      - title: Radarr
-                        url: https://radarr.${SECRET_DOMAIN}
-                        icon: di:radarr
-                      - title: Sonarr
-                        url: https://sonarr.${SECRET_DOMAIN}
-                        icon: di:sonarr
-                      - title: Bazarr
-                        url: https://bazarr.${SECRET_DOMAIN}
-                        icon: di:bazarr
-                      - title: Sabnzbd
-                        url: https://sabnzbd.${SECRET_DOMAIN}
-                        icon: di:sabnzbd
-                      - title: qBittorrent
-                        url: https://qbittorrent.${SECRET_DOMAIN}
-                        icon: di:qbittorrent
 
       # ── Stats ──────────────────────────────────────────────────────────────
       - name: stats
