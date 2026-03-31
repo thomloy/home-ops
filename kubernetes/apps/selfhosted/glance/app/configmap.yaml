@@ -13,7 +13,7 @@ data:
       background-color: 28 35 55
       primary-color: 155 100 20
       negative-color: 0 100 60
-      contrast-multiplier: 2.5
+      contrast-multiplier: 5.0
       text-saturation-multiplier: 0.5
 
     pages:
