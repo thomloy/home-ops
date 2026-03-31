@@ -7,7 +7,8 @@ data:
   glance.yml: |
     server:
       port: 8080
-      custom-css-file: /app/config/custom.css
+
+    custom-css-file: /app/config/custom.css
 
     theme:
       light: true
@@ -374,6 +375,9 @@ data:
                         url: https://grafana.${SECRET_DOMAIN}
                         icon: di:grafana
   custom.css: |
-    body, html, .page-wrapper {
-      background-color: hsl(28, 50%, 48%) !important;
+    body {
+      background-color: hsl(28, 45%, 52%) !important;
+    }
+    :root {
+      --color-widget-background: hsl(28, 35%, 78%) !important;
     }
