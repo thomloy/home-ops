@@ -48,7 +48,7 @@ spec:
         globalMounts:
           - path: /app/config/glance.yml
             subPath: glance.yml
-          - path: /app/config/custom.css
+          - path: /app/assets/custom.css
             subPath: custom.css
 
     route:
