@@ -215,10 +215,13 @@ data:
                     cache: 1h
                     url: "https://api.themoviedb.org/3/movie/now_playing?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
                     template: |
-                      <form action="https://radarr.${SECRET_DOMAIN}/add/new" method="GET" target="_blank" style="display:flex;gap:8px;margin-bottom:12px">
-                        <input name="term" placeholder="Rechercher un film..." style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
-                        <button type="submit" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
-                      </form>
+                      <div style="display:flex;gap:8px;margin-bottom:12px">
+                        <input id="glance-fsq" placeholder="Rechercher un film..." onkeydown="if(event.key==='Enter')glanceFS()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
+                        <button onclick="glanceFS()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
+                        <button onclick="glanceFSClear()" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
+                      </div>
+                      <div id="glance-fsr" style="display:none"></div>
+                      <div id="glance-fsd">
                       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">
                       {{range .JSON.Array "results"}}
                       <div style="display:flex;gap:10px;padding:8px;background:rgba(0,0,0,.06);border-radius:6px;align-items:flex-start">
@@ -231,6 +234,35 @@ data:
                       </div>
                       {{end}}
                       </div>
+                      </div>
+                      <script>
+                      function glanceFS(){
+                        var q=document.getElementById('glance-fsq').value.trim();
+                        if(!q)return;
+                        fetch('https://api.themoviedb.org/3/search/movie?api_key=$${TMDB_API_KEY}&query='+encodeURIComponent(q)+'&language=fr-FR')
+                        .then(function(r){return r.json()}).then(function(d){
+                          var h='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">';
+                          d.results.forEach(function(m){
+                            var p=m.poster_path?'<img src="https://image.tmdb.org/t/p/w92'+m.poster_path+'" style="width:50px;min-width:50px;height:75px;object-fit:cover;border-radius:4px">':'<div style="width:50px;min-width:50px;height:75px;background:rgba(0,0,0,.1);border-radius:4px"></div>';
+                            h+='<div style="display:flex;gap:10px;padding:8px;background:rgba(0,0,0,.06);border-radius:6px;align-items:flex-start">'+p+'<div>';
+                            h+='<div style="font-weight:600;font-size:.9em;line-height:1.2">'+m.title+'</div>';
+                            h+='<div style="font-size:.75em;opacity:.65;margin-top:3px">'+(m.release_date||'')+'</div>';
+                            h+='<div style="font-size:.75em;margin-top:3px">⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div>';
+                            h+='<a href="https://radarr.${SECRET_DOMAIN}/add/new?term='+encodeURIComponent(m.title)+'" target="_blank" style="display:inline-block;margin-top:6px;font-size:.75em;padding:2px 8px;background:rgba(0,0,0,.12);border-radius:4px;text-decoration:none;color:inherit">+ Radarr</a>';
+                            h+='</div></div>';
+                          });
+                          h+='</div>';
+                          document.getElementById('glance-fsr').innerHTML=h;
+                          document.getElementById('glance-fsr').style.display='';
+                          document.getElementById('glance-fsd').style.display='none';
+                        });
+                      }
+                      function glanceFSClear(){
+                        document.getElementById('glance-fsq').value='';
+                        document.getElementById('glance-fsr').style.display='none';
+                        document.getElementById('glance-fsd').style.display='';
+                      }
+                      </script>
 
                   - type: custom-api
                     title: Séries
@@ -238,10 +270,13 @@ data:
                     cache: 1h
                     url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=$${TMDB_API_KEY}&language=fr-FR"
                     template: |
-                      <form action="https://sonarr.${SECRET_DOMAIN}/add/new" method="GET" target="_blank" style="display:flex;gap:8px;margin-bottom:12px">
-                        <input name="term" placeholder="Rechercher une série..." style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
-                        <button type="submit" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
-                      </form>
+                      <div style="display:flex;gap:8px;margin-bottom:12px">
+                        <input id="glance-ssq" placeholder="Rechercher une série..." onkeydown="if(event.key==='Enter')glanceSS()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
+                        <button onclick="glanceSS()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
+                        <button onclick="glanceSSClear()" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
+                      </div>
+                      <div id="glance-ssr" style="display:none"></div>
+                      <div id="glance-ssd">
                       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">
                       {{range .JSON.Array "results"}}
                       <div style="display:flex;gap:10px;padding:8px;background:rgba(0,0,0,.06);border-radius:6px;align-items:flex-start">
@@ -254,6 +289,35 @@ data:
                       </div>
                       {{end}}
                       </div>
+                      </div>
+                      <script>
+                      function glanceSS(){
+                        var q=document.getElementById('glance-ssq').value.trim();
+                        if(!q)return;
+                        fetch('https://api.themoviedb.org/3/search/tv?api_key=$${TMDB_API_KEY}&query='+encodeURIComponent(q)+'&language=fr-FR')
+                        .then(function(r){return r.json()}).then(function(d){
+                          var h='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">';
+                          d.results.forEach(function(m){
+                            var p=m.poster_path?'<img src="https://image.tmdb.org/t/p/w92'+m.poster_path+'" style="width:50px;min-width:50px;height:75px;object-fit:cover;border-radius:4px">':'<div style="width:50px;min-width:50px;height:75px;background:rgba(0,0,0,.1);border-radius:4px"></div>';
+                            h+='<div style="display:flex;gap:10px;padding:8px;background:rgba(0,0,0,.06);border-radius:6px;align-items:flex-start">'+p+'<div>';
+                            h+='<div style="font-weight:600;font-size:.9em;line-height:1.2">'+m.name+'</div>';
+                            h+='<div style="font-size:.75em;opacity:.65;margin-top:3px">'+(m.first_air_date||'')+'</div>';
+                            h+='<div style="font-size:.75em;margin-top:3px">⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div>';
+                            h+='<a href="https://sonarr.${SECRET_DOMAIN}/add/new?term='+encodeURIComponent(m.name)+'" target="_blank" style="display:inline-block;margin-top:6px;font-size:.75em;padding:2px 8px;background:rgba(0,0,0,.12);border-radius:4px;text-decoration:none;color:inherit">+ Sonarr</a>';
+                            h+='</div></div>';
+                          });
+                          h+='</div>';
+                          document.getElementById('glance-ssr').innerHTML=h;
+                          document.getElementById('glance-ssr').style.display='';
+                          document.getElementById('glance-ssd').style.display='none';
+                        });
+                      }
+                      function glanceSSClear(){
+                        document.getElementById('glance-ssq').value='';
+                        document.getElementById('glance-ssr').style.display='none';
+                        document.getElementById('glance-ssd').style.display='';
+                      }
+                      </script>
 
       # ── Stats ──────────────────────────────────────────────────────────────
       - name: stats
