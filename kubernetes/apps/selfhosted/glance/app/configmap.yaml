@@ -222,7 +222,7 @@ data:
                 title: Films au cinéma
                 allow-insecure-html: true
                 cache: 1h
-                url: "https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=fr-FR&region=FR"
+                url: "https://api.themoviedb.org/3/movie/now_playing?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
                 template: |
                   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">
                   {{range .JSON.Array "results"}}
@@ -241,7 +241,7 @@ data:
                 title: Séries en cours
                 allow-insecure-html: true
                 cache: 1h
-                url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=${TMDB_API_KEY}&language=fr-FR"
+                url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=$${TMDB_API_KEY}&language=fr-FR"
                 template: |
                   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">
                   {{range .JSON.Array "results"}}
