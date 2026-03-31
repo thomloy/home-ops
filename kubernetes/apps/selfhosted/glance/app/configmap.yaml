@@ -10,10 +10,10 @@ data:
 
     theme:
       light: true
-      background-color: 28 40 77
+      background-color: 28 35 55
       primary-color: 155 100 20
       negative-color: 0 100 60
-      contrast-multiplier: 1.1
+      contrast-multiplier: 2.5
       text-saturation-multiplier: 0.5
 
     pages:
