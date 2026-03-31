@@ -5,7 +5,6 @@ sonarr:
     base_url: http://sonarr.downloads.svc.cluster.local:8989
     api_key: !env_var SONARR_API_KEY
     delete_old_custom_formats: true
-    replace_existing_custom_formats: true
     quality_definition:
       type: series
     include:
@@ -17,13 +16,9 @@ sonarr:
       - name: WEB-1080p
         reset_unmatched_scores:
           enabled: true
-          except:
-            - "Kitsune"
       - name: WEB-2160p
         reset_unmatched_scores:
           enabled: true
-          except:
-            - "Kitsune"
     custom_formats:
       - trash_ids:
           - 9b27ab6498ec0f31a3353992e19434ca # DV (WEBDL)
@@ -43,7 +38,6 @@ radarr:
     base_url: http://radarr.downloads.svc.cluster.local:7878
     api_key: !env_var RADARR_API_KEY
     delete_old_custom_formats: true
-    replace_existing_custom_formats: true
     quality_definition:
       type: movie
     include:
