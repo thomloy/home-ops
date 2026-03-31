@@ -8,8 +8,6 @@ data:
     server:
       port: 8080
 
-    custom-css-file: /app/config/custom.css
-
     theme:
       light: true
       background-color: 28 35 70
@@ -17,6 +15,7 @@ data:
       negative-color: 0 100 60
       contrast-multiplier: 1.5
       text-saturation-multiplier: 0.5
+      custom-css-file: /app/config/custom.css
 
     pages:
       # ── Home ───────────────────────────────────────────────────────────────
