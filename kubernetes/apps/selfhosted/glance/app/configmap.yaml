@@ -220,6 +220,7 @@ data:
 
               - type: custom-api
                 title: Films au cinéma
+                allow-insecure-html: true
                 cache: 1h
                 url: "https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=fr-FR&region=FR"
                 template: |
@@ -238,6 +239,7 @@ data:
 
               - type: custom-api
                 title: Séries en cours
+                allow-insecure-html: true
                 cache: 1h
                 url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=${TMDB_API_KEY}&language=fr-FR"
                 template: |
