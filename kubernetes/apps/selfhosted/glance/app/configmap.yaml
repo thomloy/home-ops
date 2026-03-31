@@ -242,29 +242,33 @@ data:
 
           - size: full
             widgets:
+              - type: search
+                search-engine: https://radarr.${SECRET_DOMAIN}/add/new?term={query}
+                new-tab: true
+                bangs:
+                  - title: Sonarr
+                    shortcut: "!s"
+                    url: https://sonarr.${SECRET_DOMAIN}/add/new?term={query}
+                  - title: IMDB
+                    shortcut: "!i"
+                    url: https://www.imdb.com/find?q={query}
+
               - type: group
                 widgets:
-                  - type: reddit
-                    title: r/movies
-                    subreddit: movies
-                    style: vertical-list
-                    show-thumbnails: true
+                  - type: rss
+                    title: Films au cinéma
                     limit: 7
                     collapse-after: 5
-                  - type: reddit
-                    title: r/NetflixBestOf
-                    subreddit: NetflixBestOf
-                    style: vertical-list
-                    show-thumbnails: true
+                    feeds:
+                      - url: https://www.allocine.fr/rss/filmssortie.rss
+                        title: AlloCiné
+                  - type: rss
+                    title: Séries
                     limit: 7
                     collapse-after: 5
-                  - type: reddit
-                    title: r/MovieSuggestions
-                    subreddit: MovieSuggestions
-                    style: vertical-list
-                    show-thumbnails: false
-                    limit: 7
-                    collapse-after: 5
+                    feeds:
+                      - url: https://www.allocine.fr/rss/seriessortie.rss
+                        title: AlloCiné
 
           - size: small
             widgets:
