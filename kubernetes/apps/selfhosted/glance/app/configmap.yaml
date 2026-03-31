@@ -224,7 +224,7 @@ data:
                 url: "https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=fr-FR&region=FR"
                 template: |
                   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">
-                  {{range slice (.JSON.Array "results") 0 12}}
+                  {{range (.JSON.Array "results")}}
                   <div style="display:flex;gap:10px;padding:8px;background:rgba(0,0,0,.06);border-radius:6px;align-items:flex-start">
                     <img src="https://image.tmdb.org/t/p/w92{{(.Get "poster_path").Str}}" style="width:50px;min-width:50px;height:75px;object-fit:cover;border-radius:4px">
                     <div>
@@ -242,7 +242,7 @@ data:
                 url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=${TMDB_API_KEY}&language=fr-FR"
                 template: |
                   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">
-                  {{range slice (.JSON.Array "results") 0 12}}
+                  {{range (.JSON.Array "results")}}
                   <div style="display:flex;gap:10px;padding:8px;background:rgba(0,0,0,.06);border-radius:6px;align-items:flex-start">
                     <img src="https://image.tmdb.org/t/p/w92{{(.Get "poster_path").Str}}" style="width:50px;min-width:50px;height:75px;object-fit:cover;border-radius:4px">
                     <div>
