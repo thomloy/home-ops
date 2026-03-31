@@ -46,7 +46,7 @@ data:
                     url: https://status.${SECRET_DOMAIN}
                     icon: di:gatus
                   - title: Flux
-                    url: http://source-controller.flux-system.svc.cluster.local:80/healthz
+                    url: http://source-controller.flux-system.svc.cluster.local:80
                     icon: di:flux-cd
 
           # Col 2 : search + services + reddit
@@ -356,7 +356,7 @@ data:
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
                     icon: di:it-tools
                   - title: Flux
-                    url: http://source-controller.flux-system.svc.cluster.local:80/healthz
+                    url: http://source-controller.flux-system.svc.cluster.local:80
                     icon: di:flux-cd
 
           - size: small
