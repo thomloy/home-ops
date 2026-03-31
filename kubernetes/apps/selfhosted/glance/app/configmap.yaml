@@ -10,7 +10,7 @@ data:
 
     theme:
       light: true
-      background-color: 28 35 70
+      background-color: 30 55 52
       primary-color: 155 100 20
       negative-color: 0 100 60
       contrast-multiplier: 1.5
