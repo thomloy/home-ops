@@ -376,8 +376,8 @@ data:
                         icon: di:grafana
   custom.css: |
     body {
-      background-color: hsl(28, 45%, 52%) !important;
+      background-color: hsl(28, 30%, 83%) !important;
     }
     :root {
-      --color-widget-background: hsl(28, 35%, 78%) !important;
+      --color-widget-background: hsl(28, 45%, 65%) !important;
     }
