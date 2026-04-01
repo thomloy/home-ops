@@ -301,9 +301,11 @@ data:
                 cache: 30s
                 url: "http://emby.media.svc.cluster.local:8096/Sessions?ActiveWithinSeconds=300&api_key=$${EMBY_API_KEY}"
                 template: |
+                  {{$any := false}}
                   <div style="display:flex;flex-direction:column;gap:8px">
                   {{range .JSON.Array "@this"}}
                   {{if (.String "NowPlayingItem.Name")}}
+                  {{$any = true}}
                   {{$paused := eq (.String "PlayState.IsPaused") "true"}}
                   {{$h := .Int "NowPlayingItem.Height"}}
                   <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:rgba(0,0,0,.06);border-radius:6px">

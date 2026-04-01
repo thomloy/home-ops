@@ -11,7 +11,6 @@ resources:
   - ./it-tools/ks.yaml
   - ./bentopdf/ks.yaml
   - ./paperless/ks.yaml
-  - ./homepage/ks.yaml
   - ./glance/ks.yaml
   - ./immich/ks.yaml
   - ./nextcloud/ks.yaml
