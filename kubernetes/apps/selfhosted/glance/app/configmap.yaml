@@ -348,12 +348,11 @@ data:
                 template: |
                   <div style="display:flex;flex-direction:column;gap:6px">
                   {{range .JSON.Array "@this"}}
-                  <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "series.title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                    <img src="{{.String "series.images.#[coverType==poster].remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
+                  <a href="https://sonarr.${SECRET_DOMAIN}/series" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                    <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "seriesId"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
                     <div style="min-width:0">
-                      <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "series.title"}}</div>
-                      <div style="font-size:.75em;opacity:.65;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                      <div style="font-size:.75em;opacity:.65">{{printf "S%02dE%02d" (.Int "seasonNumber") (.Int "episodeNumber")}} · {{.String "airDate"}}</div>
+                      <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                      <div style="font-size:.75em;opacity:.65">{{printf "S%02dE%02d" (.Int "seasonNumber") (.Int "episodeNumber")}} · {{printf "%.16s" (.String "airDateUtc")}} UTC</div>
                       {{if eq (.String "hasFile") "true"}}
                       <span style="font-size:.7em;padding:1px 6px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:4px">Téléchargé</span>
                       {{else}}
