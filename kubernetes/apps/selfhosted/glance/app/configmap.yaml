@@ -205,7 +205,7 @@ data:
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
         columns:
-          - size: full
+          - size: small
             widgets:
               - type: group
                 widgets:
@@ -215,7 +215,7 @@ data:
                     cache: 1h
                     url: "https://api.themoviedb.org/3/movie/now_playing?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
                     template: |
-                      <div id="glance-fsk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-fsq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/movie?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w185'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://radarr.'+d+'/add/new?term='+encodeURIComponent(m.title)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.title+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.release_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-fsr').innerHTML=h;document.getElementById('glance-fsr').style.display='';document.getElementById('glance-fsd').style.display='none';});})(this)" style="display:none"></div>
+                      <div id="glance-fsk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-fsq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/movie?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://radarr.'+d+'/add/new?term='+encodeURIComponent(m.title)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.title+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.release_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-fsr').innerHTML=h;document.getElementById('glance-fsr').style.display='';document.getElementById('glance-fsd').style.display='none';});})(this)" style="display:none"></div>
                       <div style="display:flex;gap:8px;margin-bottom:12px">
                         <input id="glance-fsq" placeholder="Rechercher un film..." onkeydown="if(event.key==='Enter')document.getElementById('glance-fsk').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
                         <button onclick="document.getElementById('glance-fsk').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
@@ -223,10 +223,10 @@ data:
                       </div>
                       <div id="glance-fsr" style="display:none"></div>
                       <div id="glance-fsd">
-                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
                       {{range .JSON.Array "results"}}
                       <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        <img src="https://image.tmdb.org/t/p/w185{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
+                        <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
                           <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "release_date"}}</div>
@@ -243,7 +243,7 @@ data:
                     cache: 1h
                     url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=$${TMDB_API_KEY}&language=fr-FR"
                     template: |
-                      <div id="glance-ssk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-ssq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w185'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-ssr').innerHTML=h;document.getElementById('glance-ssr').style.display='';document.getElementById('glance-ssd').style.display='none';});})(this)" style="display:none"></div>
+                      <div id="glance-ssk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-ssq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-ssr').innerHTML=h;document.getElementById('glance-ssr').style.display='';document.getElementById('glance-ssd').style.display='none';});})(this)" style="display:none"></div>
                       <div style="display:flex;gap:8px;margin-bottom:12px">
                         <input id="glance-ssq" placeholder="Rechercher une série..." onkeydown="if(event.key==='Enter')document.getElementById('glance-ssk').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
                         <button onclick="document.getElementById('glance-ssk').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
@@ -251,10 +251,10 @@ data:
                       </div>
                       <div id="glance-ssr" style="display:none"></div>
                       <div id="glance-ssd">
-                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
                       {{range .JSON.Array "results"}}
                       <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        <img src="https://image.tmdb.org/t/p/w185{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
+                        <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
                           <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "first_air_date"}}</div>
@@ -271,7 +271,7 @@ data:
                     cache: 1h
                     url: "https://api.themoviedb.org/3/discover/tv?api_key=$${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&language=fr-FR"
                     template: |
-                      <div id="glance-ask" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-asq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w185'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-asr').innerHTML=h;document.getElementById('glance-asr').style.display='';document.getElementById('glance-asd').style.display='none';});})(this)" style="display:none"></div>
+                      <div id="glance-ask" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-asq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-asr').innerHTML=h;document.getElementById('glance-asr').style.display='';document.getElementById('glance-asd').style.display='none';});})(this)" style="display:none"></div>
                       <div style="display:flex;gap:8px;margin-bottom:12px">
                         <input id="glance-asq" placeholder="Rechercher un animé..." onkeydown="if(event.key==='Enter')document.getElementById('glance-ask').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
                         <button onclick="document.getElementById('glance-ask').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
@@ -279,10 +279,10 @@ data:
                       </div>
                       <div id="glance-asr" style="display:none"></div>
                       <div id="glance-asd">
-                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
                       {{range .JSON.Array "results"}}
                       <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        <img src="https://image.tmdb.org/t/p/w185{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
+                        <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
                           <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "first_air_date"}}</div>
@@ -293,7 +293,7 @@ data:
                       </div>
                       </div>
 
-          - size: small
+          - size: full
             widgets:
               - type: custom-api
                 title: Lecture en cours
