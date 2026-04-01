@@ -301,7 +301,7 @@ data:
                 template: |
                   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
                   {{range .JSON.Array "@this"}}
-                  <div style="display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px">
+                  <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                     <img src="{{.String "images.0.remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
                     <div style="min-width:0">
                       <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
@@ -312,7 +312,7 @@ data:
                       <span style="font-size:.7em;padding:1px 6px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:4px">Manquant</span>
                       {{end}}
                     </div>
-                  </div>
+                  </a>
                   {{end}}
                   </div>
 
@@ -324,7 +324,7 @@ data:
                 template: |
                   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
                   {{range .JSON.Array "@this"}}
-                  <div style="display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px">
+                  <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "series.title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                     <img src="{{.String "series.images.0.remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
                     <div style="min-width:0">
                       <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "series.title"}}</div>
@@ -336,7 +336,7 @@ data:
                       <span style="font-size:.7em;padding:1px 6px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:4px">Manquant</span>
                       {{end}}
                     </div>
-                  </div>
+                  </a>
                   {{end}}
                   </div>
 
