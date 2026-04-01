@@ -205,7 +205,7 @@ data:
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
         columns:
-          - size: small
+          - size: full
             widgets:
               - type: group
                 widgets:
@@ -323,7 +323,7 @@ data:
                 cache: 6h
                 url: "https://api.themoviedb.org/3/movie/upcoming?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
                 template: |
-                  <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
                   {{range .JSON.Array "results"}}
                   <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                     <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
@@ -342,7 +342,7 @@ data:
                 cache: 30m
                 url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
                 template: |
-                  <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
                   {{range .JSON.Array "@this"}}
                   <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                     <img src="{{.String "images.#[coverType==poster].remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
@@ -365,7 +365,7 @@ data:
                 cache: 30m
                 url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
                 template: |
-                  <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
                   {{range .JSON.Array "@this"}}
                   <a href="https://sonarr.${SECRET_DOMAIN}/series" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                     <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "seriesId"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
