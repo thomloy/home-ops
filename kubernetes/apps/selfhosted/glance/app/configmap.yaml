@@ -229,7 +229,7 @@ data:
                         <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
-                          <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "release_date"}}</div>
+                          {{$rd := .String "release_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{slice $rd 8 10}}-{{slice $rd 5 7}}-{{slice $rd 0 4}}</div>
                           <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
                       </a>
@@ -257,7 +257,7 @@ data:
                         <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
-                          <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "first_air_date"}}</div>
+                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}</div>
                           <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
                       </a>
@@ -285,7 +285,7 @@ data:
                         <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
-                          <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "first_air_date"}}</div>
+                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}</div>
                           <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
                       </a>
@@ -318,7 +318,7 @@ data:
                   </div>
 
               - type: custom-api
-                title: Sorties à venir (FR)
+                title: Sorties films (FR)
                 allow-insecure-html: true
                 cache: 6h
                 url: "https://api.themoviedb.org/3/movie/upcoming?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
@@ -330,6 +330,25 @@ data:
                     <div style="min-width:0">
                       <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
                       {{$rd := .String "release_date"}}<div style="font-size:.75em;opacity:.65;margin-top:2px">{{slice $rd 8 10}}-{{slice $rd 5 7}}-{{slice $rd 0 4}}</div>
+                      <div style="font-size:.75em;margin-top:2px">⭐ {{.String "vote_average"}}</div>
+                    </div>
+                  </a>
+                  {{end}}
+                  </div>
+
+              - type: custom-api
+                title: Sorties séries (FR)
+                allow-insecure-html: true
+                cache: 6h
+                url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=$${TMDB_API_KEY}&language=fr-FR&watch_region=FR"
+                template: |
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                  {{range .JSON.Array "results"}}
+                  <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px;overflow:hidden;min-width:0" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                    <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
+                    <div style="min-width:0">
+                      <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "name"}}</div>
+                      {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:2px">{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}</div>
                       <div style="font-size:.75em;margin-top:2px">⭐ {{.String "vote_average"}}</div>
                     </div>
                   </a>
