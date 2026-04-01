@@ -293,16 +293,40 @@ data:
                       </div>
                       </div>
 
+          - size: small
+            widgets:
+              - type: custom-api
+                title: Lecture en cours
+                allow-insecure-html: true
+                cache: 30s
+                url: "http://emby.media.svc.cluster.local:8096/Sessions?ActiveWithinSeconds=300&api_key=$${EMBY_API_KEY}"
+                template: |
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                  {{range .JSON.Array "@this"}}
+                  {{if (.String "NowPlayingItem.Name")}}
+                  <div style="display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px">
+                    <img src="https://emby.${SECRET_DOMAIN}/Items/{{if (.String "NowPlayingItem.SeriesId")}}{{.String "NowPlayingItem.SeriesId"}}{{else}}{{.String "NowPlayingItem.Id"}}{{end}}/Images/Primary?maxHeight=80&api_key=$${EMBY_API_KEY}" style="width:40px;min-width:40px;height:60px;object-fit:cover;border-radius:4px;flex-shrink:0">
+                    <div style="min-width:0;flex:1">
+                      <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{if (.String "NowPlayingItem.SeriesName")}}{{.String "NowPlayingItem.SeriesName"}}{{else}}{{.String "NowPlayingItem.Name"}}{{end}}</div>
+                      {{if (.String "NowPlayingItem.SeriesName")}}<div style="font-size:.75em;opacity:.65;margin-top:1px">{{printf "S%02dE%02d" (.Int "NowPlayingItem.ParentIndexNumber") (.Int "NowPlayingItem.IndexNumber")}} · {{.String "NowPlayingItem.Name"}}</div>{{end}}
+                      <div style="font-size:.75em;opacity:.65;margin-top:1px">👤 {{.String "UserName"}} · {{.String "DeviceName"}}</div>
+                      <div style="font-size:.75em;margin-top:2px">{{if eq (.String "PlayState.IsPaused") "true"}}⏸ En pause{{else}}▶ En lecture{{end}}</div>
+                    </div>
+                  </div>
+                  {{end}}
+                  {{end}}
+                  </div>
+
               - type: custom-api
                 title: Films à venir
                 allow-insecure-html: true
                 cache: 30m
                 url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
                 template: |
-                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+                  <div style="display:flex;flex-direction:column;gap:6px">
                   {{range .JSON.Array "@this"}}
                   <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                    <img src="{{.String "images.0.remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
+                    <img src="{{.String "images.#[coverType==poster].remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
                     <div style="min-width:0">
                       <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
                       <div style="font-size:.75em;opacity:.65;margin-top:2px">{{printf "%.10s" (.String "inCinemas")}}</div>
@@ -322,10 +346,10 @@ data:
                 cache: 30m
                 url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
                 template: |
-                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+                  <div style="display:flex;flex-direction:column;gap:6px">
                   {{range .JSON.Array "@this"}}
                   <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "series.title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                    <img src="{{.String "series.images.0.remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
+                    <img src="{{.String "series.images.#[coverType==poster].remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
                     <div style="min-width:0">
                       <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "series.title"}}</div>
                       <div style="font-size:.75em;opacity:.65;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
