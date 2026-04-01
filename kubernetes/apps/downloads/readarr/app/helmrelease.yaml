@@ -17,12 +17,11 @@ spec:
         pod:
           securityContext:
             fsGroup: 1000
-            fsGroupChangePolicy: OnRootMismatch
         containers:
           app:
             image:
-              repository: ghcr.io/hotio/readarr
-              tag: nightly
+              repository: lscr.io/linuxserver/readarr
+              tag: develop
             env:
               PUID: "1000"
               PGID: "1000"
