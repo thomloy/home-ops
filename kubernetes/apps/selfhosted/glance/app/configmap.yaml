@@ -321,7 +321,7 @@ data:
                 title: Sorties films (FR)
                 allow-insecure-html: true
                 cache: 6h
-                url: "https://api.themoviedb.org/3/movie/upcoming?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
+                url: "https://api.themoviedb.org/3/discover/movie?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR&sort_by=release_date.asc&release_date.gte=2026-04-01&release_date.lte=2027-12-31&with_release_type=2%7C3"
                 template: |
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
                   {{range .JSON.Array "results"}}
@@ -340,7 +340,7 @@ data:
                 title: Sorties séries (FR)
                 allow-insecure-html: true
                 cache: 6h
-                url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=$${TMDB_API_KEY}&language=fr-FR&watch_region=FR"
+                url: "https://api.themoviedb.org/3/discover/tv?api_key=$${TMDB_API_KEY}&language=fr-FR&watch_region=FR&sort_by=first_air_date.asc&first_air_date.gte=2026-01-01&first_air_date.lte=2027-12-31&with_type=2%7C4"
                 template: |
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
                   {{range .JSON.Array "results"}}
