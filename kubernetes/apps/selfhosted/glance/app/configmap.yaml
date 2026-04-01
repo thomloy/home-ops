@@ -225,14 +225,14 @@ data:
                       <div id="glance-fsd">
                       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
                       {{range .JSON.Array "results"}}
-                      <div style="border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)">
+                      <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
                         <img src="https://image.tmdb.org/t/p/w185{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
                           <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "release_date"}}</div>
                           <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
-                      </div>
+                      </a>
                       {{end}}
                       </div>
                       </div>
@@ -253,14 +253,14 @@ data:
                       <div id="glance-ssd">
                       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
                       {{range .JSON.Array "results"}}
-                      <div style="border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)">
+                      <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
                         <img src="https://image.tmdb.org/t/p/w185{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
                           <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "first_air_date"}}</div>
                           <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
-                      </div>
+                      </a>
                       {{end}}
                       </div>
                       </div>
@@ -281,14 +281,14 @@ data:
                       <div id="glance-asd">
                       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
                       {{range .JSON.Array "results"}}
-                      <div style="border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)">
+                      <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
                         <img src="https://image.tmdb.org/t/p/w185{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
                           <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "first_air_date"}}</div>
                           <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
-                      </div>
+                      </a>
                       {{end}}
                       </div>
                       </div>
