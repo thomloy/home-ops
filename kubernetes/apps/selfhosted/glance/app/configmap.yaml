@@ -318,7 +318,26 @@ data:
                   </div>
 
               - type: custom-api
-                title: Films à venir
+                title: Sorties à venir (FR)
+                allow-insecure-html: true
+                cache: 6h
+                url: "https://api.themoviedb.org/3/movie/upcoming?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
+                template: |
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                  {{range .JSON.Array "results"}}
+                  <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                    <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
+                    <div style="min-width:0">
+                      <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                      {{$rd := .String "release_date"}}<div style="font-size:.75em;opacity:.65;margin-top:2px">{{slice $rd 8 10}}-{{slice $rd 5 7}}-{{slice $rd 0 4}}</div>
+                      <div style="font-size:.75em;margin-top:2px">⭐ {{.String "vote_average"}}</div>
+                    </div>
+                  </a>
+                  {{end}}
+                  </div>
+
+              - type: custom-api
+                title: Ma watchlist (Radarr)
                 allow-insecure-html: true
                 cache: 30m
                 url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
