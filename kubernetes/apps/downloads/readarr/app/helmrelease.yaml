@@ -16,16 +16,17 @@ spec:
           reloader.stakater.com/auto: "true"
         pod:
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
             fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
         containers:
           app:
             image:
-              repository: lscr.io/linuxserver/readarr
-              tag: develop
+              repository: ghcr.io/home-operations/readarr
+              tag: 0.4.12.2753@sha256:8bef9a3f289e97371951005b3c8da7fa1c35b7290fb5f694e9cdeadefce24446
             env:
-              PUID: "1000"
-              PGID: "1000"
-              UMASK: "002"
               READARR__APP__INSTANCENAME: Readarr
               READARR__AUTH__APIKEY:
                 valueFrom:
@@ -64,7 +65,7 @@ spec:
                   periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
+              readOnlyRootFilesystem: true
               capabilities: {drop: ["ALL"]}
             resources:
               requests:
