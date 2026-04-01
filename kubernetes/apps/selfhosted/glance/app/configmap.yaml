@@ -293,6 +293,53 @@ data:
                       </div>
                       </div>
 
+              - type: custom-api
+                title: Films à venir
+                allow-insecure-html: true
+                cache: 30m
+                url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
+                template: |
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+                  {{range .JSON.Array "@this"}}
+                  <div style="display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px">
+                    <img src="{{.String "images.0.remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
+                    <div style="min-width:0">
+                      <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                      <div style="font-size:.75em;opacity:.65;margin-top:2px">{{printf "%.10s" (.String "inCinemas")}}</div>
+                      {{if eq (.String "hasFile") "true"}}
+                      <span style="font-size:.7em;padding:1px 6px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:4px">Téléchargé</span>
+                      {{else}}
+                      <span style="font-size:.7em;padding:1px 6px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:4px">Manquant</span>
+                      {{end}}
+                    </div>
+                  </div>
+                  {{end}}
+                  </div>
+
+              - type: custom-api
+                title: Épisodes à venir
+                allow-insecure-html: true
+                cache: 30m
+                url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
+                template: |
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">
+                  {{range .JSON.Array "@this"}}
+                  <div style="display:flex;gap:10px;align-items:flex-start;padding:8px;background:rgba(0,0,0,.06);border-radius:6px">
+                    <img src="{{.String "series.images.0.remoteUrl"}}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px">
+                    <div style="min-width:0">
+                      <div style="font-weight:600;font-size:.85em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "series.title"}}</div>
+                      <div style="font-size:.75em;opacity:.65;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                      <div style="font-size:.75em;opacity:.65">{{printf "S%02dE%02d" (.Int "seasonNumber") (.Int "episodeNumber")}} · {{.String "airDate"}}</div>
+                      {{if eq (.String "hasFile") "true"}}
+                      <span style="font-size:.7em;padding:1px 6px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:4px">Téléchargé</span>
+                      {{else}}
+                      <span style="font-size:.7em;padding:1px 6px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:4px">Manquant</span>
+                      {{end}}
+                    </div>
+                  </div>
+                  {{end}}
+                  </div>
+
       # ── Stats ──────────────────────────────────────────────────────────────
       - name: stats
         columns:
