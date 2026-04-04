@@ -57,5 +57,7 @@ spec:
         globalMounts:
           - path: /config/recyclarr.yml
             subPath: recyclarr.yml
+          - path: /config/settings.yml
+            subPath: settings.yml
       tmp:
         type: emptyDir
