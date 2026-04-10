@@ -10,12 +10,12 @@ data:
       assets-path: /app/assets
 
     theme:
-      light: true
-      background-color: 28 35 70
-      primary-color: 155 100 20
-      negative-color: 0 100 60
-      contrast-multiplier: 1.5
-      text-saturation-multiplier: 0.5
+      light: false
+      background-color: 28 20 15
+      primary-color: 38 70 85
+      negative-color: 0 80 65
+      contrast-multiplier: 1.2
+      text-saturation-multiplier: 0.4
       custom-css-file: /assets/custom.css
 
     pages:
@@ -719,22 +719,18 @@ data:
       background-size: cover !important;
       background-attachment: fixed !important;
       background-position: center !important;
-      background-color: hsl(28, 30%, 83%) !important;
+      background-color: hsl(28, 15%, 18%) !important;
     }
     :root {
-      --color-widget-background: hsla(28, 45%, 82%, 0.93) !important;
-    }
-    /* Ensure widget header areas are fully readable */
-    .widget-header, .widget-header * {
-      text-shadow: none;
+      --color-widget-background: hsla(28, 18%, 14%, 0.82) !important;
     }
     .widget-type-group [role="tablist"] .widget-group-title {
-      background: rgba(0,0,0,.08);
+      background: rgba(255,255,255,.06);
       border-radius: 5px;
       padding: 2px 8px;
     }
     .widget-type-group [role="tablist"] .widget-group-title-current {
-      background: rgba(0,0,0,.18);
+      background: rgba(255,255,255,.14);
     }
     /* Hide group tab headers in side columns — only center (full) tabs visible */
     .page-column-small .widget-type-group [role="tablist"] {
