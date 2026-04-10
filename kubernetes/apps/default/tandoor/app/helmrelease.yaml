@@ -43,6 +43,7 @@ spec:
               ALLOWED_HOSTS: "*"
               CSRF_TRUSTED_ORIGINS: "https://tandoor.${SECRET_DOMAIN}"
               GUNICORN_CMD_ARGS: "--timeout 60 --workers 2"
+              DEFAULT_LOCALE: fr
             resources:
               requests:
                 memory: 512Mi
