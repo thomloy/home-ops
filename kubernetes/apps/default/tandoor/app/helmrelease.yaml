@@ -90,10 +90,9 @@ spec:
 
     persistence:
       media:
-        type: persistentVolumeClaim
-        accessMode: ReadWriteOnce
-        size: 10Gi
-        storageClass: ceph-block
+        type: nfs
+        server: ${NAS_IP}
+        path: /mnt/HDD1X4/tandoor
         advancedMounts:
           tandoor:
             app:
