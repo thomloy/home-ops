@@ -74,7 +74,7 @@ spec:
         controller: tandoor
         ports:
           http:
-            port: 8080
+            port: 80
 
     route:
       app:
