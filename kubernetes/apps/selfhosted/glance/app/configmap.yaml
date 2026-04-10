@@ -393,7 +393,7 @@ data:
                       {{end}}
                       </div>
                       </div>
-                      <script>if(!window.__gls){window.__gls=true;setTimeout(function(){document.querySelectorAll('[role="tablist"]').forEach(function(tl){var p=tl.parentElement;if(p&&!p.querySelector('#glance-fsk'))tl.style.setProperty('display','none','important');});},200);var _s=false;document.addEventListener('click',function(e){if(_s)return;var b=e.target.closest&&e.target.closest('.widget-group-title');if(!b)return;var t=b.closest('[role="tablist"]');if(!t)return;var bs=Array.from(t.querySelectorAll('.widget-group-title'));var i=bs.indexOf(b);if(i<0)return;_s=true;document.querySelectorAll('[role="tablist"]').forEach(function(o){if(o===t)return;var ob=Array.from(o.querySelectorAll('.widget-group-title'));if(ob.length!==bs.length)return;if(ob[i]&&!ob[i].classList.contains('widget-group-title-current'))ob[i].click();});_s=false;},true);}</script>
+                      <div class="gls-trigger" onanimationstart="if(!window.__gls){window.__gls=true;document.addEventListener('click',function(e){var b=e.target;while(b&&!b.classList.contains('widget-group-title'))b=b.parentElement;if(!b)return;var t=b.parentElement;var bs=[].slice.call(t.children);var i=bs.indexOf(b);if(i<0)return;document.querySelectorAll('.widget-header.gap-20').forEach(function(o){if(o===t||o.children.length!==t.children.length)return;var ob=o.children[i];if(ob&&!ob.classList.contains('widget-group-title-current'))ob.click();});},true);}"></div>
 
                   - type: custom-api
                     title: Séries
@@ -640,3 +640,10 @@ data:
     :root {
       --color-widget-background: hsl(28, 45%, 75%) !important;
     }
+    /* Hide group tab headers in side columns — only center (full) tabs visible */
+    .page-column-small .widget-type-group [role="tablist"] {
+      display: none !important;
+    }
+    /* Animation trigger for JS init via onanimationstart attribute */
+    @keyframes gls-init { from { opacity: 1; } to { opacity: 1; } }
+    .gls-trigger { animation: gls-init 1ms; }
