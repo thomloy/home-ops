@@ -715,10 +715,14 @@ data:
                         icon: di:grafana
   custom.css: |
     body {
+      background-image: url('/assets/bg.jpg') !important;
+      background-size: cover !important;
+      background-attachment: fixed !important;
+      background-position: center !important;
       background-color: hsl(28, 30%, 83%) !important;
     }
     :root {
-      --color-widget-background: hsl(28, 45%, 75%) !important;
+      --color-widget-background: hsla(28, 45%, 82%, 0.82) !important;
     }
     /* Hide group tab headers in side columns — only center (full) tabs visible */
     .page-column-small .widget-type-group [role="tablist"] {

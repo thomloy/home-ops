@@ -53,6 +53,12 @@ spec:
             subPath: glance.yml
           - path: /app/assets/custom.css
             subPath: custom.css
+      bg:
+        type: configMap
+        name: glance-bg
+        globalMounts:
+          - path: /app/assets/bg.jpg
+            subPath: bg.jpg
 
     route:
       app:
