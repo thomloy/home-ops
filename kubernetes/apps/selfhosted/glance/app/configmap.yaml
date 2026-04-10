@@ -262,10 +262,10 @@ data:
               - type: group
                 widgets:
                   - type: custom-api
-                    title: Queue Radarr
+                    title: Films
                     allow-insecure-html: true
                     cache: 30s
-                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/queue?apikey=$${RADARR_API_KEY}&pageSize=10"
+                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/queue?apikey=$${RADARR_API_KEY}&pageSize=8"
                     template: |
                       {{$records := .JSON.Array "records"}}
                       {{if eq (len $records) 0}}
@@ -282,10 +282,50 @@ data:
                       {{end}}
 
                   - type: custom-api
-                    title: Queue Sonarr
+                    title: Séries
                     allow-insecure-html: true
                     cache: 30s
-                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/queue?apikey=$${SONARR_API_KEY}&pageSize=10"
+                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/queue?apikey=$${SONARR_API_KEY}&pageSize=8"
+                    template: |
+                      {{$records := .JSON.Array "records"}}
+                      {{if eq (len $records) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
+                      {{else}}
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range $records}}
+                      <div style="padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px">
+                        <div style="font-size:.8em;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                        <div style="display:flex;justify-content:space-between;font-size:.7em;opacity:.6;margin-top:2px"><span>{{.String "status"}}</span><span>{{.String "timeleft"}}</span></div>
+                      </div>
+                      {{end}}
+                      </div>
+                      {{end}}
+
+                  - type: custom-api
+                    title: Animés
+                    allow-insecure-html: true
+                    cache: 30s
+                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/queue?apikey=$${SONARR_API_KEY}&pageSize=8"
+                    template: |
+                      {{$records := .JSON.Array "records"}}
+                      {{if eq (len $records) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
+                      {{else}}
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range $records}}
+                      <div style="padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px">
+                        <div style="font-size:.8em;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                        <div style="display:flex;justify-content:space-between;font-size:.7em;opacity:.6;margin-top:2px"><span>{{.String "status"}}</span><span>{{.String "timeleft"}}</span></div>
+                      </div>
+                      {{end}}
+                      </div>
+                      {{end}}
+
+                  - type: custom-api
+                    title: Livres
+                    allow-insecure-html: true
+                    cache: 30s
+                    url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/queue?apikey=$${READARR_API_KEY}&pageSize=8"
                     template: |
                       {{$records := .JSON.Array "records"}}
                       {{if eq (len $records) 0}}
@@ -353,6 +393,7 @@ data:
                       {{end}}
                       </div>
                       </div>
+                      <script>if(!window.__gls){window.__gls=true;var _s=false;document.addEventListener('click',function(e){if(_s)return;var b=e.target.closest&&e.target.closest('.widget-group-title');if(!b)return;var t=b.closest('[role="tablist"]');if(!t)return;var bs=Array.from(t.querySelectorAll('.widget-group-title'));var i=bs.indexOf(b);if(i<0)return;_s=true;document.querySelectorAll('[role="tablist"]').forEach(function(o){if(o===t)return;var ob=Array.from(o.querySelectorAll('.widget-group-title'));if(ob.length!==bs.length)return;if(ob[i]&&!ob[i].classList.contains('widget-group-title-current'))ob[i].click();});_s=false;},true);}</script>
 
                   - type: custom-api
                     title: Séries
@@ -433,63 +474,84 @@ data:
 
           - size: small
             widgets:
-              - type: custom-api
-                title: Épisodes à venir
-                allow-insecure-html: true
-                cache: 30m
-                url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
-                template: |
-                  <div style="display:flex;flex-direction:column;gap:4px">
-                  {{range .JSON.Array "@this"}}
-                  <a href="https://sonarr.${SECRET_DOMAIN}/series" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                    <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "seriesId"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
-                    <div style="min-width:0">
-                      <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                      {{$au := .String "airDateUtc"}}<div style="font-size:.7em;opacity:.65">{{printf "S%02dE%02d" (.Int "seasonNumber") (.Int "episodeNumber")}} · {{slice $au 8 10}}-{{slice $au 5 7}}-{{slice $au 0 4}}</div>
-                      {{if eq (.String "hasFile") "true"}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Dispo</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Manquant</span>{{end}}
-                    </div>
-                  </a>
-                  {{end}}
-                  </div>
+              - type: group
+                widgets:
+                  - type: custom-api
+                    title: Films
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
+                    template: |
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range .JSON.Array "@this"}}
+                      <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        <img src="{{.String "images.#[coverType==poster].remoteUrl"}}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
+                        <div style="min-width:0">
+                          <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                          {{$ic := .String "inCinemas"}}<div style="font-size:.7em;opacity:.65;margin-top:2px">{{slice $ic 8 10}}-{{slice $ic 5 7}}-{{slice $ic 0 4}}</div>
+                          {{if eq (.String "hasFile") "true"}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Téléchargé</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Manquant</span>{{end}}
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
 
-              - type: custom-api
-                title: Films attendus
-                allow-insecure-html: true
-                cache: 30m
-                url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
-                template: |
-                  <div style="display:flex;flex-direction:column;gap:4px">
-                  {{range .JSON.Array "@this"}}
-                  <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                    <img src="{{.String "images.#[coverType==poster].remoteUrl"}}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
-                    <div style="min-width:0">
-                      <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                      {{$ic := .String "inCinemas"}}<div style="font-size:.7em;opacity:.65;margin-top:2px">{{slice $ic 8 10}}-{{slice $ic 5 7}}-{{slice $ic 0 4}}</div>
-                      {{if eq (.String "hasFile") "true"}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Téléchargé</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Manquant</span>{{end}}
-                    </div>
-                  </a>
-                  {{end}}
-                  </div>
+                  - type: custom-api
+                    title: Séries
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
+                    template: |
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range .JSON.Array "@this"}}
+                      <a href="https://sonarr.${SECRET_DOMAIN}/series" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "seriesId"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
+                        <div style="min-width:0">
+                          <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                          {{$au := .String "airDateUtc"}}<div style="font-size:.7em;opacity:.65">{{printf "S%02dE%02d" (.Int "seasonNumber") (.Int "episodeNumber")}} · {{slice $au 8 10}}-{{slice $au 5 7}}-{{slice $au 0 4}}</div>
+                          {{if eq (.String "hasFile") "true"}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Dispo</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Manquant</span>{{end}}
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
 
-              - type: custom-api
-                title: Livres à venir
-                allow-insecure-html: true
-                cache: 6h
-                url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/calendar?apikey=$${READARR_API_KEY}&start=2025-01-01&end=2027-12-31&unmonitored=false"
-                template: |
-                  <div style="display:flex;flex-direction:column;gap:4px">
-                  {{range .JSON.Array "@this"}}
-                  <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                    {{$cover := .String "images.#[coverType==cover].url"}}
-                    {{if $cover}}<img src="{{$cover}}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">{{else}}<div style="width:35px;min-width:35px;height:52px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center">📚</div>{{end}}
-                    <div style="min-width:0">
-                      <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                      <div style="font-size:.7em;opacity:.65;margin-top:2px">{{.String "authorTitle"}}</div>
-                      {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{slice $rd 0 10}}</div>
-                    </div>
-                  </a>
-                  {{end}}
-                  </div>
+                  - type: custom-api
+                    title: Animés
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
+                    template: |
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range .JSON.Array "@this"}}
+                      <a href="https://sonarr.${SECRET_DOMAIN}/series" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "seriesId"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
+                        <div style="min-width:0">
+                          <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                          {{$au := .String "airDateUtc"}}<div style="font-size:.7em;opacity:.65">{{printf "S%02dE%02d" (.Int "seasonNumber") (.Int "episodeNumber")}} · {{slice $au 8 10}}-{{slice $au 5 7}}-{{slice $au 0 4}}</div>
+                          {{if eq (.String "hasFile") "true"}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Dispo</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Manquant</span>{{end}}
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+
+                  - type: custom-api
+                    title: Livres
+                    allow-insecure-html: true
+                    cache: 6h
+                    url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/calendar?apikey=$${READARR_API_KEY}&start=2025-01-01&end=2027-12-31&unmonitored=false"
+                    template: |
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range .JSON.Array "@this"}}
+                      <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        {{$cover := .String "images.#[coverType==cover].url"}}
+                        {{if $cover}}<img src="{{$cover}}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">{{else}}<div style="width:35px;min-width:35px;height:52px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center">📚</div>{{end}}
+                        <div style="min-width:0">
+                          <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                          <div style="font-size:.7em;opacity:.65;margin-top:2px">{{.String "authorTitle"}}</div>
+                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{slice $rd 0 10}}</div>
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
 
       # ── Stats ──────────────────────────────────────────────────────────────
       - name: stats
