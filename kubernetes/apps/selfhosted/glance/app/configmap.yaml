@@ -232,6 +232,7 @@ data:
                   </div>
                   {{end}}
                   {{end}}
+                  {{if not $any}}<div style="font-size:.85em;opacity:.5">Aucune lecture en cours</div>{{end}}
                   </div>
 
               - type: bookmarks
