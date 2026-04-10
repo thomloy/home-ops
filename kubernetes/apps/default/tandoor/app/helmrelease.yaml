@@ -92,7 +92,7 @@ spec:
       media:
         type: nfs
         server: ${NAS_IP}
-        path: /mnt/HDD1X4/tandoor
+        path: /mnt/HDD1X4/cuisine
         advancedMounts:
           tandoor:
             app:
