@@ -754,7 +754,7 @@ data:
                 title: Lecture en cours
                 allow-insecure-html: true
                 cache: 30s
-                url: "http://audiobookshelf.media.svc.cluster.local/api/me/listening-sessions?itemsPerPage=3&token=$${ABS_TOKEN}"
+                url: "http://audiobookshelf.media.svc.cluster.local:80/api/me/listening-sessions?itemsPerPage=3&token=$${ABS_TOKEN}"
                 template: |
                   {{$sessions := .JSON.Array "sessions"}}
                   {{if eq (len $sessions) 0}}
