@@ -521,7 +521,7 @@ data:
                       {{end}}
                       <div class="gls-sep"></div>
                       <div class="gls-section-hdr">FILMS ATTENDUS</div>
-                      <div id="glance-mfa" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/movie/upcoming?api_key='+el.dataset.k+'&language=fr-FR&region=FR').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.results.slice(0,6).forEach(function(m){h+='<div class=\'gls-item\'><div class=\'gls-item-title\'>'+(m.title||'')+'</div><div class=\'gls-item-sub\'>'+(m.release_date||'')+'</div></div>';});h+='</div>';el.innerHTML=h;});})(this)">Chargement...</div>
+                      <div id="glance-mfa" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/movie/upcoming?api_key='+el.dataset.k+'&language=fr-FR&region=FR').then(function(r){return r.json()}).then(function(d){var h='';d.results.slice(0,6).forEach(function(m){var p=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:32px;min-width:32px;height:48px;object-fit:cover;border-radius:3px;flex-shrink:0\'>':'<div style=\'width:32px;min-width:32px;height:48px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0\'></div>';h+='<a href=\'https://www.themoviedb.org/movie/'+m.id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px;margin-bottom:4px\'>'+p+'<div style=\'min-width:0;flex:1\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(m.title||'')+'</div><div style=\'font-size:.7em;opacity:.6;margin-top:2px\'>'+(m.release_date||'')+'</div></div></a>';});el.innerHTML=h;});})(this)">Chargement...</div>
 
                   - type: custom-api
                     title: Films
@@ -549,7 +549,7 @@ data:
                       {{end}}
                       <div class="gls-sep"></div>
                       <div class="gls-section-hdr">SORTIES FILMS (FR)</div>
-                      <div id="glance-sfr" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/movie/upcoming?api_key='+el.dataset.k+'&language=fr-FR&region=FR').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.results.slice(0,6).forEach(function(m){h+='<div class=\'gls-item\'><div class=\'gls-item-title\'>'+(m.title||'')+'</div><div class=\'gls-item-sub\'>'+(m.release_date||'')+'</div></div>';});h+='</div>';el.innerHTML=h;});})(this)">Chargement...</div>
+                      <div id="glance-sfr" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/movie/upcoming?api_key='+el.dataset.k+'&language=fr-FR&region=FR').then(function(r){return r.json()}).then(function(d){var h='';d.results.slice(0,6).forEach(function(m){var p=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:32px;min-width:32px;height:48px;object-fit:cover;border-radius:3px;flex-shrink:0\'>':'<div style=\'width:32px;min-width:32px;height:48px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0\'></div>';h+='<a href=\'https://www.themoviedb.org/movie/'+m.id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px;margin-bottom:4px\'>'+p+'<div style=\'min-width:0;flex:1\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(m.title||'')+'</div><div style=\'font-size:.7em;opacity:.6;margin-top:2px\'>'+(m.release_date||'')+'</div></div></a>';});el.innerHTML=h;});})(this)">Chargement...</div>
 
                   - type: custom-api
                     title: Séries
@@ -577,7 +577,7 @@ data:
                       {{end}}
                       <div class="gls-sep"></div>
                       <div class="gls-section-hdr">SORTIES SÉRIES (FR)</div>
-                      <div id="glance-ssr2" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/tv/on_the_air?api_key='+el.dataset.k+'&language=fr-FR').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.results.slice(0,6).forEach(function(m){h+='<div class=\'gls-item\'><div class=\'gls-item-title\'>'+(m.name||'')+'</div><div class=\'gls-item-sub\'>'+(m.first_air_date||'')+'</div></div>';});h+='</div>';el.innerHTML=h;});})(this)">Chargement...</div>
+                      <div id="glance-ssr2" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+30*864e5).toISOString().slice(0,10);fetch('https://api.themoviedb.org/3/discover/tv?api_key='+el.dataset.k+'&language=fr-FR&first_air_date.gte='+t+'&first_air_date.lte='+f+'&sort_by=first_air_date.asc').then(function(r){return r.json()}).then(function(d){var h='';(d.results||[]).slice(0,6).forEach(function(m){var p=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:32px;min-width:32px;height:48px;object-fit:cover;border-radius:3px;flex-shrink:0\'>':'<div style=\'width:32px;min-width:32px;height:48px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0\'></div>';h+='<a href=\'https://www.themoviedb.org/tv/'+m.id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px;margin-bottom:4px\'>'+p+'<div style=\'min-width:0;flex:1\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(m.name||'')+'</div><div style=\'font-size:.7em;opacity:.6;margin-top:2px\'>'+(m.first_air_date||'')+'</div></div></a>';});el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucune sortie à venir</div>';});})(this)">Chargement...</div>
 
                   - type: custom-api
                     title: Animés
@@ -605,7 +605,7 @@ data:
                       {{end}}
                       <div class="gls-sep"></div>
                       <div class="gls-section-hdr">NOUVELLES SAISONS</div>
-                      <div id="glance-nsa" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/discover/tv?api_key='+el.dataset.k+'&with_genres=16&with_original_language=ja&sort_by=popularity.desc&language=fr-FR').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.results.slice(0,6).forEach(function(m){h+='<div class=\'gls-item\'><div class=\'gls-item-title\'>'+(m.name||'')+'</div><div class=\'gls-item-sub\'>'+(m.first_air_date||'')+'</div></div>';});h+='</div>';el.innerHTML=h;});})(this)">Chargement...</div>
+                      <div id="glance-nsa" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+30*864e5).toISOString().slice(0,10);fetch('https://api.themoviedb.org/3/discover/tv?api_key='+el.dataset.k+'&language=fr-FR&with_genres=16&with_original_language=ja&first_air_date.gte='+t+'&first_air_date.lte='+f+'&sort_by=first_air_date.asc').then(function(r){return r.json()}).then(function(d){var h='';(d.results||[]).slice(0,6).forEach(function(m){var p=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:32px;min-width:32px;height:48px;object-fit:cover;border-radius:3px;flex-shrink:0\'>':'<div style=\'width:32px;min-width:32px;height:48px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0\'></div>';h+='<a href=\'https://www.themoviedb.org/tv/'+m.id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px;margin-bottom:4px\'>'+p+'<div style=\'min-width:0;flex:1\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(m.name||'')+'</div><div style=\'font-size:.7em;opacity:.6;margin-top:2px\'>'+(m.first_air_date||'')+'</div></div></a>';});el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucune sortie à venir</div>';});})(this)">Chargement...</div>
 
                   - type: custom-api
                     title: Livres
@@ -729,17 +729,20 @@ data:
     .gls-trigger { animation: gls-init 1ms; }
     /* Section headers inside group tab templates */
     .gls-section-hdr {
-      font-size: .65em;
+      font-size: .62em;
       font-weight: 700;
-      letter-spacing: .08em;
+      letter-spacing: .09em;
       opacity: .45;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      margin-top: 2px;
       text-transform: uppercase;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(0,0,0,.09);
     }
     /* Separator between sections */
     .gls-sep {
       border-top: 1px solid rgba(0,0,0,.1);
-      margin: 10px 0;
+      margin: 12px 0;
     }
     /* Queue / calendar items */
     .gls-item {
@@ -766,11 +769,21 @@ data:
       text-decoration: none;
       display: flex;
       align-items: center;
-      padding: 6px 10px;
+      justify-content: space-between;
+      padding: 8px 12px;
       background: rgba(0,0,0,.06);
-      border-radius: 6px;
+      border-radius: 7px;
       font-size: .85em;
       font-weight: 600;
       color: inherit;
     }
-    .gls-link:hover { opacity: .7; }
+    .gls-link::after {
+      content: '›';
+      opacity: .35;
+      font-size: 1.15em;
+      font-weight: 400;
+    }
+    .gls-link:hover {
+      background: rgba(0,0,0,.12);
+      opacity: 1;
+    }
