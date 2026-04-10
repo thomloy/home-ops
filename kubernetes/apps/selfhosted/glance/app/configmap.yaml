@@ -97,8 +97,8 @@ data:
                         url: http://paperless.selfhosted.svc.cluster.local:8000
                         icon: di:paperless-ngx
                       - title: Mealie
-                        url: http://mealie.default.svc.cluster.local:9000
-                        icon: di:mealie
+                        url: http://tandoor.default.svc.cluster.local:8080
+                        icon: si:tandoorrecipes
                       - title: IT-Tools
                         url: http://it-tools.selfhosted.svc.cluster.local:8080
                         icon: di:it-tools
@@ -198,9 +198,9 @@ data:
                       - title: Paperless
                         url: https://paperless.${SECRET_DOMAIN}
                         icon: di:paperless-ngx
-                      - title: Mealie
-                        url: https://mealie.${SECRET_DOMAIN}
-                        icon: di:mealie
+                      - title: Tandoor
+                        url: https://tandoor.${SECRET_DOMAIN}
+                        icon: si:tandoorrecipes
                       - title: IT-Tools
                         url: https://it-tools.${SECRET_DOMAIN}
                         icon: di:it-tools
@@ -693,9 +693,9 @@ data:
                   - title: Paperless
                     url: http://paperless.selfhosted.svc.cluster.local:8000
                     icon: di:paperless-ngx
-                  - title: Mealie
-                    url: http://mealie.default.svc.cluster.local:9000
-                    icon: di:mealie
+                  - title: Tandoor
+                    url: http://tandoor.default.svc.cluster.local:8080
+                    icon: si:tandoorrecipes
                   - title: IT-Tools
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
                     icon: di:it-tools
