@@ -28,7 +28,7 @@ spec:
         containers:
           app:
             image:
-              repository: vabene2000/tandoor-recipes
+              repository: vabene1111/recipes
               tag: "2.6.5"
             envFrom:
               - secretRef:
