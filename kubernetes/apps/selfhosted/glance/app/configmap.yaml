@@ -722,7 +722,19 @@ data:
       background-color: hsl(28, 30%, 83%) !important;
     }
     :root {
-      --color-widget-background: hsla(28, 45%, 82%, 0.82) !important;
+      --color-widget-background: hsla(28, 45%, 82%, 0.93) !important;
+    }
+    /* Ensure widget header areas are fully readable */
+    .widget-header, .widget-header * {
+      text-shadow: none;
+    }
+    .widget-type-group [role="tablist"] .widget-group-title {
+      background: rgba(0,0,0,.08);
+      border-radius: 5px;
+      padding: 2px 8px;
+    }
+    .widget-type-group [role="tablist"] .widget-group-title-current {
+      background: rgba(0,0,0,.18);
     }
     /* Hide group tab headers in side columns — only center (full) tabs visible */
     .page-column-small .widget-type-group [role="tablist"] {
