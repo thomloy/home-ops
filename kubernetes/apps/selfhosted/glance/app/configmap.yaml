@@ -235,51 +235,49 @@ data:
                   {{if not $any}}<div style="font-size:.85em;opacity:.5">Aucune lecture en cours</div>{{end}}
                   </div>
 
-              - type: custom-api
-                title: Lecture audio
-                allow-insecure-html: true
-                cache: 30s
-                url: "http://audiobookshelf.media.svc.cluster.local:80/api/me/listening-sessions?itemsPerPage=3&token=$${ABS_TOKEN}"
-                template: |
-                  {{$sessions := .JSON.Array "sessions"}}
-                  {{if eq (len $sessions) 0}}
-                  <div style="font-size:.85em;opacity:.5">Aucune session en cours</div>
-                  {{else}}
-                  <div style="display:flex;flex-direction:column;gap:8px">
-                  {{range $sessions}}
-                  <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:rgba(0,0,0,.06);border-radius:6px">
-                    <img src="https://audiobookshelf.${SECRET_DOMAIN}/api/items/{{.String "libraryItemId"}}/cover?token=$${ABS_TOKEN}" style="width:45px;min-width:45px;height:67px;object-fit:cover;border-radius:4px;flex-shrink:0">
-                    <div style="min-width:0;flex:1">
-                      <div style="font-weight:700;font-size:.9em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="color:#22c55e">●</span> {{.String "mediaMetadata.title"}}</div>
-                      <div style="font-size:.75em;opacity:.7;margin-top:2px">{{.String "mediaMetadata.authorName"}}</div>
-                      <div style="font-size:.75em;opacity:.65;margin-top:2px">▶ En cours · {{.Int "currentTime"}}s / {{.Int "duration"}}s</div>
-                    </div>
-                  </div>
-                  {{end}}
-                  </div>
-                  {{end}}
-
               - type: group
                 widgets:
+                  - type: custom-api
+                    title: Media
+                    allow-insecure-html: true
+                    cache: 1h
+                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/system/status?apikey=$${RADARR_API_KEY}"
+                    template: |
+                      <div class="gls-section-hdr">LIENS RAPIDES</div>
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                        <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
+                        <a href="https://audiobookshelf.${SECRET_DOMAIN}" target="_blank" class="gls-link">Audiobookshelf</a>
+                        <a href="https://radarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Radarr</a>
+                        <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
+                        <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Readarr</a>
+                      </div>
+
                   - type: custom-api
                     title: Films
                     allow-insecure-html: true
                     cache: 30s
                     url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/queue?apikey=$${RADARR_API_KEY}&pageSize=8"
                     template: |
+                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
                       {{$records := .JSON.Array "records"}}
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
                       <div style="display:flex;flex-direction:column;gap:4px">
                       {{range $records}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px">
-                        <div style="font-size:.8em;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                        <div style="display:flex;justify-content:space-between;font-size:.7em;opacity:.6;margin-top:2px"><span>{{.String "status"}}</span><span>{{.String "timeleft"}}</span></div>
+                      <div class="gls-item">
+                        <div class="gls-item-title">{{.String "title"}}</div>
+                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
                       </div>
                       {{end}}
                       </div>
                       {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">LIENS</div>
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                        <a href="https://radarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Radarr</a>
+                        <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
+                      </div>
 
                   - type: custom-api
                     title: Séries
@@ -287,19 +285,26 @@ data:
                     cache: 30s
                     url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/queue?apikey=$${SONARR_API_KEY}&pageSize=8"
                     template: |
+                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
                       {{$records := .JSON.Array "records"}}
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
                       <div style="display:flex;flex-direction:column;gap:4px">
                       {{range $records}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px">
-                        <div style="font-size:.8em;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                        <div style="display:flex;justify-content:space-between;font-size:.7em;opacity:.6;margin-top:2px"><span>{{.String "status"}}</span><span>{{.String "timeleft"}}</span></div>
+                      <div class="gls-item">
+                        <div class="gls-item-title">{{.String "title"}}</div>
+                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
                       </div>
                       {{end}}
                       </div>
                       {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">LIENS</div>
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                        <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
+                        <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
+                      </div>
 
                   - type: custom-api
                     title: Animés
@@ -307,19 +312,26 @@ data:
                     cache: 30s
                     url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/queue?apikey=$${SONARR_API_KEY}&pageSize=8"
                     template: |
+                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
                       {{$records := .JSON.Array "records"}}
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
                       <div style="display:flex;flex-direction:column;gap:4px">
                       {{range $records}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px">
-                        <div style="font-size:.8em;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                        <div style="display:flex;justify-content:space-between;font-size:.7em;opacity:.6;margin-top:2px"><span>{{.String "status"}}</span><span>{{.String "timeleft"}}</span></div>
+                      <div class="gls-item">
+                        <div class="gls-item-title">{{.String "title"}}</div>
+                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
                       </div>
                       {{end}}
                       </div>
                       {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">LIENS</div>
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                        <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
+                        <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
+                      </div>
 
                   - type: custom-api
                     title: Livres
@@ -327,45 +339,53 @@ data:
                     cache: 30s
                     url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/queue?apikey=$${READARR_API_KEY}&pageSize=8"
                     template: |
+                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
                       {{$records := .JSON.Array "records"}}
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
                       <div style="display:flex;flex-direction:column;gap:4px">
                       {{range $records}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px">
-                        <div style="font-size:.8em;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                        <div style="display:flex;justify-content:space-between;font-size:.7em;opacity:.6;margin-top:2px"><span>{{.String "status"}}</span><span>{{.String "timeleft"}}</span></div>
+                      <div class="gls-item">
+                        <div class="gls-item-title">{{.String "title"}}</div>
+                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
                       </div>
                       {{end}}
                       </div>
                       {{end}}
-
-              - type: bookmarks
-                title: Liens rapides
-                groups:
-                  - title: Media
-                    links:
-                      - title: Emby
-                        url: https://emby.${SECRET_DOMAIN}
-                        icon: di:emby
-                      - title: Audiobookshelf
-                        url: https://audiobookshelf.${SECRET_DOMAIN}
-                        icon: di:audiobookshelf
-                      - title: Radarr
-                        url: https://radarr.${SECRET_DOMAIN}
-                        icon: di:radarr
-                      - title: Sonarr
-                        url: https://sonarr.${SECRET_DOMAIN}
-                        icon: di:sonarr
-                      - title: Readarr
-                        url: https://readarr.${SECRET_DOMAIN}
-                        icon: di:readarr
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">LIENS</div>
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                        <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Readarr</a>
+                        <a href="https://audiobookshelf.${SECRET_DOMAIN}" target="_blank" class="gls-link">Audiobookshelf</a>
+                      </div>
 
           - size: full
             widgets:
               - type: group
                 widgets:
+                  - type: custom-api
+                    title: Media
+                    allow-insecure-html: true
+                    cache: 30s
+                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/queue?apikey=$${RADARR_API_KEY}&pageSize=10"
+                    template: |
+                      <div class="gls-section-hdr">QUEUE RADARR</div>
+                      {{$records := .JSON.Array "records"}}
+                      {{if eq (len $records) 0}}
+                      <div style="font-size:.85em;opacity:.5;margin-bottom:8px">Aucun téléchargement en cours</div>
+                      {{else}}
+                      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
+                      {{range $records}}
+                      <div class="gls-item">
+                        <div class="gls-item-title">{{.String "title"}}</div>
+                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+                      </div>
+                      {{end}}
+                      </div>
+                      {{end}}
+                      <div class="gls-trigger" onanimationstart="if(!window.__gls){window.__gls=true;document.addEventListener('click',function(e){var b=e.target;while(b&&!b.classList.contains('widget-group-title'))b=b.parentElement;if(!b)return;var t=b.parentElement;var bs=[].slice.call(t.children);var i=bs.indexOf(b);if(i<0)return;document.querySelectorAll('.widget-header.gap-20').forEach(function(o){if(o===t||o.children.length!==t.children.length)return;var ob=o.children[i];if(ob&&!ob.classList.contains('widget-group-title-current'))ob.click();});},true);}"></div>
+
                   - type: custom-api
                     title: Films
                     allow-insecure-html: true
@@ -393,7 +413,6 @@ data:
                       {{end}}
                       </div>
                       </div>
-                      <div class="gls-trigger" onanimationstart="if(!window.__gls){window.__gls=true;document.addEventListener('click',function(e){var b=e.target;while(b&&!b.classList.contains('widget-group-title'))b=b.parentElement;if(!b)return;var t=b.parentElement;var bs=[].slice.call(t.children);var i=bs.indexOf(b);if(i<0)return;document.querySelectorAll('.widget-header.gap-20').forEach(function(o){if(o===t||o.children.length!==t.children.length)return;var ob=o.children[i];if(ob&&!ob.classList.contains('widget-group-title-current'))ob.click();});},true);}"></div>
 
                   - type: custom-api
                     title: Séries
@@ -477,13 +496,46 @@ data:
               - type: group
                 widgets:
                   - type: custom-api
+                    title: Media
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
+                    template: |
+                      <div class="gls-section-hdr">ÉPISODES À VENIR</div>
+                      {{$items := .JSON.Array "@this"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun épisode à venir</div>
+                      {{else}}
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range $items}}
+                      <a href="https://sonarr.${SECRET_DOMAIN}/series" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "seriesId"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
+                        <div style="min-width:0">
+                          <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                          {{$au := .String "airDateUtc"}}<div style="font-size:.7em;opacity:.65">{{printf "S%02dE%02d" (.Int "seasonNumber") (.Int "episodeNumber")}} · {{slice $au 8 10}}-{{slice $au 5 7}}-{{slice $au 0 4}}</div>
+                          {{if eq (.String "hasFile") "true"}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Dispo</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px">Manquant</span>{{end}}
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+                      {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">FILMS ATTENDUS</div>
+                      <div id="glance-mfa" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/movie/upcoming?api_key='+el.dataset.k+'&language=fr-FR&region=FR').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.results.slice(0,6).forEach(function(m){h+='<div class=\'gls-item\'><div class=\'gls-item-title\'>'+(m.title||'')+'</div><div class=\'gls-item-sub\'>'+(m.release_date||'')+'</div></div>';});h+='</div>';el.innerHTML=h;});})(this)">Chargement...</div>
+
+                  - type: custom-api
                     title: Films
                     allow-insecure-html: true
                     cache: 30m
                     url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
                     template: |
+                      <div class="gls-section-hdr">WATCHLIST RADARR</div>
+                      {{$items := .JSON.Array "@this"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun film dans la watchlist</div>
+                      {{else}}
                       <div style="display:flex;flex-direction:column;gap:4px">
-                      {{range .JSON.Array "@this"}}
+                      {{range $items}}
                       <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                         <img src="{{.String "images.#[coverType==poster].remoteUrl"}}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
                         <div style="min-width:0">
@@ -494,6 +546,10 @@ data:
                       </a>
                       {{end}}
                       </div>
+                      {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">SORTIES FILMS (FR)</div>
+                      <div id="glance-sfr" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/movie/upcoming?api_key='+el.dataset.k+'&language=fr-FR&region=FR').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.results.slice(0,6).forEach(function(m){h+='<div class=\'gls-item\'><div class=\'gls-item-title\'>'+(m.title||'')+'</div><div class=\'gls-item-sub\'>'+(m.release_date||'')+'</div></div>';});h+='</div>';el.innerHTML=h;});})(this)">Chargement...</div>
 
                   - type: custom-api
                     title: Séries
@@ -501,8 +557,13 @@ data:
                     cache: 30m
                     url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
                     template: |
+                      <div class="gls-section-hdr">ÉPISODES À VENIR</div>
+                      {{$items := .JSON.Array "@this"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun épisode à venir</div>
+                      {{else}}
                       <div style="display:flex;flex-direction:column;gap:4px">
-                      {{range .JSON.Array "@this"}}
+                      {{range $items}}
                       <a href="https://sonarr.${SECRET_DOMAIN}/series" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                         <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "seriesId"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
                         <div style="min-width:0">
@@ -513,6 +574,10 @@ data:
                       </a>
                       {{end}}
                       </div>
+                      {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">SORTIES SÉRIES (FR)</div>
+                      <div id="glance-ssr2" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/tv/on_the_air?api_key='+el.dataset.k+'&language=fr-FR').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.results.slice(0,6).forEach(function(m){h+='<div class=\'gls-item\'><div class=\'gls-item-title\'>'+(m.name||'')+'</div><div class=\'gls-item-sub\'>'+(m.first_air_date||'')+'</div></div>';});h+='</div>';el.innerHTML=h;});})(this)">Chargement...</div>
 
                   - type: custom-api
                     title: Animés
@@ -520,8 +585,13 @@ data:
                     cache: 30m
                     url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${SONARR_API_KEY}&unmonitored=false"
                     template: |
+                      <div class="gls-section-hdr">ÉPISODES À VENIR</div>
+                      {{$items := .JSON.Array "@this"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun épisode à venir</div>
+                      {{else}}
                       <div style="display:flex;flex-direction:column;gap:4px">
-                      {{range .JSON.Array "@this"}}
+                      {{range $items}}
                       <a href="https://sonarr.${SECRET_DOMAIN}/series" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                         <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "seriesId"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">
                         <div style="min-width:0">
@@ -532,6 +602,10 @@ data:
                       </a>
                       {{end}}
                       </div>
+                      {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">NOUVELLES SAISONS</div>
+                      <div id="glance-nsa" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){fetch('https://api.themoviedb.org/3/discover/tv?api_key='+el.dataset.k+'&with_genres=16&with_original_language=ja&sort_by=popularity.desc&language=fr-FR').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.results.slice(0,6).forEach(function(m){h+='<div class=\'gls-item\'><div class=\'gls-item-title\'>'+(m.name||'')+'</div><div class=\'gls-item-sub\'>'+(m.first_air_date||'')+'</div></div>';});h+='</div>';el.innerHTML=h;});})(this)">Chargement...</div>
 
                   - type: custom-api
                     title: Livres
@@ -539,8 +613,13 @@ data:
                     cache: 6h
                     url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/calendar?apikey=$${READARR_API_KEY}&start=2025-01-01&end=2027-12-31&unmonitored=false"
                     template: |
+                      <div class="gls-section-hdr">LIVRES À VENIR</div>
+                      {{$items := .JSON.Array "@this"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun livre à venir</div>
+                      {{else}}
                       <div style="display:flex;flex-direction:column;gap:4px">
-                      {{range .JSON.Array "@this"}}
+                      {{range $items}}
                       <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                         {{$cover := .String "images.#[coverType==cover].url"}}
                         {{if $cover}}<img src="{{$cover}}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">{{else}}<div style="width:35px;min-width:35px;height:52px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center">📚</div>{{end}}
@@ -552,6 +631,7 @@ data:
                       </a>
                       {{end}}
                       </div>
+                      {{end}}
 
       # ── Stats ──────────────────────────────────────────────────────────────
       - name: stats
@@ -647,3 +727,50 @@ data:
     /* Animation trigger for JS init via onanimationstart attribute */
     @keyframes gls-init { from { opacity: 1; } to { opacity: 1; } }
     .gls-trigger { animation: gls-init 1ms; }
+    /* Section headers inside group tab templates */
+    .gls-section-hdr {
+      font-size: .65em;
+      font-weight: 700;
+      letter-spacing: .08em;
+      opacity: .45;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    /* Separator between sections */
+    .gls-sep {
+      border-top: 1px solid rgba(0,0,0,.1);
+      margin: 10px 0;
+    }
+    /* Queue / calendar items */
+    .gls-item {
+      padding: 6px 8px;
+      background: rgba(0,0,0,.06);
+      border-radius: 5px;
+    }
+    .gls-item-title {
+      font-size: .8em;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gls-item-sub {
+      display: flex;
+      justify-content: space-between;
+      font-size: .7em;
+      opacity: .6;
+      margin-top: 2px;
+    }
+    /* Link buttons */
+    .gls-link {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(0,0,0,.06);
+      border-radius: 6px;
+      font-size: .85em;
+      font-weight: 600;
+      color: inherit;
+    }
+    .gls-link:hover { opacity: .7; }
