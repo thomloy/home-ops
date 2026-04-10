@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: vabene2000/tandoor-recipes
-              tag: "1.5.17"
+              tag: "2.6.5"
             envFrom:
               - secretRef:
                   name: tandoor-secret
