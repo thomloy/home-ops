@@ -747,12 +747,12 @@ data:
       font-size: .62em;
       font-weight: 700;
       letter-spacing: .09em;
-      opacity: .45;
+      color: #f0d9a0;
       margin-bottom: 8px;
       margin-top: 2px;
       text-transform: uppercase;
       padding-bottom: 5px;
-      border-bottom: 1px solid rgba(0,0,0,.09);
+      border-bottom: 1px solid rgba(255,255,255,.12);
     }
     /* Separator between sections */
     .gls-sep {
