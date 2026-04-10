@@ -393,7 +393,7 @@ data:
                       {{end}}
                       </div>
                       </div>
-                      <script>if(!window.__gls){window.__gls=true;var _s=false;document.addEventListener('click',function(e){if(_s)return;var b=e.target.closest&&e.target.closest('.widget-group-title');if(!b)return;var t=b.closest('[role="tablist"]');if(!t)return;var bs=Array.from(t.querySelectorAll('.widget-group-title'));var i=bs.indexOf(b);if(i<0)return;_s=true;document.querySelectorAll('[role="tablist"]').forEach(function(o){if(o===t)return;var ob=Array.from(o.querySelectorAll('.widget-group-title'));if(ob.length!==bs.length)return;if(ob[i]&&!ob[i].classList.contains('widget-group-title-current'))ob[i].click();});_s=false;},true);}</script>
+                      <script>if(!window.__gls){window.__gls=true;setTimeout(function(){document.querySelectorAll('[role="tablist"]').forEach(function(tl){var p=tl.parentElement;if(p&&!p.querySelector('#glance-fsk'))tl.style.setProperty('display','none','important');});},200);var _s=false;document.addEventListener('click',function(e){if(_s)return;var b=e.target.closest&&e.target.closest('.widget-group-title');if(!b)return;var t=b.closest('[role="tablist"]');if(!t)return;var bs=Array.from(t.querySelectorAll('.widget-group-title'));var i=bs.indexOf(b);if(i<0)return;_s=true;document.querySelectorAll('[role="tablist"]').forEach(function(o){if(o===t)return;var ob=Array.from(o.querySelectorAll('.widget-group-title'));if(ob.length!==bs.length)return;if(ob[i]&&!ob[i].classList.contains('widget-group-title-current'))ob[i].click();});_s=false;},true);}</script>
 
                   - type: custom-api
                     title: Séries
