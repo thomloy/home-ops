@@ -265,6 +265,8 @@ data:
                         <a href="https://radarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Radarr</a>
                         <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
                         <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Readarr</a>
+                        <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Lidarr</a>
+                        <a href="https://navidrome.${SECRET_DOMAIN}" target="_blank" class="gls-link">Navidrome</a>
                       </div>
 
                   - type: custom-api
@@ -373,6 +375,33 @@ data:
                       <div style="display:flex;flex-direction:column;gap:4px">
                         <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Readarr</a>
                         <a href="https://audiobookshelf.${SECRET_DOMAIN}" target="_blank" class="gls-link">Audiobookshelf</a>
+                      </div>
+
+                  - type: custom-api
+                    title: Musique
+                    allow-insecure-html: true
+                    cache: 30s
+                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/queue?apikey=$${LIDARR_API_KEY}&pageSize=8"
+                    template: |
+                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
+                      {{$records := .JSON.Array "records"}}
+                      {{if eq (len $records) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
+                      {{else}}
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range $records}}
+                      <div class="gls-item">
+                        <div class="gls-item-title">{{.String "title"}}</div>
+                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+                      </div>
+                      {{end}}
+                      </div>
+                      {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">LIENS</div>
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                        <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Lidarr</a>
+                        <a href="https://navidrome.${SECRET_DOMAIN}" target="_blank" class="gls-link">Navidrome</a>
                       </div>
 
           - size: full
@@ -505,6 +534,29 @@ data:
                       </a>
                       {{end}}
                       </div>
+
+                  - type: custom-api
+                    title: Musique
+                    allow-insecure-html: true
+                    cache: 30s
+                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/queue?apikey=$${LIDARR_API_KEY}&pageSize=10"
+                    template: |
+                      <div class="gls-section-hdr">QUEUE LIDARR</div>
+                      {{$records := .JSON.Array "records"}}
+                      {{if eq (len $records) 0}}
+                      <div style="font-size:.85em;opacity:.5;margin-bottom:8px">Aucun téléchargement en cours</div>
+                      {{else}}
+                      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
+                      {{range $records}}
+                      <div class="gls-item">
+                        <div class="gls-item-title">{{.String "title"}}</div>
+                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+                      </div>
+                      {{end}}
+                      </div>
+                      {{end}}
+                      <div class="gls-section-hdr">ALBUMS RECHERCHÉS</div>
+                      <div id="glance-ldr" class="gls-trigger" data-k="$${LIDARR_API_KEY}" onanimationstart="(function(el){fetch('http://lidarr.downloads.svc.cluster.local:8686/api/v1/wanted/missing?apikey='+el.dataset.k+'&pageSize=10&sortKey=releaseDate&sortDirection=desc').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';(d.records||[]).forEach(function(a){h+='<div style=\'display:flex;gap:8px;align-items:center;padding:5px 8px;background:rgba(0,0,0,.06);border-radius:5px\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+a.title+'</div><div style=\'font-size:.7em;opacity:.65\'>'+(a.artistName||'')+'</div></div></div>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album manquant</div>';});})(this)">Chargement...</div>
 
           - size: small
             widgets:
@@ -641,6 +693,32 @@ data:
                         <div style="min-width:0">
                           <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
                           <div style="font-size:.7em;opacity:.65;margin-top:2px">{{.String "authorTitle"}}</div>
+                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{slice $rd 0 10}}</div>
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+                      {{end}}
+
+                  - type: custom-api
+                    title: Musique
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/calendar?apikey=$${LIDARR_API_KEY}&start=2025-01-01&end=2027-12-31&unmonitored=false"
+                    template: |
+                      <div class="gls-section-hdr">ALBUMS À VENIR</div>
+                      {{$items := .JSON.Array "@this"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun album à venir</div>
+                      {{else}}
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range $items}}
+                      <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        {{$cover := .String "images.#[coverType==cover].url"}}
+                        {{if $cover}}<img src="{{$cover}}" style="width:35px;min-width:35px;height:35px;object-fit:cover;border-radius:3px;flex-shrink:0">{{else}}<div style="width:35px;min-width:35px;height:35px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center">🎵</div>{{end}}
+                        <div style="min-width:0">
+                          <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                          <div style="font-size:.7em;opacity:.65;margin-top:1px">{{.String "artist.artistName"}}</div>
                           {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{slice $rd 0 10}}</div>
                         </div>
                       </a>
