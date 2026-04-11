@@ -14,3 +14,4 @@ resources:
   - ./glance/ks.yaml
   - ./immich/ks.yaml
   - ./nextcloud/ks.yaml
+  - ./actual-budget/ks.yaml
