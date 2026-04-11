@@ -826,13 +826,16 @@ data:
                   Authorization: Bearer $${GITHUB_TOKEN}
                   Accept: application/vnd.github+json
                 template: |
-                  {{ range .JSON.Array "@this" }}
+                  {{$prs := .JSON.Array "@this"}}
+                  {{if eq (len $prs) 0}}<div style="font-size:.75em;opacity:.5;padding:4px 0">Aucune PR en attente</div>
+                  {{else}}
+                  {{range $prs}}
                   <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.07)">
-                    <span style="font-size:.65em;opacity:.5;min-width:32px">#{{ .Get "number" }}</span>
-                    <a href="{{ .Get "html_url" }}" target="_blank" style="font-size:.72em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit">{{ .Get "title" }}</a>
+                    <span style="font-size:.65em;opacity:.5;min-width:32px">#{{.Int "number"}}</span>
+                    <a href="{{.String "html_url"}}" target="_blank" style="font-size:.72em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit">{{.String "title"}}</a>
                   </div>
-                  {{ end }}
-                  {{ if eq (len (.JSON.Array "@this")) 0 }}<div style="font-size:.75em;opacity:.5;padding:4px 0">Aucune PR en attente</div>{{ end }}
+                  {{end}}
+                  {{end}}
 
               - type: releases
                 title: Nouvelles versions
