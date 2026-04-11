@@ -13,3 +13,4 @@ resources:
   - ./audiobookshelf/ks.yaml
   - ./emby/ks.yaml
   - ./seerr/ks.yaml
+  - ./navidrome/ks.yaml
