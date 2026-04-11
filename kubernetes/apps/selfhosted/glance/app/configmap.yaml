@@ -809,7 +809,7 @@ data:
                   Authorization: Bearer $${GITHUB_TOKEN}
                   Accept: application/vnd.github+json
                 template: |
-                  {{ range .JSON.Array }}
+                  {{ range .JSON.Array "@this" }}
                   <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.07)">
                     <span style="font-size:.65em;opacity:.5;min-width:32px">#{{ .Get "number" }}</span>
                     <a href="{{ .Get "html_url" }}" target="_blank" style="font-size:.72em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit">{{ .Get "title" }}</a>
