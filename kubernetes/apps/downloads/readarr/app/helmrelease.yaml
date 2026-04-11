@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/readarr
-              tag: 0.4.12.2753@sha256:8bef9a3f289e97371951005b3c8da7fa1c35b7290fb5f694e9cdeadefce24446
+              tag: 0.4.18.2805@sha256:440dc56b904d7363468c1b19e60ccd9dd18b69bdccdb9712d5718779cc48d279
             env:
               READARR__APP__INSTANCENAME: Readarr
               READARR__AUTH__APIKEY:
