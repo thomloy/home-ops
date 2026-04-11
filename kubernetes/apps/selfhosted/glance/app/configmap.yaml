@@ -48,7 +48,7 @@ data:
                     url: https://status.${SECRET_DOMAIN}
                     icon: di:gatus
                   - title: Flux
-                    url: http://source-controller.flux-system.svc.cluster.local:80
+                    url: https://flux-webhook.${SECRET_DOMAIN}
                     icon: di:flux-cd
 
           # Col 2 : search + services + reddit
@@ -718,7 +718,7 @@ data:
                     url: https://budget.${SECRET_DOMAIN}
                     icon: si:actualbudget
                   - title: Flux
-                    url: http://source-controller.flux-system.svc.cluster.local:80
+                    url: https://flux-webhook.${SECRET_DOMAIN}
                     icon: di:flux-cd
 
           - size: small
