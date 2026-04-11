@@ -815,7 +815,7 @@ data:
                     <a href="{{ .Get "html_url" }}" target="_blank" style="font-size:.72em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit">{{ .Get "title" }}</a>
                   </div>
                   {{ end }}
-                  {{ if eq (len .JSON.Array) 0 }}<div style="font-size:.75em;opacity:.5;padding:4px 0">Aucune PR en attente</div>{{ end }}
+                  {{ if eq (len (.JSON.Array "@this")) 0 }}<div style="font-size:.75em;opacity:.5;padding:4px 0">Aucune PR en attente</div>{{ end }}
 
               - type: releases
                 title: Nouvelles versions
