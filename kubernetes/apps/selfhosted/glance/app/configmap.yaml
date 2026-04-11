@@ -105,6 +105,9 @@ data:
                       - title: IT-Tools
                         url: http://it-tools.selfhosted.svc.cluster.local:8080
                         icon: di:it-tools
+                      - title: Actual Budget
+                        url: http://actual-budget.selfhosted.svc.cluster.local:5006
+                        icon: si:actualbudget
 
               - type: group
                 widgets:
@@ -210,6 +213,9 @@ data:
                       - title: IT-Tools
                         url: https://it-tools.${SECRET_DOMAIN}
                         icon: di:it-tools
+                      - title: Actual Budget
+                        url: https://budget.${SECRET_DOMAIN}
+                        icon: si:actualbudget
 
       # ── Media ──────────────────────────────────────────────────────────────
       - name: media
@@ -708,6 +714,9 @@ data:
                   - title: IT-Tools
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
                     icon: di:it-tools
+                  - title: Actual Budget
+                    url: http://actual-budget.selfhosted.svc.cluster.local:5006
+                    icon: si:actualbudget
                   - title: Flux
                     url: http://source-controller.flux-system.svc.cluster.local:80
                     icon: di:flux-cd

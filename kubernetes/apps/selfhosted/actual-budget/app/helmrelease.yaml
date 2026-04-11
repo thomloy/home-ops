@@ -57,7 +57,7 @@ spec:
             ui:
               hide-hostname: true
         hostnames:
-          - actual.${SECRET_DOMAIN}
+          - budget.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-internal
             namespace: network
