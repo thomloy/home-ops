@@ -556,7 +556,7 @@ data:
                       </div>
                       {{end}}
                       <div class="gls-section-hdr">ALBUMS RECHERCHÉS</div>
-                      <div id="glance-ldr" class="gls-trigger" data-k="$${LIDARR_API_KEY}" onanimationstart="(function(el){fetch('http://lidarr.downloads.svc.cluster.local:8686/api/v1/wanted/missing?apikey='+el.dataset.k+'&pageSize=10&sortKey=releaseDate&sortDirection=desc').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';(d.records||[]).forEach(function(a){h+='<div style=\'display:flex;gap:8px;align-items:center;padding:5px 8px;background:rgba(0,0,0,.06);border-radius:5px\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+a.title+'</div><div style=\'font-size:.7em;opacity:.65\'>'+(a.artistName||'')+'</div></div></div>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album manquant</div>';});})(this)">Chargement...</div>
+                      <div id="glance-ldr" class="gls-trigger" data-k="$${LIDARR_API_KEY}" onanimationstart="(function(el){fetch('http://lidarr.downloads.svc.cluster.local:8686/api/v1/wanted/missing?apikey='+el.dataset.k+'&pageSize=10&sortKey=releaseDate&sortDirection=descending').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';(d.records||[]).forEach(function(a){h+='<div style=\'display:flex;gap:8px;align-items:center;padding:5px 8px;background:rgba(0,0,0,.06);border-radius:5px\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+a.title+'</div><div style=\'font-size:.7em;opacity:.65\'>'+(a.artistName||'')+'</div></div></div>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album manquant</div>';}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur de chargement</div>';});})(this)">Chargement...</div>
 
           - size: small
             widgets:
@@ -720,6 +720,30 @@ data:
                           <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
                           <div style="font-size:.7em;opacity:.65;margin-top:1px">{{.String "artist.artistName"}}</div>
                           {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{slice $rd 0 10}}</div>
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+                      {{end}}
+
+                  - type: custom-api
+                    title: Musique
+                    allow-insecure-html: true
+                    cache: 6h
+                    url: "https://api.deezer.com/chart/0/albums?limit=9"
+                    template: |
+                      <div class="gls-section-hdr">TOP ALBUMS</div>
+                      {{$items := .JSON.Array "data"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun album</div>
+                      {{else}}
+                      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
+                      {{range $items}}
+                      <a href="{{.String "link"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        <img src="{{.String "cover_medium"}}" style="width:100%;aspect-ratio:1/1;object-fit:cover">
+                        <div style="padding:4px">
+                          <div style="font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{.String "title"}}</div>
+                          <div style="font-size:.65em;opacity:.6;margin-top:1px">{{.String "artist.name"}}</div>
                         </div>
                       </a>
                       {{end}}
