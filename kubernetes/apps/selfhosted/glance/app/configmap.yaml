@@ -99,6 +99,9 @@ data:
                       - title: Mealie
                         url: http://tandoor.default.svc.cluster.local:8080
                         icon: si:tandoorrecipes
+                      - title: Nextcloud
+                        url: http://nextcloud-app.selfhosted.svc.cluster.local:80
+                        icon: si:nextcloud
                       - title: IT-Tools
                         url: http://it-tools.selfhosted.svc.cluster.local:8080
                         icon: di:it-tools
@@ -201,6 +204,9 @@ data:
                       - title: Tandoor
                         url: https://tandoor.${SECRET_DOMAIN}
                         icon: si:tandoorrecipes
+                      - title: Nextcloud
+                        url: https://nextcloud.${SECRET_DOMAIN}
+                        icon: si:nextcloud
                       - title: IT-Tools
                         url: https://it-tools.${SECRET_DOMAIN}
                         icon: di:it-tools
@@ -696,6 +702,9 @@ data:
                   - title: Tandoor
                     url: http://tandoor.default.svc.cluster.local:8080
                     icon: si:tandoorrecipes
+                  - title: Nextcloud
+                    url: http://nextcloud-app.selfhosted.svc.cluster.local:80
+                    icon: si:nextcloud
                   - title: IT-Tools
                     url: http://it-tools.selfhosted.svc.cluster.local:8080
                     icon: di:it-tools
