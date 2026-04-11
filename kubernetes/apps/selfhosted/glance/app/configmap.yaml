@@ -820,6 +820,7 @@ data:
             widgets:
               - type: custom-api
                 title: PRs Renovate
+                allow-insecure-html: true
                 cache: 10m
                 url: https://api.github.com/repos/thomloy/home-ops/pulls?state=open&per_page=20
                 headers:
