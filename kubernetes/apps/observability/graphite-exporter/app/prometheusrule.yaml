@@ -11,55 +11,55 @@ spec:
       rules:
 
         # =========================
-        # UPS sur batterie + < 20 min
+        # Batterie faible (< 20 %) + runtime < 20 min
         # =========================
         - alert: UPSOnBatteryLowRuntime
           expr: |
-            graphite_truenas_nas_ups_on_battery == 1
+            truenas_nas_nut_ups_charge_charge <= 80
             and
-            graphite_truenas_nas_ups_battery_runtime <= 1200
-          for: 5m
+            truenas_nas_nut_ups_runtime_runtime <= 1200
+          for: 2m
           labels:
             severity: critical
           annotations:
-            summary: "UPS {{ $labels.instance }} running on battery"
-            description: "UPS is on battery with less than 20 minutes of runtime remaining"
-
-        # =========================
-        # Batterie à remplacer
-        # =========================
-        - alert: UPSBatteryReplace
-          expr: |
-            graphite_truenas_nas_ups_battery_health != 1
-          for: 5m
-          labels:
-            severity: critical
-          annotations:
-            summary: "UPS {{ $labels.instance }} battery needs replacement"
-            description: "UPS reports battery health problem"
+            summary: "UPS sur batterie, autonomie critique"
+            description: "Charge {{ $value }}% — moins de 20 minutes d'autonomie"
 
         # =========================
         # Batterie faible (< 20 %)
         # =========================
         - alert: UPSLowBatteryCharge
           expr: |
-            graphite_truenas_nas_ups_battery_charge <= 20
-          for: 5m
+            truenas_nas_nut_ups_charge_charge <= 20
+          for: 2m
           labels:
             severity: warning
           annotations:
-            summary: "UPS {{ $labels.instance }} battery low"
-            description: "UPS battery charge below 20%"
+            summary: "UPS batterie faible"
+            description: "Batterie UPS à {{ $value }}%"
+
+        # =========================
+        # Tension d'entrée anormale (coupure secteur)
+        # =========================
+        - alert: UPSInputVoltageLow
+          expr: |
+            truenas_nas_nut_ups_input_voltage_voltage < 200
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "UPS tension secteur anormale"
+            description: "Tension d'entrée à {{ $value }}V (normal ~230V)"
 
         # =========================
         # UPS non joignable
         # =========================
         - alert: UPSExporterDown
           expr: |
-            absent(graphite_truenas_nas_ups_status)
+            absent(truenas_nas_nut_ups_charge_charge)
           for: 5m
           labels:
             severity: critical
           annotations:
-            summary: "UPS metrics missing"
-            description: "No UPS metrics received"
+            summary: "UPS métriques manquantes"
+            description: "Aucune métrique UPS reçue depuis 5 minutes"
