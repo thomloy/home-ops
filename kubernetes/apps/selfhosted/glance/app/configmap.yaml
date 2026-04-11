@@ -823,9 +823,6 @@ data:
                 allow-insecure-html: true
                 cache: 10m
                 url: https://api.github.com/repos/thomloy/home-ops/pulls?state=open&per_page=20
-                headers:
-                  Authorization: Bearer $${GITHUB_TOKEN}
-                  Accept: application/vnd.github+json
                 template: |
                   {{$prs := .JSON.Array "@this"}}
                   {{if eq (len $prs) 0}}<div style="font-size:.75em;opacity:.5;padding:4px 0">Aucune PR en attente</div>
