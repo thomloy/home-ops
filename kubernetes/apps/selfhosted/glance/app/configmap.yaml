@@ -723,6 +723,34 @@ data:
 
           - size: small
             widgets:
+              - type: custom-api
+                title: PRs Renovate
+                cache: 10m
+                url: https://api.github.com/repos/thomloy/home-ops/pulls?state=open&per_page=20
+                headers:
+                  Authorization: Bearer $${GITHUB_TOKEN}
+                  Accept: application/vnd.github+json
+                template: |
+                  {{ range .JSON.Array }}
+                  <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+                    <span style="font-size:.65em;opacity:.5;min-width:32px">#{{ .Get "number" }}</span>
+                    <a href="{{ .Get "html_url" }}" target="_blank" style="font-size:.72em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit">{{ .Get "title" }}</a>
+                  </div>
+                  {{ end }}
+                  {{ if eq (len .JSON.Array) 0 }}<div style="font-size:.75em;opacity:.5;padding:4px 0">Aucune PR en attente</div>{{ end }}
+
+              - type: releases
+                title: Nouvelles versions
+                cache: 1h
+                token: $${GITHUB_TOKEN}
+                repositories:
+                  - TandoorRecipes/recipes
+                  - actualbudget/actual
+                  - glanceapp/glance
+                  - paperless-ngx/paperless-ngx
+                  - immich-app/immich
+                  - nextcloud/server
+
               - type: bookmarks
                 title: Liens rapides
                 groups:

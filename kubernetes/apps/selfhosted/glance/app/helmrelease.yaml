@@ -24,6 +24,12 @@ spec:
             envFrom:
               - secretRef:
                   name: glance-secret
+            env:
+              GITHUB_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: github-status-token-secret
+                    key: token
             resources:
               requests:
                 cpu: 10m
