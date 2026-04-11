@@ -97,7 +97,7 @@ data:
                         url: http://paperless.selfhosted.svc.cluster.local:8000
                         icon: di:paperless-ngx
                       - title: Mealie
-                        url: http://tandoor.default.svc.cluster.local:8080
+                        url: http://tandoor.default.svc.cluster.local:80
                         icon: si:tandoorrecipes
                       - title: Nextcloud
                         url: http://nextcloud-app.selfhosted.svc.cluster.local:80
@@ -700,7 +700,7 @@ data:
                     url: http://paperless.selfhosted.svc.cluster.local:8000
                     icon: di:paperless-ngx
                   - title: Tandoor
-                    url: http://tandoor.default.svc.cluster.local:8080
+                    url: http://tandoor.default.svc.cluster.local:80
                     icon: si:tandoorrecipes
                   - title: Nextcloud
                     url: http://nextcloud-app.selfhosted.svc.cluster.local:80
