@@ -107,19 +107,16 @@ Alternative solutions to the first two of these problems would be to host a Kube
 
 | Service                                   | Use                                                            | Cost           |
 |-------------------------------------------|----------------------------------------------------------------|----------------|
-| [1Password](https://1password.com/)       | Secrets with [External Secrets](https://external-secrets.io/)  | ~$65/yr        |
-| [Cloudflare](https://www.cloudflare.com/) | Domain and S3                                                  | ~$50/yr        |
-| [GCP](https://cloud.google.com/)          | Voice interactions with Home Assistant over Google Assistant   | Free           |
+| [1Password](https://1password.com/)       | Secrets with [External Secrets](https://external-secrets.io/)  | ~€65/yr        |
 | [GitHub](https://github.com/)             | Hosting this repository and continuous integration/deployments | Free           |
-| [Migadu](https://migadu.com/)             | Email hosting                                                  | ~$20/yr        |
-| [Pushover](https://pushover.net/)         | Kubernetes Alerts and application notifications                | $5 OTP         |
-|                                           |                                                                | Total: ~$10/mo |
+| [Pushover](https://pushover.net/)         | Kubernetes Alerts and application notifications                | €5 OTP         |
+|                                           |                                                                | Total: ~€5/mo |
 
 ---
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif" alt="🌎" width="20" height="20"> DNS
 
-In my cluster there are two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) running. One for syncing private DNS records to my `UDM Pro Max` using [ExternalDNS webhook provider for UniFi](https://github.com/kashalls/external-dns-unifi-webhook), while another instance syncs public DNS to `Cloudflare`. This setup is managed by creating ingresses with two specific classes: `internal` for private DNS and `external` for public DNS. The `external-dns` instances then syncs the DNS records to their respective platforms accordingly.
+In my cluster there are two instances of [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) running. One for syncing private DNS records to my `OPNsense router` using [ExternalDNS webhook](https://github.com/kashalls/external-dns-unifi-webhook), while another instance syncs public DNS to `Cloudflare`. This setup is managed by creating ingresses with two specific classes: `internal` for private DNS and `external` for public DNS. The `external-dns` instances then syncs the DNS records to their respective platforms accordingly.
 
 ---
 
@@ -131,14 +128,14 @@ In my cluster there are two instances of [ExternalDNS](https://github.com/kubern
   <img src="" align="center" width="250px" alt="rack" />
 </details>
 
-| Device                      | Num | OS Disk Size | Data Disk Size         | Ram  | OS            | Function                |
-|-----------------------------|-----|--------------|------------------------|------|---------------|-------------------------|
-| Minisforum MS-01            | 3   | 256GB SSD    | 1TB (rook-ceph)        | 64GB | Talos         | Kubernetes              |
-| NAS - N150 Motherboard      | 1   | 1TB SSD      | 4x4TB ZFS              | 16GB | TrueNAS SCALE | NFS + Backup Server     |
-| JetKVM                      | 3   | -            | -                      | -    | -             | KVM for Kubernetes      |
-| Lenovo m720q                | 1   | 256GB SSD    | -                      | -    | OPNsense      | Router                  |
-| Mikrotik CRS310-8G+2S+IN    | 1   | -            | -                      | -    | -             | 2.5Gb  Switch           |
-| EATON 3S 850                | 1   | -            | -                      | -    | -             | UPS                     |
+| Device                   | Num | OS Disk Size | Data Disk Size     | Ram  | OS            | Function              |
+|--------------------------|-----|--------------|--------------------|------|---------------|-----------------------|
+| Minisforum MS-01         | 3   | 256GB SSD    | 3x1TB (rook-ceph)  | 96GB | Talos         | Kubernetes            |
+| NAS - N150 Motherboard   | 1   | 1TB SSD      | 4x4TB ZFS          | 16GB | TrueNAS SCALE | NFS + Backup Server   |
+| JetKVM                   | 3   | -            | -                  | -    | -             | KVM for Kubernetes    |
+| Lenovo m720q             | 1   | 256GB SSD    | -                  | -    | OPNsense      | Router                |
+| Mikrotik CRS310-8G+2S+IN | 1   | -            | -                  | -    | -             | 2.5Gb  Switch         |
+| EATON 3S 850             | 1   | -            | -                  | -    | -             | UPS                   |
 
 ---
 
@@ -160,7 +157,7 @@ In my cluster there are two instances of [ExternalDNS](https://github.com/kubern
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f64f/512.gif" alt="🙏" width="20" height="20"> Gratitude and Thanks
 
-Thanks to all the people who donate their time to the [Home Operations](https://discord.gg/home-operations) Discord community. 
+Thanks to all the people who donate their time to the [Home Operations](https://discord.gg/home-operations) Discord community.
 Be sure to check out [kubesearch.dev](https://kubesearch.dev/) for ideas on how to deploy applications or get ideas on what you could deploy.
 
 ---
