@@ -42,7 +42,7 @@ _... managed with Flux, Renovate, and GitHub Actions_ <img src="https://fonts.gs
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4a1/512.gif" alt="💡" width="20" height="20"> Overview
 
-Welcome to my home operations repository, this is a mono repository for my home infrastructure and Kubernetes cluster. I try to adhere to Infrastructure as Code (IaC) and GitOps practices using tools like [Ansible](https://www.ansible.com/), [Terraform](https://www.terraform.io/), [Kubernetes](https://kubernetes.io/), [Flux](https://github.com/fluxcd/flux2), [Renovate](https://github.com/renovatebot/renovate), and [GitHub Actions](https://github.com/features/actions).
+Welcome to my home operations repository, this is a mono repository for my home infrastructure and Kubernetes cluster. I try to adhere to Infrastructure as Code (IaC) and GitOps practices using tools like [Ansible](https://www.ansible.com/), [Kubernetes](https://kubernetes.io/), [Flux](https://github.com/fluxcd/flux2), [Renovate](https://github.com/renovatebot/renovate), and [GitHub Actions](https://github.com/features/actions). Secrets are encrypted at rest with [SOPS](https://github.com/getsops/sops) and [Age](https://github.com/FiloSottile/age).
 
 ---
 
@@ -74,6 +74,11 @@ This Git repository contains the following directories under [Kubernetes](./kube
 ├── 📁 apps       # applications
 ├── 📁 components # re-useable kustomize components
 └── 📁 flux       # flux system configuration
+📁 ansible
+├── 📁 inventory  # hosts and group_vars
+└── 📁 playbooks  # bootstrap, nas, network
+📁 talos          # Talos OS node configurations
+📁 templates      # Jinja2 templates (makejinja)
 ```
 
 ### Flux Workflow
