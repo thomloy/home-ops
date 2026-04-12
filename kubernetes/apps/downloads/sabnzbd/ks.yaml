@@ -20,7 +20,7 @@ spec:
     substitute:
       APP: sabnzbd
       VOLSYNC_CLAIM: sabnzbd-config
-      VOLSYNC_CAPACITY: 2Gi
+      VOLSYNC_CAPACITY: 5Gi
   prune: true
   sourceRef:
     kind: GitRepository
