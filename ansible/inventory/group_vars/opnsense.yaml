@@ -1,0 +1,56 @@
+---
+# ansible-vault encrypt_string 'YOUR_KEY' --name 'opnsense_api_key'
+opnsense_api_key: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  # remplacer par: ansible-vault encrypt_string 'YOUR_KEY' --name 'opnsense_api_key'
+
+opnsense_api_secret: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  # remplacer par: ansible-vault encrypt_string 'YOUR_SECRET' --name 'opnsense_api_secret'
+
+# Firewall aliases
+opnsense_aliases:
+  - name: "kubernetes_nodes"
+    type: host
+    content:
+      - "192.168.42.41"
+      - "192.168.42.42"
+      - "192.168.42.43"
+    description: "Talos nodes"
+  - name: "kubernetes_pods"
+    type: network
+    content:
+      - "10.42.0.0/16"
+    description: "Pod CIDR"
+  - name: "kubernetes_services"
+    type: network
+    content:
+      - "10.43.0.0/16"
+    description: "Service CIDR"
+  - name: "nas"
+    type: host
+    content:
+      - "192.168.42.50"
+    description: "TrueNAS SCALE"
+
+# Règles LAN → Kubernetes
+opnsense_firewall_rules:
+  - description: "Allow LAN to Kubernetes API"
+    interface: "lan"
+    source_net: "lan"
+    destination_net: "192.168.42.100"
+    destination_port: "6443"
+    protocol: "TCP"
+    action: "pass"
+  - description: "Allow Kubernetes nodes outbound"
+    interface: "lan"
+    source_net: "kubernetes_nodes"
+    destination_net: "any"
+    action: "pass"
+  - description: "Allow NAS NFS from Kubernetes"
+    interface: "lan"
+    source_net: "kubernetes_nodes"
+    destination_net: "nas"
+    destination_port: "2049"
+    protocol: "TCP/UDP"
+    action: "pass"

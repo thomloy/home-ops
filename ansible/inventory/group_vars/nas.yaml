@@ -1,0 +1,46 @@
+---
+# ansible-vault encrypt_string 'ton-api-key' --name 'truenas_api_key'
+truenas_api_key: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  # remplacer par: ansible-vault encrypt_string 'YOUR_API_KEY' --name 'truenas_api_key'
+
+# Datasets ZFS à créer sur le pool principal
+truenas_datasets:
+  - name: "data/kubernetes"
+    comments: "Kubernetes NFS exports"
+    children:
+      - name: "data/kubernetes/volsync"
+        comments: "VolSync backups Kopia"
+      - name: "data/kubernetes/media"
+        comments: "Media files (Emby, Audiobookshelf)"
+      - name: "data/kubernetes/downloads"
+        comments: "Download temp storage"
+
+# Exports NFS pour le cluster
+truenas_nfs_shares:
+  - path: "/mnt/data/kubernetes/volsync"
+    comment: "VolSync backups"
+    networks:
+      - "192.168.42.0/24"
+    maproot_user: "root"
+    maproot_group: "wheel"
+  - path: "/mnt/data/kubernetes/media"
+    comment: "Media library"
+    networks:
+      - "192.168.42.0/24"
+    maproot_user: "root"
+    maproot_group: "wheel"
+  - path: "/mnt/data/kubernetes/downloads"
+    comment: "Downloads"
+    networks:
+      - "192.168.42.0/24"
+    maproot_user: "root"
+    maproot_group: "wheel"
+
+# Shares SMB (accès depuis les autres machines du réseau)
+truenas_smb_shares:
+  - name: "media"
+    path: "/mnt/data/kubernetes/media"
+    comment: "Media library"
+    browsable: true
+    readonly: false

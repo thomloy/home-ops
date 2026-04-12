@@ -1,0 +1,168 @@
+---
+# Configuration TrueNAS SCALE via API REST v2.
+# Crée les datasets ZFS, exports NFS et shares SMB.
+#
+# Usage:
+#   ansible-playbook ansible/playbooks/nas.yaml --ask-vault-pass
+#   ansible-playbook ansible/playbooks/nas.yaml --tags nfs   # seulement NFS
+#
+# Prérequis:
+#   1. Créer un API key dans TrueNAS : System > API Keys
+#   2. Encrypter la clé : ansible-vault encrypt_string 'YOUR_KEY' --name 'truenas_api_key'
+#   3. Remplacer la valeur dans inventory/group_vars/nas.yaml
+
+- name: Configure TrueNAS SCALE
+  hosts: nas
+  gather_facts: false
+  vars:
+    api_headers:
+      Authorization: "Bearer {{ truenas_api_key }}"
+      Content-Type: "application/json"
+
+  tasks:
+    # ── Datasets ZFS ──────────────────────────────────────────────────────────
+    - name: Create ZFS datasets
+      tags: [datasets]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/pool/dataset"
+        method: POST
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          name: "{{ item.name }}"
+          comments: "{{ item.comments | default('') }}"
+          atime: "off"
+          compression: "lz4"
+        status_code: [200, 201, 422]  # 422 = already exists
+        validate_certs: false
+      loop: "{{ truenas_datasets | subelements('children', skip_missing=True) | map(attribute='1') | list
+                + truenas_datasets }}"
+      loop_control:
+        label: "{{ item.name }}"
+      register: dataset_result
+      changed_when: dataset_result.status == 200
+
+    # ── Services NFS ──────────────────────────────────────────────────────────
+    - name: Enable NFS service
+      tags: [nfs]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/service/id/nfs"
+        method: PUT
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          enable: true
+        validate_certs: false
+      changed_when: false
+
+    - name: Start NFS service
+      tags: [nfs]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/service/start"
+        method: POST
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          service: "nfs"
+        validate_certs: false
+      changed_when: false
+
+    - name: Get existing NFS shares
+      tags: [nfs]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/sharing/nfs"
+        method: GET
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: existing_nfs
+
+    - name: Create NFS shares
+      tags: [nfs]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/sharing/nfs"
+        method: POST
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          path: "{{ item.path }}"
+          comment: "{{ item.comment }}"
+          networks: "{{ item.networks }}"
+          maproot_user: "{{ item.maproot_user | default('root') }}"
+          maproot_group: "{{ item.maproot_group | default('wheel') }}"
+          enabled: true
+        status_code: [200, 201]
+        validate_certs: false
+      loop: "{{ truenas_nfs_shares }}"
+      loop_control:
+        label: "{{ item.path }}"
+      when: item.path not in (existing_nfs.json | map(attribute='path') | list)
+      changed_when: true
+
+    # ── Services SMB ──────────────────────────────────────────────────────────
+    - name: Enable SMB service
+      tags: [smb]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/service/id/cifs"
+        method: PUT
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          enable: true
+        validate_certs: false
+      changed_when: false
+
+    - name: Get existing SMB shares
+      tags: [smb]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/sharing/smb"
+        method: GET
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: existing_smb
+
+    - name: Create SMB shares
+      tags: [smb]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/sharing/smb"
+        method: POST
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          name: "{{ item.name }}"
+          path: "{{ item.path }}"
+          comment: "{{ item.comment | default('') }}"
+          browsable: "{{ item.browsable | default(true) }}"
+          readonly: "{{ item.readonly | default(false) }}"
+          enabled: true
+        status_code: [200, 201]
+        validate_certs: false
+      loop: "{{ truenas_smb_shares }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: item.name not in (existing_smb.json | map(attribute='name') | list)
+      changed_when: true
+
+    # ── Snapshots automatiques ────────────────────────────────────────────────
+    - name: Create snapshot task for kubernetes datasets
+      tags: [snapshots]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/pool/snapshottask"
+        method: POST
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          dataset: "data/kubernetes"
+          recursive: true
+          lifetime_value: 7
+          lifetime_unit: "DAY"
+          naming_schema: "auto-%Y-%m-%d_%H-%M"
+          schedule:
+            minute: "0"
+            hour: "2"
+            dom: "*"
+            month: "*"
+            dow: "*"
+          enabled: true
+        status_code: [200, 201, 422]
+        validate_certs: false
+      changed_when: false

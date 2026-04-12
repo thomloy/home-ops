@@ -1,0 +1,8 @@
+---
+cluster_name: "home-ops"
+cluster_api_addr: "192.168.42.100"
+cluster_endpoint: "https://192.168.42.100:6443"
+talos_config_dir: "{{ playbook_dir }}/../../talos/clusterconfig"
+github_repo: "thomloy/home-ops"
+github_branch: "main"
+cloudflare_domain: "kryzql.space"

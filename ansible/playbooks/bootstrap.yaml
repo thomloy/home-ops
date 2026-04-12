@@ -1,0 +1,135 @@
+---
+# Bootstrap complet du cluster Talos + Flux depuis zéro.
+# Prérequis : talosctl, kubectl, flux CLI installés (gérés via mise)
+#
+# Usage:
+#   ansible-playbook ansible/playbooks/bootstrap.yaml
+#   ansible-playbook ansible/playbooks/bootstrap.yaml --tags flux   # seulement Flux
+
+- name: Generate Talos configs
+  hosts: localhost
+  gather_facts: false
+  tags: [talos, configs]
+  tasks:
+    - name: Check talconfig.yaml exists
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../../talos/talconfig.yaml"
+      register: talconfig
+
+    - name: Fail if talconfig.yaml missing
+      ansible.builtin.fail:
+        msg: "talos/talconfig.yaml not found"
+      when: not talconfig.stat.exists
+
+    - name: Generate Talos configs via talhelper
+      ansible.builtin.command:
+        cmd: talhelper genconfig
+        chdir: "{{ playbook_dir }}/../../talos"
+      changed_when: true
+
+- name: Apply Talos configs to nodes
+  hosts: kubernetes
+  gather_facts: false
+  serial: 1
+  tags: [talos, apply]
+  tasks:
+    - name: Apply config to node (insecure — first apply)
+      delegate_to: localhost
+      ansible.builtin.command:
+        cmd: >
+          talosctl apply-config
+          --nodes {{ ansible_host }}
+          --file {{ talos_config_dir }}/{{ cluster_name }}-{{ inventory_hostname }}.yaml
+          --insecure
+      register: apply_result
+      changed_when: true
+      # --insecure uniquement pour le bootstrap initial
+      # enlever pour les re-applies sur cluster existant
+
+    - name: Wait for node API to be ready
+      delegate_to: localhost
+      ansible.builtin.command:
+        cmd: talosctl version --nodes {{ ansible_host }}
+      register: version_check
+      until: version_check.rc == 0
+      retries: 30
+      delay: 10
+      changed_when: false
+
+- name: Bootstrap etcd
+  hosts: kubernetes
+  gather_facts: false
+  tags: [talos, etcd]
+  tasks:
+    - name: Bootstrap etcd on first control-plane
+      delegate_to: localhost
+      ansible.builtin.command:
+        cmd: talosctl bootstrap --nodes {{ ansible_host }}
+      when: talos_bootstrap | bool
+      register: bootstrap_result
+      changed_when: bootstrap_result.rc == 0
+      failed_when:
+        - bootstrap_result.rc != 0
+        - '"etcd is already bootstrapped" not in bootstrap_result.stderr'
+
+    - name: Wait for Kubernetes API
+      delegate_to: localhost
+      ansible.builtin.command:
+        cmd: talosctl kubeconfig --nodes {{ ansible_host }} --force
+      register: kubeconfig_result
+      until: kubeconfig_result.rc == 0
+      retries: 30
+      delay: 10
+      when: talos_bootstrap | bool
+      changed_when: true
+
+    - name: Wait for all nodes to be Ready
+      delegate_to: localhost
+      ansible.builtin.command:
+        cmd: kubectl wait node --all --for=condition=Ready --timeout=300s
+      register: nodes_ready
+      until: nodes_ready.rc == 0
+      retries: 10
+      delay: 30
+      when: talos_bootstrap | bool
+      changed_when: false
+
+- name: Bootstrap Flux
+  hosts: localhost
+  gather_facts: false
+  tags: [flux]
+  tasks:
+    - name: Check GITHUB_TOKEN is set
+      ansible.builtin.fail:
+        msg: "GITHUB_TOKEN environment variable must be set"
+      when: lookup('env', 'GITHUB_TOKEN') == ''
+
+    - name: Check if Flux is already installed
+      ansible.builtin.command:
+        cmd: flux check --pre
+      register: flux_pre
+      changed_when: false
+      failed_when: false
+
+    - name: Bootstrap Flux
+      ansible.builtin.command:
+        cmd: >
+          flux bootstrap github
+          --owner={{ github_repo.split('/')[0] }}
+          --repository={{ github_repo.split('/')[1] }}
+          --branch={{ github_branch }}
+          --path=kubernetes/flux
+          --personal
+      environment:
+        GITHUB_TOKEN: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+      when: flux_pre.rc != 0
+      changed_when: true
+
+    - name: Wait for Flux to reconcile
+      ansible.builtin.command:
+        cmd: flux reconcile kustomization flux-system --with-source --timeout=5m
+      register: flux_reconcile
+      until: flux_reconcile.rc == 0
+      retries: 5
+      delay: 30
+      changed_when: false
