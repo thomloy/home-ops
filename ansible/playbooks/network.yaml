@@ -84,7 +84,31 @@
         label: "{{ item.hostname }}.{{ cloudflare_domain }}"
 
     # ── BGP (Cilium) ──────────────────────────────────────────────────────────
-    - name: Configure BGP neighbor for Cilium
+    - name: Enable FRR BGP daemon
+      tags: [bgp]
+      ansibleguy.opnsense.frr_bgp_general:
+        firewall: "{{ ansible_host }}"
+        api_key: "{{ opnsense_api_key }}"
+        api_secret: "{{ opnsense_api_secret }}"
+        as: "{{ bgp_router_asn }}"
+        router_id: "{{ bgp_router_ip }}"
+        enabled: true
+        ssl_verify: false
+
+    - name: Configure prefix list — accept LoadBalancer ranges from nodes
+      tags: [bgp]
+      ansibleguy.opnsense.frr_bgp_prefix_list:
+        firewall: "{{ ansible_host }}"
+        api_key: "{{ opnsense_api_key }}"
+        api_secret: "{{ opnsense_api_secret }}"
+        name: "kubernetes-lb"
+        seq: 10
+        action: "permit"
+        network: "{{ node_subnet }}"
+        ssl_verify: false
+        state: present
+
+    - name: Configure BGP neighbors (Kubernetes nodes)
       tags: [bgp]
       ansibleguy.opnsense.frr_bgp_neighbor:
         firewall: "{{ ansible_host }}"
