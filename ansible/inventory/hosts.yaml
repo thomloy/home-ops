@@ -25,10 +25,10 @@ all:
     nas:
       hosts:
         truenas:
-          ansible_host: 192.168.42.50   # TODO: remplacer par l'IP réelle du NAS
+          ansible_host: 192.168.42.44
           ansible_user: root
           ansible_ssh_private_key_file: "~/.ssh/id_ed25519"
-          truenas_api_url: "http://192.168.42.50/api/v2.0"
+          truenas_api_url: "http://192.168.42.44/api/v2.0"
           # truenas_api_key: défini dans group_vars/nas.yaml (vault)
 
     # Router OPNsense

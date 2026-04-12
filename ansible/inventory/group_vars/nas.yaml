@@ -1,8 +1,7 @@
 ---
-# ansible-vault encrypt_string 'ton-api-key' --name 'truenas_api_key'
-truenas_api_key: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  # remplacer par: ansible-vault encrypt_string 'YOUR_API_KEY' --name 'truenas_api_key'
+# Clé API TrueNAS — générer dans TrueNAS UI > Credentials > API Keys
+# Puis stocker dans 1Password sous l'item 'truenas', champ 'TRUENAS_API_KEY'
+truenas_api_key: "{{ lookup('community.general.onepassword', 'truenas', field='TRUENAS_API_KEY') }}"
 
 # Datasets ZFS à créer sur le pool principal
 truenas_datasets:

@@ -1,12 +1,7 @@
 ---
-# ansible-vault encrypt_string 'YOUR_KEY' --name 'opnsense_api_key'
-opnsense_api_key: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  # remplacer par: ansible-vault encrypt_string 'YOUR_KEY' --name 'opnsense_api_key'
-
-opnsense_api_secret: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  # remplacer par: ansible-vault encrypt_string 'YOUR_SECRET' --name 'opnsense_api_secret'
+# Clés OPNsense récupérées depuis 1Password (item: opnsense)
+opnsense_api_key: "{{ lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_KEY') }}"
+opnsense_api_secret: "{{ lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_SECRET') }}"
 
 # Firewall aliases
 opnsense_aliases:
@@ -30,7 +25,7 @@ opnsense_aliases:
   - name: "nas"
     type: host
     content:
-      - "192.168.42.50"
+      - "192.168.42.44"
     description: "TrueNAS SCALE"
 
 # Règles LAN → Kubernetes
