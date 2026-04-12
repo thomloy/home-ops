@@ -3,13 +3,13 @@
 # Crée les datasets ZFS, exports NFS et shares SMB.
 #
 # Usage:
-#   ansible-playbook ansible/playbooks/nas.yaml --ask-vault-pass
+#   ansible-playbook ansible/playbooks/nas.yaml
 #   ansible-playbook ansible/playbooks/nas.yaml --tags nfs   # seulement NFS
 #
 # Prérequis:
-#   1. Créer un API key dans TrueNAS : System > API Keys
-#   2. Encrypter la clé : ansible-vault encrypt_string 'YOUR_KEY' --name 'truenas_api_key'
-#   3. Remplacer la valeur dans inventory/group_vars/nas.yaml
+#   1. Créer un API key dans TrueNAS : profil utilisateur (haut droite) > API Keys
+#   2. Stocker dans 1Password (item: truenas, champ: TRUENAS_API_KEY)
+#   3. ansible-galaxy collection install -r requirements.yaml
 
 - name: Configure TrueNAS SCALE
   hosts: nas

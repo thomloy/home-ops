@@ -10,8 +10,8 @@
 #
 # Prérequis:
 #   1. Activer l'API dans OPNsense : System > Access > Users > ton user > API keys
-#   2. ansible-galaxy collection install ansibleguy.opnsense
-#   3. Encrypter les clés : ansible-vault encrypt_string 'KEY' --name 'opnsense_api_key'
+#   2. Stocker les clés dans 1Password (item: opnsense, champs: OPNSENSE_API_KEY / OPNSENSE_API_SECRET)
+#   3. ansible-galaxy collection install -r requirements.yaml
 
 - name: Configure OPNsense
   hosts: opnsense
@@ -72,16 +72,16 @@
         state: present
       loop:
         - hostname: "k8s"
-          ip: "192.168.42.100"
+          ip: "{{ cluster_api_addr }}"
           description: "Kubernetes API VIP"
         - hostname: "gateway"
-          ip: "192.168.42.110"
+          ip: "{{ cluster_gateway_internal }}"
           description: "Internal Envoy Gateway"
         - hostname: "truenas"
-          ip: "192.168.42.50"
+          ip: "{{ nas_ip }}"
           description: "TrueNAS SCALE NAS"
       loop_control:
-        label: "{{ item.hostname }}.kryzql.space"
+        label: "{{ item.hostname }}.{{ cloudflare_domain }}"
 
     # ── BGP (Cilium) ──────────────────────────────────────────────────────────
     - name: Configure BGP neighbor for Cilium
@@ -90,18 +90,18 @@
         firewall: "{{ ansible_host }}"
         api_key: "{{ opnsense_api_key }}"
         api_secret: "{{ opnsense_api_secret }}"
-        name: "kubernetes-nodes"
-        peer_ip: "192.168.42.41"  # node01 comme référence
+        name: "{{ item.name }}"
+        peer_ip: "{{ item.ip }}"
         remote_as: "64514"
         multi_hop: false
         ssl_verify: false
         state: present
       loop:
-        - ip: "192.168.42.41"
+        - ip: "{{ node01_ip }}"
           name: "node01"
-        - ip: "192.168.42.42"
+        - ip: "{{ node02_ip }}"
           name: "node02"
-        - ip: "192.168.42.43"
+        - ip: "{{ node03_ip }}"
           name: "node03"
       loop_control:
         label: "BGP {{ item.name }} ({{ item.ip }})"
