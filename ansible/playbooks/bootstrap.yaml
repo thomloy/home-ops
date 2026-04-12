@@ -11,10 +11,12 @@
   hosts: localhost
   gather_facts: false
   tags: [talos, configs]
+  vars:
+    talos_dir: "{{ playbook_dir }}/../../talos"
   tasks:
     - name: Check talconfig.yaml exists
       ansible.builtin.stat:
-        path: "{{ playbook_dir }}/../../talos/talconfig.yaml"
+        path: "{{ talos_dir }}/talconfig.yaml"
       register: talconfig
 
     - name: Fail if talconfig.yaml missing
@@ -22,10 +24,26 @@
         msg: "talos/talconfig.yaml not found"
       when: not talconfig.stat.exists
 
-    - name: Generate Talos configs via talhelper
+    # ── Generate talsecret.sops.yaml if not present (fresh install only) ─────
+    - name: Check talsecret.sops.yaml exists
+      ansible.builtin.stat:
+        path: "{{ talos_dir }}/talsecret.sops.yaml"
+      register: talsecret
+
+    - name: Generate and encrypt talsecret.sops.yaml
+      ansible.builtin.shell: >
+        talhelper gensecret |
+        sops --filename-override talos/talsecret.sops.yaml --encrypt /dev/stdin
+        > {{ talos_dir }}/talsecret.sops.yaml
+      when: not talsecret.stat.exists
+      changed_when: true
+
+    - name: Generate Talos node configs via talhelper
       ansible.builtin.command:
         cmd: talhelper genconfig
-        chdir: "{{ playbook_dir }}/../../talos"
+        chdir: "{{ talos_dir }}"
+      environment:
+        SOPS_AGE_KEY_FILE: "{{ playbook_dir }}/../../age.key"
       changed_when: true
 
 - name: Apply Talos configs to nodes
@@ -33,6 +51,8 @@
   gather_facts: false
   serial: 1
   tags: [talos, apply]
+  vars:
+    talosconfig_path: "{{ talos_config_dir }}/talosconfig"
   tasks:
     - name: Apply config to node (insecure — first apply)
       delegate_to: localhost
@@ -40,14 +60,18 @@
         cmd: >
           talosctl apply-config
           --nodes {{ ansible_host }}
-          --file {{ talos_config_dir }}/{{ cluster_name }}-{{ inventory_hostname }}.yaml
+          --file {{ talos_config_dir }}/{{ talos_cluster_name }}-{{ inventory_hostname }}.yaml
           --insecure
+      environment:
+        TALOSCONFIG: "{{ talosconfig_path }}"
       changed_when: true
 
-    - name: Wait for node API to be ready
+    - name: Wait for node Talos API to be ready
       delegate_to: localhost
       ansible.builtin.command:
         cmd: talosctl version --nodes {{ ansible_host }}
+      environment:
+        TALOSCONFIG: "{{ talosconfig_path }}"
       register: version_check
       until: version_check.rc == 0
       retries: 30
@@ -58,11 +82,15 @@
   hosts: kubernetes
   gather_facts: false
   tags: [talos, etcd]
+  vars:
+    talosconfig_path: "{{ talos_config_dir }}/talosconfig"
   tasks:
     - name: Bootstrap etcd on first control-plane
       delegate_to: localhost
       ansible.builtin.command:
         cmd: talosctl bootstrap --nodes {{ ansible_host }}
+      environment:
+        TALOSCONFIG: "{{ talosconfig_path }}"
       when: talos_bootstrap | bool
       register: bootstrap_result
       changed_when: bootstrap_result.rc == 0
@@ -74,6 +102,8 @@
       delegate_to: localhost
       ansible.builtin.command:
         cmd: talosctl kubeconfig --nodes {{ ansible_host }} --force
+      environment:
+        TALOSCONFIG: "{{ talosconfig_path }}"
       register: kubeconfig_result
       until: kubeconfig_result.rc == 0
       retries: 30
@@ -81,10 +111,12 @@
       when: talos_bootstrap | bool
       changed_when: true
 
-    - name: Wait for all nodes to be Ready
+    - name: Wait for all nodes to appear (Ready=False is expected — CNI not yet deployed)
       delegate_to: localhost
       ansible.builtin.command:
-        cmd: kubectl wait node --all --for=condition=Ready --timeout=300s
+        cmd: kubectl wait node --all --for=condition=Ready=False --timeout=300s
+      environment:
+        KUBECONFIG: "{{ playbook_dir }}/../../kubeconfig"
       register: nodes_ready
       until: nodes_ready.rc == 0
       retries: 10
@@ -96,25 +128,32 @@
   hosts: localhost
   gather_facts: false
   tags: [flux]
+  vars:
+    repo_dir: "{{ playbook_dir }}/../.."
+    kubeconfig_path: "{{ playbook_dir }}/../../kubeconfig"
   tasks:
     # ── Retrieve secrets from 1Password if not present locally ───────────────
-    - name: Retrieve age.key from 1Password (item: sops, field: SOPS_PRIVATE_KEY)
+    - name: Retrieve age.key from 1Password (item: sops / SOPS_PRIVATE_KEY)
       ansible.builtin.shell: >
-        op item get "{{ op_sops_item }}" --fields label="{{ op_sops_field }}"
-        > {{ playbook_dir }}/../../age.key
+        op item get "{{ op_sops_item }}"
+        --fields label="{{ op_sops_field }}"
+        --reveal
+        > {{ repo_dir }}/age.key
       args:
-        creates: "{{ playbook_dir }}/../../age.key"
+        creates: "{{ repo_dir }}/age.key"
 
-    - name: Retrieve 1password-credentials.json from 1Password (item: 1password, field: OP_CREDENTIALS_JSON)
+    - name: Retrieve 1password-credentials.json from 1Password (item: 1password / OP_CREDENTIALS_JSON)
       ansible.builtin.shell: >
-        op item get "{{ op_1password_item }}" --fields label="{{ op_1password_credentials_field }}"
-        > {{ playbook_dir }}/../../1password-credentials.json
+        op item get "{{ op_1password_item }}"
+        --fields label="{{ op_1password_credentials_field }}"
+        --reveal
+        > {{ repo_dir }}/1password-credentials.json
       args:
-        creates: "{{ playbook_dir }}/../../1password-credentials.json"
+        creates: "{{ repo_dir }}/1password-credentials.json"
 
     - name: Check age.key exists
       ansible.builtin.stat:
-        path: "{{ playbook_dir }}/../../age.key"
+        path: "{{ repo_dir }}/age.key"
       register: age_key
 
     - name: Fail if age.key missing
@@ -125,6 +164,8 @@
     # ── Check if Flux is already installed ───────────────────────────────────
     - name: Check if Flux is already installed
       ansible.builtin.command: flux check
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
       register: flux_check
       failed_when: false
       changed_when: false
@@ -132,6 +173,9 @@
     # ── Install Flux (idempotent — skipped if already running) ───────────────
     - name: Install Flux
       when: flux_check.rc != 0
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+        SOPS_AGE_KEY_FILE: "{{ repo_dir }}/age.key"
       block:
         - name: Create flux-system namespace
           ansible.builtin.command:
@@ -162,7 +206,7 @@
             cmd: >
               kubectl create secret generic sops-age
               --namespace=flux-system
-              --from-file=age.agekey={{ playbook_dir }}/../../age.key
+              --from-file=age.agekey={{ repo_dir }}/age.key
               --dry-run=client -o yaml
           register: sops_secret_yaml
           changed_when: false
@@ -178,7 +222,7 @@
             cmd: >
               kubectl create secret generic onepassword-credentials
               --namespace=external-secrets
-              --from-file=1password-credentials.json={{ playbook_dir }}/../../1password-credentials.json
+              --from-file=1password-credentials.json={{ repo_dir }}/1password-credentials.json
               --dry-run=client -o yaml
           register: op_secret_yaml
           changed_when: false
@@ -192,12 +236,14 @@
         - name: Run helmfile bootstrap (cilium → coredns → cert-manager → external-secrets → 1password → flux)
           ansible.builtin.command:
             cmd: helmfile apply
-            chdir: "{{ playbook_dir }}/../../bootstrap/helmfile.d"
+            chdir: "{{ repo_dir }}/bootstrap/helmfile.d"
           changed_when: true
 
     - name: Wait for Flux to reconcile cluster-apps
       ansible.builtin.command:
         cmd: flux reconcile kustomization cluster-apps --with-source --timeout=5m
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
       register: flux_reconcile
       until: flux_reconcile.rc == 0
       retries: 5

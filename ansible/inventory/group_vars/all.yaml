@@ -21,6 +21,7 @@ jetkvm2_ip: "{{ lookup('community.general.onepassword', 'cluster-network', field
 jetkvm3_ip: "{{ lookup('community.general.onepassword', 'cluster-network', field='JETKVM_3_IP') }}"
 graphite_ip: "{{ lookup('community.general.onepassword', 'cluster-network', field='GRAPHITE_IP') }}"
 talos_config_dir: "{{ playbook_dir }}/../../talos/clusterconfig"
+talos_cluster_name: "kubernetes"
 op_sops_item: "sops"
 op_sops_field: "SOPS_PRIVATE_KEY"
 op_1password_item: "1password"

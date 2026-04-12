@@ -23,58 +23,62 @@
         - op
         - sops
       changed_when: false
-      register: tool_check
-      failed_when: tool_check.rc != 0
 
     # ── 1Password CLI ─────────────────────────────────────────────────────────
     - name: Check 1Password CLI is authenticated
       ansible.builtin.command: op account get
       changed_when: false
-      register: op_auth
-      failed_when: op_auth.rc != 0
 
-    # ── Secrets 1Password ─────────────────────────────────────────────────────
-    - name: Check cluster-network secrets
-      ansible.builtin.assert:
-        that: "{{ item.value }} != ''"
-        fail_msg: "{{ item.msg }}"
-      loop:
-        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='CLUSTER_API_IP') }}"
-          msg: "CLUSTER_API_IP manquant dans 1Password (item: cluster-network)"
-        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='NAS_IP') }}"
-          msg: "NAS_IP manquant dans 1Password (item: cluster-network)"
-        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='BGP_ROUTER_IP') }}"
-          msg: "BGP_ROUTER_IP manquant dans 1Password (item: cluster-network)"
-        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='SECRET_DOMAIN') }}"
-          msg: "SECRET_DOMAIN manquant dans 1Password (item: cluster-network)"
-        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='NODE01_MAC') }}"
-          msg: "NODE01_MAC manquant dans 1Password (item: cluster-network)"
-        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='NODE02_MAC') }}"
-          msg: "NODE02_MAC manquant dans 1Password (item: cluster-network)"
-        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='NODE03_MAC') }}"
-          msg: "NODE03_MAC manquant dans 1Password (item: cluster-network)"
-
-    - name: Check TrueNAS secrets
-      ansible.builtin.assert:
-        that: "{{ lookup('community.general.onepassword', 'truenas', field='TRUENAS_API_KEY') }} != ''"
-        fail_msg: "TRUENAS_API_KEY manquant dans 1Password (item: truenas)"
-
-    - name: Check OPNsense secrets
+    # ── Secrets 1Password : cluster-network ──────────────────────────────────
+    - name: Check cluster-network secrets in 1Password
       ansible.builtin.assert:
         that:
-          - "{{ lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_KEY') }} != ''"
-          - "{{ lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_SECRET') }} != ''"
+          - lookup('community.general.onepassword', 'cluster-network', field='CLUSTER_API_IP') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='NAS_IP') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='BGP_ROUTER_IP') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='NODE_IP_1') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='NODE_IP_2') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='NODE_IP_3') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='NODE01_MAC') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='NODE02_MAC') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='NODE03_MAC') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='SECRET_DOMAIN') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='NODE_SUBNET') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='POD_CIDR') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='SERVICE_CIDR') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='BGP_NODE_ASN') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='BGP_ROUTER_ASN') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='GRAPHITE_IP') | length > 0
+        fail_msg: "Un ou plusieurs secrets manquent dans 1Password (item: cluster-network)"
+
+    # ── Secrets 1Password : TrueNAS ───────────────────────────────────────────
+    - name: Check TrueNAS secret in 1Password
+      ansible.builtin.assert:
+        that:
+          - lookup('community.general.onepassword', 'truenas', field='TRUENAS_API_KEY') | length > 0
+        fail_msg: "TRUENAS_API_KEY manquant dans 1Password (item: truenas)"
+
+    # ── Secrets 1Password : OPNsense ──────────────────────────────────────────
+    - name: Check OPNsense secrets in 1Password
+      ansible.builtin.assert:
+        that:
+          - lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_KEY') | length > 0
+          - lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_SECRET') | length > 0
         fail_msg: "OPNSENSE_API_KEY/SECRET manquant dans 1Password (item: opnsense)"
 
+    # ── Secrets 1Password : SOPS age key ─────────────────────────────────────
     - name: Check SOPS age key accessible (item: sops / SOPS_PRIVATE_KEY)
       ansible.builtin.command: >
-        op item get "{{ op_sops_item }}" --fields label="{{ op_sops_field }}"
+        op item get "{{ op_sops_item }}" --fields label="{{ op_sops_field }}" --reveal
       changed_when: false
+      no_log: true
 
+    # ── Secrets 1Password : 1Password credentials ─────────────────────────────
     - name: Check 1Password credentials accessible (item: 1password / OP_CREDENTIALS_JSON)
       ansible.builtin.command: >
-        op item get "{{ op_1password_item }}" --fields label="{{ op_1password_credentials_field }}"
+        op item get "{{ op_1password_item }}" --fields label="{{ op_1password_credentials_field }}" --reveal
       changed_when: false
+      no_log: true
 
     - name: All prerequisites OK
       ansible.builtin.debug:
