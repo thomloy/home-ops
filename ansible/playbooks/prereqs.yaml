@@ -34,6 +34,8 @@
       ansible.builtin.assert:
         that:
           - lookup('community.general.onepassword', 'cluster-network', field='CLUSTER_API_IP') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='CLUSTER_GATEWAY_INTERNAL_IP') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='CLUSTER_GATEWAY_EXTERNAL_IP') | length > 0
           - lookup('community.general.onepassword', 'cluster-network', field='NAS_IP') | length > 0
           - lookup('community.general.onepassword', 'cluster-network', field='BGP_ROUTER_IP') | length > 0
           - lookup('community.general.onepassword', 'cluster-network', field='NODE_IP_1') | length > 0

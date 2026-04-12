@@ -157,9 +157,12 @@
         - hostname: k8s
           ip: "{{ cluster_api_addr }}"
           description: "Kubernetes API VIP"
-        - hostname: gateway
+        - hostname: internal
           ip: "{{ cluster_gateway_internal }}"
-          description: "Internal Envoy Gateway"
+          description: "Internal Envoy Gateway (envoy-internal)"
+        - hostname: external
+          ip: "{{ cluster_gateway_external }}"
+          description: "External Envoy Gateway (envoy-external)"
         - hostname: truenas
           ip: "{{ nas_ip }}"
           description: "TrueNAS SCALE NAS"
