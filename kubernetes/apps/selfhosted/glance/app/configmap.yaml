@@ -280,11 +280,16 @@ data:
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px">
+                      <div style="display:flex;flex-direction:column;gap:5px">
                       {{range $records}}
-                      <div class="gls-item">
-                        <div class="gls-item-title">{{.String "title"}}</div>
-                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+                      {{$st := .String "status"}}
+                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
+                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
+                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "movie.title"}}{{if .Int "movie.year"}} <span style="opacity:.4;font-weight:400">({{.Int "movie.year"}})</span>{{end}}</div>
+                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
+                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
+                          <span style="opacity:.55">{{.String "timeleft"}}</span>
+                        </div>
                       </div>
                       {{end}}
                       </div>
@@ -307,11 +312,16 @@ data:
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px">
+                      <div style="display:flex;flex-direction:column;gap:5px">
                       {{range $records}}
-                      <div class="gls-item">
-                        <div class="gls-item-title">{{.String "title"}}</div>
-                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+                      {{$st := .String "status"}}
+                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
+                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
+                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "series.title"}} <span style="opacity:.55;font-weight:400">S{{printf "%02d" (.Int "episode.seasonNumber")}}E{{printf "%02d" (.Int "episode.episodeNumber")}}</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
+                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
+                          <span style="opacity:.55">{{.String "timeleft"}}</span>
+                        </div>
                       </div>
                       {{end}}
                       </div>
@@ -334,11 +344,16 @@ data:
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px">
+                      <div style="display:flex;flex-direction:column;gap:5px">
                       {{range $records}}
-                      <div class="gls-item">
-                        <div class="gls-item-title">{{.String "title"}}</div>
-                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+                      {{$st := .String "status"}}
+                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
+                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
+                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "series.title"}} <span style="opacity:.55;font-weight:400">S{{printf "%02d" (.Int "episode.seasonNumber")}}E{{printf "%02d" (.Int "episode.episodeNumber")}}</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
+                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
+                          <span style="opacity:.55">{{.String "timeleft"}}</span>
+                        </div>
                       </div>
                       {{end}}
                       </div>
@@ -361,11 +376,16 @@ data:
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px">
+                      <div style="display:flex;flex-direction:column;gap:5px">
                       {{range $records}}
-                      <div class="gls-item">
-                        <div class="gls-item-title">{{.String "title"}}</div>
-                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+                      {{$st := .String "status"}}
+                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
+                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
+                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "book.title"}} <span style="opacity:.4;font-weight:400">— {{.String "author.authorName"}}</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
+                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
+                          <span style="opacity:.55">{{.String "timeleft"}}</span>
+                        </div>
                       </div>
                       {{end}}
                       </div>
@@ -388,11 +408,16 @@ data:
                       {{if eq (len $records) 0}}
                       <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
                       {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px">
+                      <div style="display:flex;flex-direction:column;gap:5px">
                       {{range $records}}
-                      <div class="gls-item">
-                        <div class="gls-item-title">{{.String "title"}}</div>
-                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+                      {{$st := .String "status"}}
+                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
+                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
+                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "album.title"}} <span style="opacity:.4;font-weight:400">— {{.String "artist.artistName"}}</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
+                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
+                          <span style="opacity:.55">{{.String "timeleft"}}</span>
+                        </div>
                       </div>
                       {{end}}
                       </div>
