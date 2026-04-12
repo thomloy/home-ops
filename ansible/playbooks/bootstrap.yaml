@@ -13,7 +13,19 @@
   tags: [talos, configs]
   vars:
     talos_dir: "{{ playbook_dir }}/../../talos"
+    repo_dir: "{{ playbook_dir }}/../.."
   tasks:
+    # ── Retrieve age.key first — required by talhelper genconfig to decrypt talsecret ──
+    - name: Retrieve age.key from 1Password (item: sops / SOPS_PRIVATE_KEY)
+      ansible.builtin.shell: >
+        op item get "{{ op_sops_item }}"
+        --fields label="{{ op_sops_field }}"
+        --reveal
+        > {{ repo_dir }}/age.key
+      args:
+        creates: "{{ repo_dir }}/age.key"
+      no_log: true
+
     - name: Check talconfig.yaml exists
       ansible.builtin.stat:
         path: "{{ talos_dir }}/talconfig.yaml"
@@ -101,7 +113,7 @@
     - name: Retrieve kubeconfig
       delegate_to: localhost
       ansible.builtin.command:
-        cmd: talosctl kubeconfig --nodes {{ ansible_host }} --force
+        cmd: talosctl kubeconfig {{ talos_config_dir }}/../../kubeconfig --nodes {{ ansible_host }} --force --merge=false
       environment:
         TALOSCONFIG: "{{ talosconfig_path }}"
       register: kubeconfig_result
