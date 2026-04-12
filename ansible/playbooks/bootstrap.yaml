@@ -1,10 +1,11 @@
 ---
 # Bootstrap complet du cluster Talos + Flux depuis zéro.
-# Prérequis : talosctl, kubectl, flux CLI installés (gérés via mise)
+# Prérequis : talosctl, kubectl, flux, helmfile CLI installés (gérés via mise)
 #
 # Usage:
 #   ansible-playbook ansible/playbooks/bootstrap.yaml
-#   ansible-playbook ansible/playbooks/bootstrap.yaml --tags flux   # seulement Flux
+#   ansible-playbook ansible/playbooks/bootstrap.yaml --tags talos   # seulement Talos
+#   ansible-playbook ansible/playbooks/bootstrap.yaml --tags flux    # seulement Flux
 
 - name: Generate Talos configs
   hosts: localhost
@@ -41,10 +42,7 @@
           --nodes {{ ansible_host }}
           --file {{ talos_config_dir }}/{{ cluster_name }}-{{ inventory_hostname }}.yaml
           --insecure
-      register: apply_result
       changed_when: true
-      # --insecure uniquement pour le bootstrap initial
-      # enlever pour les re-applies sur cluster existant
 
     - name: Wait for node API to be ready
       delegate_to: localhost
@@ -72,7 +70,7 @@
         - bootstrap_result.rc != 0
         - '"etcd is already bootstrapped" not in bootstrap_result.stderr'
 
-    - name: Wait for Kubernetes API
+    - name: Retrieve kubeconfig
       delegate_to: localhost
       ansible.builtin.command:
         cmd: talosctl kubeconfig --nodes {{ ansible_host }} --force
@@ -94,40 +92,74 @@
       when: talos_bootstrap | bool
       changed_when: false
 
-- name: Bootstrap Flux
+- name: Bootstrap Flux via helmfile
   hosts: localhost
   gather_facts: false
   tags: [flux]
   tasks:
-    - name: Check GITHUB_TOKEN is set
+    - name: Check age.key exists
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../../age.key"
+      register: age_key
+
+    - name: Fail if age.key missing
       ansible.builtin.fail:
-        msg: "GITHUB_TOKEN environment variable must be set"
-      when: lookup('env', 'GITHUB_TOKEN') == ''
+        msg: "age.key not found at repo root — required for SOPS decryption"
+      when: not age_key.stat.exists
 
-    - name: Check if Flux is already installed
+    - name: Create flux-system namespace
       ansible.builtin.command:
-        cmd: flux check --pre
-      register: flux_pre
+        cmd: kubectl create namespace flux-system --dry-run=client -o yaml
+      register: ns_yaml
       changed_when: false
-      failed_when: false
 
-    - name: Bootstrap Flux
+    - name: Apply flux-system namespace
       ansible.builtin.command:
-        cmd: >
-          flux bootstrap github
-          --owner={{ github_repo.split('/')[0] }}
-          --repository={{ github_repo.split('/')[1] }}
-          --branch={{ github_branch }}
-          --path=kubernetes/flux
-          --personal
-      environment:
-        GITHUB_TOKEN: "{{ lookup('env', 'GITHUB_TOKEN') }}"
-      when: flux_pre.rc != 0
+        cmd: kubectl apply -f -
+        stdin: "{{ ns_yaml.stdout }}"
       changed_when: true
 
-    - name: Wait for Flux to reconcile
+    - name: Create sops-age secret in flux-system
       ansible.builtin.command:
-        cmd: flux reconcile kustomization flux-system --with-source --timeout=5m
+        cmd: >
+          kubectl create secret generic sops-age
+          --namespace=flux-system
+          --from-file=age.agekey={{ playbook_dir }}/../../age.key
+          --dry-run=client -o yaml
+      register: sops_secret_yaml
+      changed_when: false
+
+    - name: Apply sops-age secret
+      ansible.builtin.command:
+        cmd: kubectl apply -f -
+        stdin: "{{ sops_secret_yaml.stdout }}"
+      changed_when: true
+
+    - name: Create 1Password credentials secret
+      ansible.builtin.command:
+        cmd: >
+          kubectl create secret generic onepassword-credentials
+          --namespace=external-secrets
+          --from-file=1password-credentials.json={{ playbook_dir }}/../../1password-credentials.json
+          --dry-run=client -o yaml
+      register: op_secret_yaml
+      changed_when: false
+
+    - name: Apply 1Password credentials secret
+      ansible.builtin.command:
+        cmd: kubectl apply -f -
+        stdin: "{{ op_secret_yaml.stdout }}"
+      changed_when: true
+
+    - name: Run helmfile bootstrap (cilium → coredns → cert-manager → external-secrets → 1password → flux)
+      ansible.builtin.command:
+        cmd: helmfile apply
+        chdir: "{{ playbook_dir }}/../../bootstrap/helmfile.d"
+      changed_when: true
+
+    - name: Wait for Flux to reconcile cluster-apps
+      ansible.builtin.command:
+        cmd: flux reconcile kustomization cluster-apps --with-source --timeout=5m
       register: flux_reconcile
       until: flux_reconcile.rc == 0
       retries: 5

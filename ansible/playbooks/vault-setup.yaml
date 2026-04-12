@@ -1,35 +1,36 @@
 ---
-# Helper pour créer les secrets vault la première fois.
-# NE PAS committer les valeurs réelles — ce fichier montre la procédure.
+# Vérifie que tous les secrets 1Password sont accessibles avant de lancer les playbooks.
 #
 # Usage:
-#   ansible-vault encrypt_string 'YOUR_TRUENAS_API_KEY' --name 'truenas_api_key'
-#   ansible-vault encrypt_string 'YOUR_OPNSENSE_API_KEY' --name 'opnsense_api_key'
-#   ansible-vault encrypt_string 'YOUR_OPNSENSE_SECRET' --name 'opnsense_api_secret'
-#
-# Stocker le vault password dans 1Password et créer ~/.ansible_vault_pass :
-#   echo "your-vault-password" > ~/.ansible_vault_pass
-#   chmod 600 ~/.ansible_vault_pass
-#
-# Puis dans ansible.cfg :
-#   vault_password_file = ~/.ansible_vault_pass
+#   ansible-playbook ansible/playbooks/vault-setup.yaml
 
-- name: Verify vault secrets are accessible
+- name: Verify 1Password secrets are accessible
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Check TrueNAS API key is defined
+    - name: Check TrueNAS API key
       ansible.builtin.assert:
-        that: truenas_api_key is defined and truenas_api_key != ''
-        fail_msg: "truenas_api_key not set — run: ansible-vault encrypt_string 'KEY' --name 'truenas_api_key'"
+        that: lookup('community.general.onepassword', 'truenas', field='TRUENAS_API_KEY') != ''
+        fail_msg: "TRUENAS_API_KEY manquant dans 1Password (item: truenas)"
 
-    - name: Check OPNsense API credentials are defined
+    - name: Check OPNsense API key
+      ansible.builtin.assert:
+        that: lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_KEY') != ''
+        fail_msg: "OPNSENSE_API_KEY manquant dans 1Password (item: opnsense)"
+
+    - name: Check OPNsense API secret
+      ansible.builtin.assert:
+        that: lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_SECRET') != ''
+        fail_msg: "OPNSENSE_API_SECRET manquant dans 1Password (item: opnsense)"
+
+    - name: Check cluster network vars
       ansible.builtin.assert:
         that:
-          - opnsense_api_key is defined and opnsense_api_key != ''
-          - opnsense_api_secret is defined and opnsense_api_secret != ''
-        fail_msg: "OPNsense credentials not set in group_vars/opnsense.yaml"
+          - lookup('community.general.onepassword', 'cluster-network', field='CLUSTER_API_IP') != ''
+          - lookup('community.general.onepassword', 'cluster-network', field='NAS_IP') != ''
+          - lookup('community.general.onepassword', 'cluster-network', field='SECRET_DOMAIN') != ''
+        fail_msg: "Variables manquantes dans 1Password (item: cluster-network)"
 
     - name: All secrets OK
       ansible.builtin.debug:
-        msg: "✅ Tous les secrets vault sont accessibles"
+        msg: "✅ Tous les secrets 1Password sont accessibles"
