@@ -52,7 +52,7 @@ spec:
   infrastructure:
     annotations:
       external-dns.alpha.kubernetes.io/hostname: external.${SECRET_DOMAIN}
-      lbipam.cilium.io/ips: "192.168.42.120"
+      lbipam.cilium.io/ips: "${CLUSTER_GATEWAY_EXTERNAL_IP}"
   listeners:
     - name: http
       protocol: HTTP
@@ -69,7 +69,7 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: kryzql-space-tls
+            name: ${SECRET_DOMAIN_SLUG}-tls
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -82,7 +82,7 @@ spec:
   infrastructure:
     annotations:
       external-dns.alpha.kubernetes.io/hostname: internal.${SECRET_DOMAIN}
-      lbipam.cilium.io/ips: "192.168.42.110"
+      lbipam.cilium.io/ips: "${CLUSTER_GATEWAY_INTERNAL_IP}"
   listeners:
     - name: http
       protocol: HTTP
@@ -99,7 +99,7 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: kryzql-space-tls
+            name: ${SECRET_DOMAIN_SLUG}-tls
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy

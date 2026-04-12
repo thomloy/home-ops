@@ -47,7 +47,7 @@ spec:
       peers:
         - name: opnsense
           peerASN: 64513
-          peerAddress: 192.168.42.1
+          peerAddress: ${BGP_ROUTER_IP}
           peerConfigRef:
             name: l3-bgp-peer-config
 ---
@@ -56,7 +56,7 @@ kind: Service
 metadata:
   name: kube-api
   annotations:
-    lbipam.cilium.io/ips: 192.168.42.100
+    lbipam.cilium.io/ips: ${CLUSTER_API_IP}
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Local

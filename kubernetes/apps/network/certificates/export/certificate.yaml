@@ -3,7 +3,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "kryzql-space"
+  name: "${SECRET_DOMAIN_SLUG}"
 spec:
   dnsNames:
     - ${SECRET_DOMAIN}
@@ -16,6 +16,6 @@ spec:
     algorithm: ECDSA
     size: 256
     rotationPolicy: Always
-  secretName: "kryzql-space-tls"
+  secretName: "${SECRET_DOMAIN_SLUG}-tls"
   usages:
     - digital signature

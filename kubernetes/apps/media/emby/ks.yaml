@@ -20,6 +20,9 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/media/emby/app
   postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
     substitute:
       APP: emby
       VOLSYNC_CLAIM: emby

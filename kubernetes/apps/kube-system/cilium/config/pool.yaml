@@ -7,10 +7,10 @@ metadata:
 spec:
   allowFirstLastIPs: "Yes"
   blocks:
-    - start: 192.168.42.50
-      stop: 192.168.42.109
-    - start: 192.168.42.121
-      stop: 192.168.42.199
+    - start: ${LB_POOL_START}
+      stop: ${LB_POOL_STOP}
+    - start: ${LB_POOL2_START}
+      stop: ${LB_POOL2_STOP}
 ---
 apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
@@ -18,5 +18,5 @@ metadata:
   name: gateways
 spec:
   blocks:
-    - start: 192.168.42.110
-      stop: 192.168.42.120
+    - start: ${CLUSTER_GATEWAY_INTERNAL_IP}
+      stop: ${CLUSTER_GATEWAY_EXTERNAL_IP}

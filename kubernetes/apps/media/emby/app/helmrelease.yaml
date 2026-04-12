@@ -68,7 +68,7 @@ spec:
       app:
         type: LoadBalancer
         annotations:
-          lbipam.cilium.io/ips: 192.168.42.110
+          lbipam.cilium.io/ips: ${CLUSTER_GATEWAY_INTERNAL_IP}
         externalTrafficPolicy: Local
         ports:
           http:
