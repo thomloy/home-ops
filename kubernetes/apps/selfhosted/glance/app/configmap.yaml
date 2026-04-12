@@ -250,6 +250,14 @@ data:
                   {{if not $any}}<div style="font-size:.85em;opacity:.5">Aucune lecture en cours</div>{{end}}
                   </div>
 
+              - type: custom-api
+                title: Requêtes
+                allow-insecure-html: true
+                cache: 1m
+                url: "http://seerr.media.svc.cluster.local:5055/api/v1/status"
+                template: |
+                  <div id="glance-srq" class="gls-trigger" data-k="MTc3NTMzODA5NjkxOTgxYzMwMmM5LTkwOWMtNDIxZi04M2Q4LTZhYzc5NjMyYzQwZg==" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var k=el.dataset.k,d=el.dataset.d,s='https://seerr.'+d;fetch(s+'/api/v1/request?take=8&sort=added&apikey='+k).then(function(r){return r.json()}).then(function(data){var rs=data.results||[];if(!rs.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucune demande récente</div>';return;}return Promise.all(rs.map(function(q){var ep=q.type==='movie'?'/api/v1/movie/':'/api/v1/tv/';var id=q.media&&q.media.tmdbId;if(!id)return Promise.resolve({q:q,det:null});return fetch(s+ep+id+'?apikey='+k).then(function(r){return r.json()}).then(function(x){return{q:q,det:x}}).catch(function(){return{q:q,det:null}});}))}).then(function(items){if(!items)return;var h='<div style=\'display:flex;flex-direction:column;gap:5px\'>';items.forEach(function(it){var q=it.q,x=it.det;var ms=(q.media&&q.media.status)||1;var qs=q.status||1;var sc=qs===3?'#ef4444':ms===5?'#22c55e':ms>=3?'#a855f7':'#f59e0b';var sl=qs===3?'Refusé':ms===5?'Disponible':ms===3?'En cours':ms===4?'Partiel':'En attente';var title=x?(x.title||x.name||'?'):(q.type==='movie'?'Film':'Série');var year=x&&(x.releaseDate||x.firstAirDate||'').slice(0,4);var poster=x&&x.posterPath?'<img src=\'https://image.tmdb.org/t/p/w92'+x.posterPath+'\' style=\'width:36px;min-width:36px;height:54px;object-fit:cover;border-radius:4px;flex-shrink:0\'>':'<div style=\'width:36px;min-width:36px;height:54px;background:rgba(0,0,0,.2);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1em\'>'+(q.type==='movie'?'🎬':'📺')+'</div>';var who=(q.requestedBy&&q.requestedBy.displayName)||'';h+='<div style=\'display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.08);border-radius:6px;border-left:3px solid '+sc+'\'>'+poster+'<div style=\'min-width:0;flex:1\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+title+(year?' <span style=\'opacity:.4;font-weight:400\'>('+year+')</span>':'')+'</div><div style=\'display:flex;justify-content:space-between;font-size:.68em;margin-top:3px\'><span style=\'color:'+sc+'\'>'+sl+'</span><span style=\'opacity:.55\'>'+(q.type==='movie'?'Film':'Série')+(who?' · '+who:'')+'</span></div></div></div>';});h+='</div><div style=\'text-align:right;margin-top:4px\'><a href=\'https://seerr.'+d+'\' target=\'_blank\' style=\'font-size:.7em;opacity:.5\'>Seerr →</a></div>';el.innerHTML=h;}).catch(function(e){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur: '+e.message+'</div>';});})(this)">Chargement...</div>
+
               - type: group
                 widgets:
                   - type: custom-api
@@ -262,6 +270,7 @@ data:
                       <div style="display:flex;flex-direction:column;gap:4px">
                         <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
                         <a href="https://audiobookshelf.${SECRET_DOMAIN}" target="_blank" class="gls-link">Audiobookshelf</a>
+                        <a href="https://seerr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Seerr</a>
                         <a href="https://radarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Radarr</a>
                         <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
                         <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Readarr</a>
