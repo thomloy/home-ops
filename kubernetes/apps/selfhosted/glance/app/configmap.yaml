@@ -453,157 +453,40 @@ data:
 
           - size: full
             widgets:
-              - type: group
-                widgets:
-                  - type: custom-api
-                    title: Media
-                    allow-insecure-html: true
-                    cache: 30s
-                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/queue?apikey=$${RADARR_API_KEY}&pageSize=10"
-                    template: |
-                      <div class="gls-section-hdr">QUEUE RADARR</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5;margin-bottom:8px">Aucun téléchargement en cours</div>
-                      {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
-                      {{range $records}}
-                      <div class="gls-item">
-                        <div class="gls-item-title">{{.String "title"}}</div>
-                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
+              - type: custom-api
+                title: Bibliothèque
+                allow-insecure-html: true
+                cache: 5m
+                url: "http://emby.media.svc.cluster.local:8096/Items/Counts?api_key=$${EMBY_API_KEY}"
+                template: |
+                  {{$movies := .Int "MovieCount"}}
+                  {{$series := .Int "SeriesCount"}}
+                  {{$episodes := .Int "EpisodeCount"}}
+                  {{$songs := .Int "SongCount"}}
+                  <div style="display:flex;flex-direction:column;gap:16px">
+                  <div>
+                    <div class="gls-section-hdr">BIBLIOTHÈQUE</div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                      <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
+                        <div style="font-size:1.4em;font-weight:700;color:#3b82f6">{{$movies}}</div>
+                        <div style="font-size:.7em;opacity:.6;margin-top:1px">🎬 Films</div>
                       </div>
-                      {{end}}
+                      <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
+                        <div style="font-size:1.4em;font-weight:700;color:#8b5cf6">{{$series}}</div>
+                        <div style="font-size:.7em;opacity:.6;margin-top:1px">📺 Séries</div>
                       </div>
-                      {{end}}
-                      <div class="gls-trigger" onanimationstart="if(!window.__gls){window.__gls=true;document.addEventListener('click',function(e){var b=e.target;while(b&&!b.classList.contains('widget-group-title'))b=b.parentElement;if(!b)return;var t=b.parentElement;var bs=[].slice.call(t.children);var i=bs.indexOf(b);if(i<0)return;document.querySelectorAll('.widget-header.gap-20').forEach(function(o){if(o===t||o.children.length!==t.children.length)return;var ob=o.children[i];if(ob&&!ob.classList.contains('widget-group-title-current'))ob.click();});},true);}"></div>
-
-                  - type: custom-api
-                    title: Films
-                    allow-insecure-html: true
-                    cache: 1h
-                    url: "https://api.themoviedb.org/3/movie/now_playing?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
-                    template: |
-                      <div id="glance-fsk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-fsq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/movie?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://radarr.'+d+'/add/new?term='+encodeURIComponent(m.title)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.title+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.release_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-fsr').innerHTML=h;document.getElementById('glance-fsr').style.display='';document.getElementById('glance-fsd').style.display='none';});})(this)" style="display:none"></div>
-                      <div style="display:flex;gap:8px;margin-bottom:12px">
-                        <input id="glance-fsq" placeholder="Rechercher un film..." onkeydown="if(event.key==='Enter')document.getElementById('glance-fsk').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
-                        <button onclick="document.getElementById('glance-fsk').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
-                        <button onclick="document.getElementById('glance-fsq').value='';document.getElementById('glance-fsr').style.display='none';document.getElementById('glance-fsd').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
+                      <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
+                        <div style="font-size:1.4em;font-weight:700;color:#06b6d4">{{$episodes}}</div>
+                        <div style="font-size:.7em;opacity:.6;margin-top:1px">🎞 Épisodes</div>
                       </div>
-                      <div id="glance-fsr" style="display:none"></div>
-                      <div id="glance-fsd">
-                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
-                      {{range .JSON.Array "results"}}
-                      <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
-                        <div style="padding:8px">
-                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
-                          {{$rd := .String "release_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{slice $rd 8 10}}-{{slice $rd 5 7}}-{{slice $rd 0 4}}</div>
-                          <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
-                        </div>
-                      </a>
-                      {{end}}
+                      <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
+                        <div style="font-size:1.4em;font-weight:700;color:#f59e0b">{{$songs}}</div>
+                        <div style="font-size:.7em;opacity:.6;margin-top:1px">🎵 Morceaux</div>
                       </div>
-                      </div>
-
-                  - type: custom-api
-                    title: Séries
-                    allow-insecure-html: true
-                    cache: 1h
-                    url: "https://api.themoviedb.org/3/tv/on_the_air?api_key=$${TMDB_API_KEY}&language=fr-FR"
-                    template: |
-                      <div id="glance-ssk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-ssq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-ssr').innerHTML=h;document.getElementById('glance-ssr').style.display='';document.getElementById('glance-ssd').style.display='none';});})(this)" style="display:none"></div>
-                      <div style="display:flex;gap:8px;margin-bottom:12px">
-                        <input id="glance-ssq" placeholder="Rechercher une série..." onkeydown="if(event.key==='Enter')document.getElementById('glance-ssk').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
-                        <button onclick="document.getElementById('glance-ssk').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
-                        <button onclick="document.getElementById('glance-ssq').value='';document.getElementById('glance-ssr').style.display='none';document.getElementById('glance-ssd').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
-                      </div>
-                      <div id="glance-ssr" style="display:none"></div>
-                      <div id="glance-ssd">
-                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
-                      {{range .JSON.Array "results"}}
-                      <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
-                        <div style="padding:8px">
-                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
-                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}</div>
-                          <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
-                        </div>
-                      </a>
-                      {{end}}
-                      </div>
-                      </div>
-
-                  - type: custom-api
-                    title: Animés
-                    allow-insecure-html: true
-                    cache: 1h
-                    url: "https://api.themoviedb.org/3/discover/tv?api_key=$${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&language=fr-FR"
-                    template: |
-                      <div id="glance-ask" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-asq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-asr').innerHTML=h;document.getElementById('glance-asr').style.display='';document.getElementById('glance-asd').style.display='none';});})(this)" style="display:none"></div>
-                      <div style="display:flex;gap:8px;margin-bottom:12px">
-                        <input id="glance-asq" placeholder="Rechercher un animé..." onkeydown="if(event.key==='Enter')document.getElementById('glance-ask').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
-                        <button onclick="document.getElementById('glance-ask').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
-                        <button onclick="document.getElementById('glance-asq').value='';document.getElementById('glance-asr').style.display='none';document.getElementById('glance-asd').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
-                      </div>
-                      <div id="glance-asr" style="display:none"></div>
-                      <div id="glance-asd">
-                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
-                      {{range .JSON.Array "results"}}
-                      <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
-                        <div style="padding:8px">
-                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
-                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}</div>
-                          <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
-                        </div>
-                      </a>
-                      {{end}}
-                      </div>
-                      </div>
-
-                  - type: custom-api
-                    title: Livres
-                    allow-insecure-html: true
-                    cache: 30m
-                    url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/book?apikey=$${READARR_API_KEY}&pageSize=20&sortKey=releaseDate&sortDirection=desc&unmonitored=false"
-                    template: |
-                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
-                      {{range .JSON.Array "@this"}}
-                      <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        {{$cover := .String "images.#[coverType==cover].url"}}
-                        {{if $cover}}<img src="{{$cover}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;font-size:2em">📚</div>{{end}}
-                        <div style="padding:8px">
-                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
-                          <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "authorTitle"}}</div>
-                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:2px">{{slice $rd 0 10}}</div>
-                          {{if eq (.Int "statistics.bookFileCount") 0}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Manquant</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Dispo</span>{{end}}
-                        </div>
-                      </a>
-                      {{end}}
-                      </div>
-
-                  - type: custom-api
-                    title: Musique
-                    allow-insecure-html: true
-                    cache: 30s
-                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/queue?apikey=$${LIDARR_API_KEY}&pageSize=10"
-                    template: |
-                      <div class="gls-section-hdr">QUEUE LIDARR</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5;margin-bottom:8px">Aucun téléchargement en cours</div>
-                      {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
-                      {{range $records}}
-                      <div class="gls-item">
-                        <div class="gls-item-title">{{.String "title"}}</div>
-                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
-                      </div>
-                      {{end}}
-                      </div>
-                      {{end}}
-                      <div class="gls-section-hdr">ALBUMS RECHERCHÉS</div>
-                      <div id="glance-ldr" class="gls-trigger" data-k="$${LIDARR_API_KEY}" onanimationstart="(function(el){fetch('https://lidarr.${SECRET_DOMAIN}/api/v1/wanted/missing?apikey='+el.dataset.k+'&pageSize=10&sortKey=releaseDate&sortDirection=descending').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';(d.records||[]).forEach(function(a){h+='<div style=\'display:flex;gap:8px;align-items:center;padding:5px 8px;background:rgba(0,0,0,.06);border-radius:5px\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+a.title+'</div><div style=\'font-size:.7em;opacity:.65\'>'+(a.artistName||'')+'</div></div></div>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album manquant</div>';}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur de chargement</div>';});})(this)">Chargement...</div>
+                    </div>
+                  </div>
+                  <div id="glance-lib" class="gls-trigger" data-k="$${EMBY_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var k=el.dataset.k,d=el.dataset.d,base='https://emby.'+d;Promise.all([fetch(base+'/Items?SortBy=DateCreated&SortOrder=Descending&IncludeItemTypes=Movie,Series&Recursive=true&Limit=16&Fields=PrimaryImageAspectRatio&api_key='+k).then(function(r){return r.json()}),fetch(base+'/Users?api_key='+k).then(function(r){return r.json()}).then(function(us){var uid=us&&us[0]&&us[0].Id;if(!uid)return{Items:[]};return fetch(base+'/Users/'+uid+'/Items?SortBy=DatePlayed&SortOrder=Descending&Filters=IsPlayed&Recursive=true&Limit=8&IncludeItemTypes=Movie,Episode&Fields=PrimaryImageAspectRatio,UserData&api_key='+k).then(function(r){return r.json();});})]).then(function(res){var rec=res[0].Items||[],hist=res[1].Items||[];function ago(s){var diff=Date.now()-new Date(s).getTime(),m=Math.floor(diff/60000);if(m<60)return'il y a '+m+'min';if(m<1440)return'il y a '+Math.floor(m/60)+'h';return'il y a '+Math.floor(m/1440)+'j';}function dur(t){var s=Math.floor(t/10000000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>0?h+'h'+String(m).padStart(2,'0'):m+'min';}var h='<div class=\'gls-section-hdr\' style=\'margin-bottom:8px\'>AJOUTS RÉCENTS</div>';if(rec.length){h+='<div style=\'display:flex;gap:6px;overflow-x:auto;padding-bottom:6px\'>';rec.forEach(function(it){h+='<a href=\''+base+'/web/index.html#!/details?id='+it.Id+'\' target=\'_blank\' style=\'text-decoration:none;flex-shrink:0;display:block;width:92px\'><img src=\''+base+'/Items/'+it.Id+'/Images/Primary?maxHeight=138&api_key='+k+'\' style=\'width:92px;height:138px;object-fit:cover;border-radius:6px\'><span style=\'display:inline-block;margin-top:2px;font-size:.6em;padding:1px 4px;background:'+(it.Type==='Movie'?'#3b82f6':'#8b5cf6')+';color:#fff;border-radius:3px\'>'+(it.Type==='Movie'?'Film':'Série')+'</span><div style=\'font-size:.7em;font-weight:600;line-height:1.2;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+it.Name+'</div></a>';});h+='</div>';}else{h+='<div style=\'font-size:.85em;opacity:.5\'>Aucun ajout récent</div>';}h+='<div style=\'margin-top:14px\'><div class=\'gls-section-hdr\' style=\'margin-bottom:8px\'>VU RÉCEMMENT</div>';if(hist.length){h+='<div style=\'display:flex;flex-direction:column;gap:5px\'>';hist.forEach(function(it){var title=it.SeriesName||it.Name;var sub=it.SeriesName?'S'+String(it.ParentIndexNumber||0).padStart(2,'0')+'E'+String(it.IndexNumber||0).padStart(2,'0')+' · '+it.Name:(it.ProductionYear?String(it.ProductionYear):'');var ag=it.UserData&&it.UserData.LastPlayedDate?ago(it.UserData.LastPlayedDate):'';var dr=it.RunTimeTicks?dur(it.RunTimeTicks):'';h+='<a href=\''+base+'/web/index.html#!/details?id='+it.Id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:5px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\''+base+'/Items/'+it.Id+'/Images/Primary?maxHeight=80&api_key='+k+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0;flex:1\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+title+'</div>'+(sub?'<div style=\'font-size:.7em;opacity:.65;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+sub+'</div>':'')+'<div style=\'display:flex;justify-content:space-between;font-size:.68em;margin-top:2px;opacity:.5\'><span>'+dr+'</span><span>'+ag+'</span></div></div></a>';});h+='</div>';}else{h+='<div style=\'font-size:.85em;opacity:.5\'>Aucun historique</div>';}h+='</div>';el.innerHTML=h;}).catch(function(e){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur: '+e.message+'</div>';});})(this)">Chargement...</div>
+                  </div>
 
           - size: small
             widgets:
