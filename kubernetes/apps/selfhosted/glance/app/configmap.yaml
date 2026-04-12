@@ -459,10 +459,10 @@ data:
                 cache: 5m
                 url: "http://emby.media.svc.cluster.local:8096/Items/Counts?api_key=$${EMBY_API_KEY}"
                 template: |
-                  {{$movies := .Int "MovieCount"}}
-                  {{$series := .Int "SeriesCount"}}
-                  {{$episodes := .Int "EpisodeCount"}}
-                  {{$songs := .Int "SongCount"}}
+                  {{$movies := .JSON.Int "MovieCount"}}
+                  {{$series := .JSON.Int "SeriesCount"}}
+                  {{$episodes := .JSON.Int "EpisodeCount"}}
+                  {{$songs := .JSON.Int "SongCount"}}
                   <div style="display:flex;flex-direction:column;gap:16px">
                   <div>
                     <div class="gls-section-hdr">BIBLIOTHÈQUE</div>
