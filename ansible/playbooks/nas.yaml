@@ -161,6 +161,45 @@
       when: item.name not in (existing_smb.json | map(attribute='name') | list)
       changed_when: true
 
+    # ── Graphite reporting → graphite-exporter (Prometheus/Grafana) ──────────
+    - name: Configure TrueNAS graphite reporting
+      tags: [monitoring]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/reporting/config"
+        method: PUT
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          graphite: "{{ graphite_ip }}"
+          graphite_port: 2003
+          graph_age: 12
+          graph_points: 1200
+        validate_certs: false
+      changed_when: false
+
+    # ── ZFS scrub hebdomadaire ────────────────────────────────────────────────
+    - name: Configure weekly ZFS scrub
+      tags: [scrub]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/pool/scrub"
+        method: POST
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          pool: "data"
+          threshold: 35
+          description: "Weekly scrub"
+          schedule:
+            minute: "0"
+            hour: "0"
+            dom: "*"
+            month: "*"
+            dow: "0"
+          enabled: true
+        status_code: [200, 201, 422]
+        validate_certs: false
+      changed_when: false
+
     # ── Snapshots automatiques ────────────────────────────────────────────────
     - name: Create snapshot task for kubernetes datasets
       tags: [snapshots]

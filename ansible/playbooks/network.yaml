@@ -20,6 +20,45 @@
     ansible_connection: local  # tout via API, pas SSH
 
   tasks:
+    # ── DHCP static leases ────────────────────────────────────────────────────
+    - name: Create DHCP static leases for nodes
+      tags: [dhcp]
+      ansibleguy.opnsense.dhcp_reservation:
+        firewall: "{{ ansible_host }}"
+        api_key: "{{ opnsense_api_key }}"
+        api_secret: "{{ opnsense_api_secret }}"
+        mac: "{{ item.mac }}"
+        ip: "{{ item.ip }}"
+        hostname: "{{ item.hostname }}"
+        description: "{{ item.description }}"
+        ssl_verify: false
+        state: present
+      loop: "{{ opnsense_dhcp_leases }}"
+      loop_control:
+        label: "{{ item.hostname }} ({{ item.mac }})"
+
+    # ── Outbound NAT ──────────────────────────────────────────────────────────
+    - name: Configure outbound NAT for pods and services
+      tags: [nat]
+      ansibleguy.opnsense.nat_source:
+        firewall: "{{ ansible_host }}"
+        api_key: "{{ opnsense_api_key }}"
+        api_secret: "{{ opnsense_api_secret }}"
+        description: "{{ item.description }}"
+        interface: "wan"
+        source_net: "{{ item.source_net }}"
+        ssl_verify: false
+        state: present
+      loop:
+        - source_net: "{{ pod_cidr }}"
+          description: "NAT Kubernetes pods → WAN"
+        - source_net: "{{ service_cidr }}"
+          description: "NAT Kubernetes services → WAN"
+        - source_net: "{{ node_subnet }}"
+          description: "NAT Kubernetes nodes → WAN"
+      loop_control:
+        label: "{{ item.description }}"
+
     # ── Aliases ───────────────────────────────────────────────────────────────
     - name: Create firewall aliases
       tags: [aliases]

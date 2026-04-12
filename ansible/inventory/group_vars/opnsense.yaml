@@ -28,6 +28,21 @@ opnsense_aliases:
       - "{{ nas_ip }}"
     description: "TrueNAS SCALE"
 
+# DHCP static leases — nodes Talos + NAS + JetKVMs
+opnsense_dhcp_leases:
+  - mac: "58:47:ca:7d:c0:bb"
+    ip: "{{ node01_ip }}"
+    hostname: node01
+    description: "Talos node01"
+  - mac: "58:47:ca:7d:ca:43"
+    ip: "{{ node02_ip }}"
+    hostname: node02
+    description: "Talos node02"
+  - mac: "58:47:ca:7d:ce:3b"
+    ip: "{{ node03_ip }}"
+    hostname: node03
+    description: "Talos node03"
+
 # Règles LAN → Kubernetes
 opnsense_firewall_rules:
   - description: "Allow LAN to Kubernetes API"
