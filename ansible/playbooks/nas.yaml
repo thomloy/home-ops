@@ -131,6 +131,18 @@
         validate_certs: false
       changed_when: false
 
+    - name: Start SMB service
+      tags: [smb]
+      ansible.builtin.uri:
+        url: "{{ truenas_api_url }}/service/start"
+        method: POST
+        headers: "{{ api_headers }}"
+        body_format: json
+        body:
+          service: "cifs"
+        validate_certs: false
+      changed_when: false
+
     - name: Get existing SMB shares
       tags: [smb]
       ansible.builtin.uri:

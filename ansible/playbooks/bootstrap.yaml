@@ -154,6 +154,7 @@
         > {{ repo_dir }}/age.key
       args:
         creates: "{{ repo_dir }}/age.key"
+      no_log: true
 
     - name: Retrieve 1password-credentials.json from 1Password (item: 1password / OP_CREDENTIALS_JSON)
       ansible.builtin.shell: >
@@ -163,6 +164,7 @@
         > {{ repo_dir }}/1password-credentials.json
       args:
         creates: "{{ repo_dir }}/1password-credentials.json"
+      no_log: true
 
     - name: Check age.key exists
       ansible.builtin.stat:
