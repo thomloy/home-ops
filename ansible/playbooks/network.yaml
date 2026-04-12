@@ -57,8 +57,51 @@
       loop_control:
         label: "{{ item.description }}"
 
-    # ── DNS statique (Unbound) ────────────────────────────────────────────────
-    - name: Create static DNS entries for cluster services
+    # ── DNS statique — domaine .internal ─────────────────────────────────────
+    # Entrées nécessaires avant ExternalDNS (infra bootstrap)
+    # Les entrées *.kryzql.space des apps sont gérées dynamiquement par ExternalDNS
+    - name: Create static DNS entries (.internal)
+      tags: [dns]
+      ansibleguy.opnsense.unbound_host:
+        firewall: "{{ ansible_host }}"
+        api_key: "{{ opnsense_api_key }}"
+        api_secret: "{{ opnsense_api_secret }}"
+        hostname: "{{ item.hostname }}"
+        domain: "internal"
+        server: "{{ item.ip }}"
+        description: "{{ item.description }}"
+        ssl_verify: false
+        state: present
+      loop:
+        - hostname: opnsense
+          ip: "{{ bgp_router_ip }}"
+          description: "OPNsense router (requis par ExternalDNS webhook)"
+        - hostname: node01
+          ip: "{{ node01_ip }}"
+          description: "Talos node01 (blackbox-exporter, scrapeconfig)"
+        - hostname: node02
+          ip: "{{ node02_ip }}"
+          description: "Talos node02"
+        - hostname: node03
+          ip: "{{ node03_ip }}"
+          description: "Talos node03"
+        - hostname: truenas
+          ip: "{{ nas_ip }}"
+          description: "TrueNAS SCALE NAS"
+        - hostname: jetkvm-1
+          ip: "{{ jetkvm1_ip }}"
+          description: "JetKVM node01"
+        - hostname: jetkvm-2
+          ip: "{{ jetkvm2_ip }}"
+          description: "JetKVM node02"
+        - hostname: jetkvm-3
+          ip: "{{ jetkvm3_ip }}"
+          description: "JetKVM node03"
+      loop_control:
+        label: "{{ item.hostname }}.internal"
+
+    # ── DNS statique — domaine {{ cloudflare_domain }} (infra uniquement) ────
+    - name: Create static DNS entries ({{ cloudflare_domain }})
       tags: [dns]
       ansibleguy.opnsense.unbound_host:
         firewall: "{{ ansible_host }}"
@@ -67,17 +110,17 @@
         hostname: "{{ item.hostname }}"
         domain: "{{ cloudflare_domain }}"
         server: "{{ item.ip }}"
-        description: "{{ item.description | default('') }}"
+        description: "{{ item.description }}"
         ssl_verify: false
         state: present
       loop:
-        - hostname: "k8s"
+        - hostname: k8s
           ip: "{{ cluster_api_addr }}"
           description: "Kubernetes API VIP"
-        - hostname: "gateway"
+        - hostname: gateway
           ip: "{{ cluster_gateway_internal }}"
           description: "Internal Envoy Gateway"
-        - hostname: "truenas"
+        - hostname: truenas
           ip: "{{ nas_ip }}"
           description: "TrueNAS SCALE NAS"
       loop_control:
