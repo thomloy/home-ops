@@ -2,9 +2,10 @@
 # Configuration TrueNAS SCALE via API REST v2.
 # Crée les datasets ZFS, exports NFS et shares SMB.
 #
-# Usage:
-#   ansible-playbook ansible/playbooks/nas.yaml
-#   ansible-playbook ansible/playbooks/nas.yaml --tags nfs   # seulement NFS
+# Usage (depuis le répertoire ansible/, ou via task runner) :
+#   task ansible:nas
+#   ansible-playbook playbooks/nas.yaml
+#   ansible-playbook playbooks/nas.yaml --tags nfs   # seulement NFS
 #
 # Prérequis:
 #   1. Créer un API key dans TrueNAS : profil utilisateur (haut droite) > API Keys

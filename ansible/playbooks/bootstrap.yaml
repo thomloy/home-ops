@@ -2,7 +2,8 @@
 # Bootstrap complet du cluster Talos + Flux depuis zéro.
 # Prérequis : talosctl, kubectl, flux, helmfile, talhelper, op CLI installés (gérés via mise)
 #
-# Usage:
+# Usage (depuis le répertoire ansible/, ou via task runner) :
+#   task ansible:bootstrap
 #   ansible-playbook playbooks/bootstrap.yaml
 #   ansible-playbook playbooks/bootstrap.yaml --tags talos   # seulement Talos
 #   ansible-playbook playbooks/bootstrap.yaml --tags flux    # seulement Flux

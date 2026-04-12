@@ -2,11 +2,12 @@
 # Configuration OPNsense via collection ansibleguy.opnsense.
 # Gère les aliases, règles firewall et DNS statique.
 #
-# Usage:
-#   ansible-playbook ansible/playbooks/network.yaml --ask-vault-pass
-#   ansible-playbook ansible/playbooks/network.yaml --tags aliases
-#   ansible-playbook ansible/playbooks/network.yaml --tags rules
-#   ansible-playbook ansible/playbooks/network.yaml --tags dns
+# Usage (depuis le répertoire ansible/, ou via task runner) :
+#   task ansible:network
+#   ansible-playbook playbooks/network.yaml
+#   ansible-playbook playbooks/network.yaml --tags aliases
+#   ansible-playbook playbooks/network.yaml --tags rules
+#   ansible-playbook playbooks/network.yaml --tags dns
 #
 # Prérequis:
 #   1. Activer l'API dans OPNsense : System > Access > Users > ton user > API keys

@@ -49,6 +49,9 @@
           - lookup('community.general.onepassword', 'cluster-network', field='BGP_NODE_ASN') | length > 0
           - lookup('community.general.onepassword', 'cluster-network', field='BGP_ROUTER_ASN') | length > 0
           - lookup('community.general.onepassword', 'cluster-network', field='GRAPHITE_IP') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='JETKVM_1_IP') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='JETKVM_2_IP') | length > 0
+          - lookup('community.general.onepassword', 'cluster-network', field='JETKVM_3_IP') | length > 0
         fail_msg: "Un ou plusieurs secrets manquent dans 1Password (item: cluster-network)"
 
     # ── Secrets 1Password : TrueNAS ───────────────────────────────────────────
