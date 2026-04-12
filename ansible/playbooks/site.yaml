@@ -8,10 +8,14 @@
 #   ansible-playbook playbooks/site.yaml --tags network    # seulement OPNsense
 #   ansible-playbook playbooks/site.yaml --tags nas        # seulement TrueNAS
 
-- import_playbook: prereqs.yaml
+- name: "Check prerequisites"
+  import_playbook: prereqs.yaml
 
-- import_playbook: network.yaml
+- name: "Configure network (OPNsense)"
+  import_playbook: network.yaml
 
-- import_playbook: nas.yaml
+- name: "Configure NAS (TrueNAS SCALE)"
+  import_playbook: nas.yaml
 
-- import_playbook: bootstrap.yaml
+- name: "Bootstrap cluster (Talos + Flux)"
+  import_playbook: bootstrap.yaml

@@ -72,14 +72,14 @@
         fail_msg: "OPNSENSE_API_KEY/SECRET manquant dans 1Password (item: opnsense)"
 
     # ── Secrets 1Password : SOPS age key ─────────────────────────────────────
-    - name: Check SOPS age key accessible (item: sops / SOPS_PRIVATE_KEY)
+    - name: "Check SOPS age key accessible (item: sops / SOPS_PRIVATE_KEY)"
       ansible.builtin.command: >
         op item get "{{ op_sops_item }}" --fields label="{{ op_sops_field }}" --reveal
       changed_when: false
       no_log: true
 
     # ── Secrets 1Password : 1Password credentials ─────────────────────────────
-    - name: Check 1Password credentials accessible (item: 1password / OP_CREDENTIALS_JSON)
+    - name: "Check 1Password credentials accessible (item: 1password / OP_CREDENTIALS_JSON)"
       ansible.builtin.command: >
         op item get "{{ op_1password_item }}" --fields label="{{ op_1password_credentials_field }}" --reveal
       changed_when: false

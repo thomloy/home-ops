@@ -17,7 +17,7 @@
     repo_dir: "{{ playbook_dir }}/../.."
   tasks:
     # ── Retrieve age.key first — required by talhelper genconfig to decrypt talsecret ──
-    - name: Retrieve age.key from 1Password (item: sops / SOPS_PRIVATE_KEY)
+    - name: "Retrieve age.key from 1Password (item: sops / SOPS_PRIVATE_KEY)"
       ansible.builtin.shell: >
         op item get "{{ op_sops_item }}"
         --fields label="{{ op_sops_field }}"
@@ -44,10 +44,11 @@
       register: talsecret
 
     - name: Generate and encrypt talsecret.sops.yaml
-      ansible.builtin.shell: >
-        talhelper gensecret |
-        sops --filename-override talos/talsecret.sops.yaml --encrypt /dev/stdin
-        > {{ talos_dir }}/talsecret.sops.yaml
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          talhelper gensecret | sops --filename-override talos/talsecret.sops.yaml --encrypt /dev/stdin > {{ talos_dir }}/talsecret.sops.yaml
+        executable: /bin/bash
       when: not talsecret.stat.exists
       changed_when: true
 
@@ -146,7 +147,7 @@
     kubeconfig_path: "{{ playbook_dir }}/../../kubeconfig"
   tasks:
     # ── Retrieve secrets from 1Password if not present locally ───────────────
-    - name: Retrieve age.key from 1Password (item: sops / SOPS_PRIVATE_KEY)
+    - name: "Retrieve age.key from 1Password (item: sops / SOPS_PRIVATE_KEY)"
       ansible.builtin.shell: >
         op item get "{{ op_sops_item }}"
         --fields label="{{ op_sops_field }}"
@@ -156,7 +157,7 @@
         creates: "{{ repo_dir }}/age.key"
       no_log: true
 
-    - name: Retrieve 1password-credentials.json from 1Password (item: 1password / OP_CREDENTIALS_JSON)
+    - name: "Retrieve 1password-credentials.json from 1Password (item: 1password / OP_CREDENTIALS_JSON)"
       ansible.builtin.shell: >
         op item get "{{ op_1password_item }}"
         --fields label="{{ op_1password_credentials_field }}"
