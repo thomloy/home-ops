@@ -5,7 +5,8 @@ kind: Cluster
 metadata:
   name: nextcloud-postgres
 spec:
-  instances: 2
+  instances: 3
+  # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
   imageName: ghcr.io/cloudnative-pg/postgresql:16
   storage:
     storageClass: ceph-block
