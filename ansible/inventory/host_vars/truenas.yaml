@@ -1,0 +1,3 @@
+---
+ansible_host: "{{ lookup('community.general.onepassword', 'cluster-network', field='NAS_IP') }}"
+truenas_api_url: "http://{{ lookup('community.general.onepassword', 'cluster-network', field='NAS_IP') }}/api/v2.0"

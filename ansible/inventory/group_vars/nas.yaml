@@ -20,19 +20,19 @@ truenas_nfs_shares:
   - path: "/mnt/data/kubernetes/volsync"
     comment: "VolSync backups"
     networks:
-      - "192.168.42.0/24"
+      - "{{ node_subnet }}"
     maproot_user: "root"
     maproot_group: "wheel"
   - path: "/mnt/data/kubernetes/media"
     comment: "Media library"
     networks:
-      - "192.168.42.0/24"
+      - "{{ node_subnet }}"
     maproot_user: "root"
     maproot_group: "wheel"
   - path: "/mnt/data/kubernetes/downloads"
     comment: "Downloads"
     networks:
-      - "192.168.42.0/24"
+      - "{{ node_subnet }}"
     maproot_user: "root"
     maproot_group: "wheel"
 

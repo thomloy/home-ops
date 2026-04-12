@@ -1,0 +1,2 @@
+---
+ansible_host: "{{ lookup('community.general.onepassword', 'cluster-network', field='BGP_ROUTER_IP') }}"

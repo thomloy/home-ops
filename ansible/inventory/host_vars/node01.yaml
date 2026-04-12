@@ -1,0 +1,2 @@
+---
+ansible_host: "{{ lookup('community.general.onepassword', 'cluster-network', field='NODE_IP_1') }}"

@@ -8,24 +8,24 @@ opnsense_aliases:
   - name: "kubernetes_nodes"
     type: host
     content:
-      - "192.168.42.41"
-      - "192.168.42.42"
-      - "192.168.42.43"
+      - "{{ node01_ip }}"
+      - "{{ node02_ip }}"
+      - "{{ node03_ip }}"
     description: "Talos nodes"
   - name: "kubernetes_pods"
     type: network
     content:
-      - "10.42.0.0/16"
+      - "{{ pod_cidr }}"
     description: "Pod CIDR"
   - name: "kubernetes_services"
     type: network
     content:
-      - "10.43.0.0/16"
+      - "{{ service_cidr }}"
     description: "Service CIDR"
   - name: "nas"
     type: host
     content:
-      - "192.168.42.44"
+      - "{{ nas_ip }}"
     description: "TrueNAS SCALE"
 
 # Règles LAN → Kubernetes
@@ -33,7 +33,7 @@ opnsense_firewall_rules:
   - description: "Allow LAN to Kubernetes API"
     interface: "lan"
     source_net: "lan"
-    destination_net: "192.168.42.100"
+    destination_net: "{{ cluster_api_addr }}"
     destination_port: "6443"
     protocol: "TCP"
     action: "pass"

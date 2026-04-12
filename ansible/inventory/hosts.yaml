@@ -6,17 +6,14 @@ all:
     kubernetes:
       hosts:
         node01:
-          ansible_host: 192.168.42.41
           talos_disk: "23492U801714"
           talos_mac: "58:47:ca:7d:c0:bb"
           talos_bootstrap: true   # etcd bootstrappé sur ce node
         node02:
-          ansible_host: 192.168.42.42
           talos_disk: "23492V800631"
           talos_mac: "58:47:ca:7d:ca:43"
           talos_bootstrap: false
         node03:
-          ansible_host: 192.168.42.43
           talos_disk: "23485G808758"
           talos_mac: "58:47:ca:7d:ce:3b"
           talos_bootstrap: false
@@ -25,15 +22,12 @@ all:
     nas:
       hosts:
         truenas:
-          ansible_host: 192.168.42.44
           ansible_user: root
           ansible_ssh_private_key_file: "~/.ssh/id_ed25519"
-          truenas_api_url: "http://192.168.42.44/api/v2.0"
-          # truenas_api_key: défini dans group_vars/nas.yaml (vault)
+          # ansible_host + truenas_api_url: définis dans host_vars/truenas.yaml
 
     # Router OPNsense
     opnsense:
       hosts:
         router:
-          ansible_host: 192.168.42.1
-          # opnsense_api_key / opnsense_api_secret: définis dans group_vars/opnsense.yaml (vault)
+          # ansible_host: défini dans host_vars/router.yaml

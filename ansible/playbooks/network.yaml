@@ -65,7 +65,7 @@
         api_key: "{{ opnsense_api_key }}"
         api_secret: "{{ opnsense_api_secret }}"
         hostname: "{{ item.hostname }}"
-        domain: "kryzql.space"
+        domain: "{{ cloudflare_domain }}"
         server: "{{ item.ip }}"
         description: "{{ item.description | default('') }}"
         ssl_verify: false
@@ -92,7 +92,7 @@
         api_secret: "{{ opnsense_api_secret }}"
         name: "{{ item.name }}"
         peer_ip: "{{ item.ip }}"
-        remote_as: "64514"
+        remote_as: "{{ bgp_node_asn }}"
         multi_hop: false
         ssl_verify: false
         state: present
