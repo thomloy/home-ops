@@ -3,33 +3,37 @@
 # Puis stocker dans 1Password sous l'item 'truenas', champ 'TRUENAS_API_KEY'
 truenas_api_key: "{{ lookup('community.general.onepassword', 'truenas', field='TRUENAS_API_KEY') }}"
 
+# Pool ZFS principal
+truenas_pool: "data"
+truenas_pool_mount: "/mnt/{{ truenas_pool }}"
+
 # Datasets ZFS à créer sur le pool principal
 truenas_datasets:
-  - name: "data/kubernetes"
+  - name: "{{ truenas_pool }}/kubernetes"
     comments: "Kubernetes NFS exports"
     children:
-      - name: "data/kubernetes/volsync"
+      - name: "{{ truenas_pool }}/kubernetes/volsync"
         comments: "VolSync backups Kopia"
-      - name: "data/kubernetes/media"
+      - name: "{{ truenas_pool }}/kubernetes/media"
         comments: "Media files (Emby, Audiobookshelf)"
-      - name: "data/kubernetes/downloads"
+      - name: "{{ truenas_pool }}/kubernetes/downloads"
         comments: "Download temp storage"
 
 # Exports NFS pour le cluster
 truenas_nfs_shares:
-  - path: "/mnt/data/kubernetes/volsync"
+  - path: "{{ truenas_pool_mount }}/kubernetes/volsync"
     comment: "VolSync backups"
     networks:
       - "{{ node_subnet }}"
     maproot_user: "root"
     maproot_group: "wheel"
-  - path: "/mnt/data/kubernetes/media"
+  - path: "{{ truenas_pool_mount }}/kubernetes/media"
     comment: "Media library"
     networks:
       - "{{ node_subnet }}"
     maproot_user: "root"
     maproot_group: "wheel"
-  - path: "/mnt/data/kubernetes/downloads"
+  - path: "{{ truenas_pool_mount }}/kubernetes/downloads"
     comment: "Downloads"
     networks:
       - "{{ node_subnet }}"
@@ -39,7 +43,7 @@ truenas_nfs_shares:
 # Shares SMB (accès depuis les autres machines du réseau)
 truenas_smb_shares:
   - name: "media"
-    path: "/mnt/data/kubernetes/media"
+    path: "{{ truenas_pool_mount }}/kubernetes/media"
     comment: "Media library"
     browsable: true
     readonly: false

@@ -1,0 +1,81 @@
+---
+# Vérifie les prérequis avant tout déploiement :
+#   - outils CLI installés
+#   - 1Password CLI authentifié
+#   - tous les secrets 1Password accessibles
+#
+# Usage:
+#   ansible-playbook playbooks/prereqs.yaml
+
+- name: Check prerequisites
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    # ── Outils CLI ────────────────────────────────────────────────────────────
+    - name: Check required CLI tools are installed
+      ansible.builtin.command: which {{ item }}
+      loop:
+        - talosctl
+        - kubectl
+        - flux
+        - helmfile
+        - talhelper
+        - op
+        - sops
+      changed_when: false
+      register: tool_check
+      failed_when: tool_check.rc != 0
+
+    # ── 1Password CLI ─────────────────────────────────────────────────────────
+    - name: Check 1Password CLI is authenticated
+      ansible.builtin.command: op account get
+      changed_when: false
+      register: op_auth
+      failed_when: op_auth.rc != 0
+
+    # ── Secrets 1Password ─────────────────────────────────────────────────────
+    - name: Check cluster-network secrets
+      ansible.builtin.assert:
+        that: "{{ item.value }} != ''"
+        fail_msg: "{{ item.msg }}"
+      loop:
+        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='CLUSTER_API_IP') }}"
+          msg: "CLUSTER_API_IP manquant dans 1Password (item: cluster-network)"
+        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='NAS_IP') }}"
+          msg: "NAS_IP manquant dans 1Password (item: cluster-network)"
+        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='BGP_ROUTER_IP') }}"
+          msg: "BGP_ROUTER_IP manquant dans 1Password (item: cluster-network)"
+        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='SECRET_DOMAIN') }}"
+          msg: "SECRET_DOMAIN manquant dans 1Password (item: cluster-network)"
+        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='NODE01_MAC') }}"
+          msg: "NODE01_MAC manquant dans 1Password (item: cluster-network)"
+        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='NODE02_MAC') }}"
+          msg: "NODE02_MAC manquant dans 1Password (item: cluster-network)"
+        - value: "{{ lookup('community.general.onepassword', 'cluster-network', field='NODE03_MAC') }}"
+          msg: "NODE03_MAC manquant dans 1Password (item: cluster-network)"
+
+    - name: Check TrueNAS secrets
+      ansible.builtin.assert:
+        that: "{{ lookup('community.general.onepassword', 'truenas', field='TRUENAS_API_KEY') }} != ''"
+        fail_msg: "TRUENAS_API_KEY manquant dans 1Password (item: truenas)"
+
+    - name: Check OPNsense secrets
+      ansible.builtin.assert:
+        that:
+          - "{{ lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_KEY') }} != ''"
+          - "{{ lookup('community.general.onepassword', 'opnsense', field='OPNSENSE_API_SECRET') }} != ''"
+        fail_msg: "OPNSENSE_API_KEY/SECRET manquant dans 1Password (item: opnsense)"
+
+    - name: Check SOPS age key accessible (item: sops / SOPS_PRIVATE_KEY)
+      ansible.builtin.command: >
+        op item get "{{ op_sops_item }}" --fields label="{{ op_sops_field }}"
+      changed_when: false
+
+    - name: Check 1Password credentials accessible (item: 1password / OP_CREDENTIALS_JSON)
+      ansible.builtin.command: >
+        op item get "{{ op_1password_item }}" --fields label="{{ op_1password_credentials_field }}"
+      changed_when: false
+
+    - name: All prerequisites OK
+      ansible.builtin.debug:
+        msg: "✅ Tous les prérequis sont satisfaits"

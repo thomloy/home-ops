@@ -1,0 +1,44 @@
+---
+version: '3'
+
+tasks:
+
+  site:
+    desc: Full infrastructure deploy — OPNsense + TrueNAS + Talos + Flux
+    dir: '{{.ROOT_DIR}}/ansible'
+    cmd: ansible-playbook playbooks/site.yaml
+    preconditions:
+      - which ansible-playbook
+      - which op
+
+  prereqs:
+    desc: Check prerequisites (tools + 1Password secrets)
+    dir: '{{.ROOT_DIR}}/ansible'
+    cmd: ansible-playbook playbooks/prereqs.yaml
+    preconditions:
+      - which ansible-playbook
+
+  network:
+    desc: Configure OPNsense (DHCP, DNS, BGP, NAT, aliases, firewall rules)
+    dir: '{{.ROOT_DIR}}/ansible'
+    cmd: ansible-playbook playbooks/network.yaml
+    preconditions:
+      - which ansible-playbook
+      - which op
+
+  nas:
+    desc: Configure TrueNAS SCALE (datasets, NFS, SMB, scrub, snapshots)
+    dir: '{{.ROOT_DIR}}/ansible'
+    cmd: ansible-playbook playbooks/nas.yaml
+    preconditions:
+      - which ansible-playbook
+      - which op
+
+  bootstrap:
+    desc: Bootstrap Talos cluster + Flux
+    dir: '{{.ROOT_DIR}}/ansible'
+    cmd: ansible-playbook playbooks/bootstrap.yaml
+    preconditions:
+      - which ansible-playbook
+      - which op
+      - test -f {{.ROOT_DIR}}/talos/talconfig.yaml

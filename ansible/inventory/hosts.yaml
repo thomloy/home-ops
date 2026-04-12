@@ -7,15 +7,12 @@ all:
       hosts:
         node01:
           talos_disk: "23492U801714"
-          talos_mac: "58:47:ca:7d:c0:bb"
           talos_bootstrap: true   # etcd bootstrappé sur ce node
         node02:
           talos_disk: "23492V800631"
-          talos_mac: "58:47:ca:7d:ca:43"
           talos_bootstrap: false
         node03:
           talos_disk: "23485G808758"
-          talos_mac: "58:47:ca:7d:ce:3b"
           talos_bootstrap: false
 
     # NAS TrueNAS SCALE — SSH disponible

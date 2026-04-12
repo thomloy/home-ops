@@ -1,0 +1,17 @@
+---
+# Déploiement complet de l'infrastructure depuis zéro.
+# Ordre : prérequis → réseau (OPNsense) → NAS (TrueNAS) → cluster (Talos + Flux)
+#
+# Usage:
+#   ansible-playbook playbooks/site.yaml
+#   ansible-playbook playbooks/site.yaml --tags flux       # seulement Flux
+#   ansible-playbook playbooks/site.yaml --tags network    # seulement OPNsense
+#   ansible-playbook playbooks/site.yaml --tags nas        # seulement TrueNAS
+
+- import_playbook: prereqs.yaml
+
+- import_playbook: network.yaml
+
+- import_playbook: nas.yaml
+
+- import_playbook: bootstrap.yaml

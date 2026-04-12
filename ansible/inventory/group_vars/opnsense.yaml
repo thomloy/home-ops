@@ -30,15 +30,15 @@ opnsense_aliases:
 
 # DHCP static leases — nodes Talos + NAS + JetKVMs
 opnsense_dhcp_leases:
-  - mac: "58:47:ca:7d:c0:bb"
+  - mac: "{{ node01_mac }}"
     ip: "{{ node01_ip }}"
     hostname: node01
     description: "Talos node01"
-  - mac: "58:47:ca:7d:ca:43"
+  - mac: "{{ node02_mac }}"
     ip: "{{ node02_ip }}"
     hostname: node02
     description: "Talos node02"
-  - mac: "58:47:ca:7d:ce:3b"
+  - mac: "{{ node03_mac }}"
     ip: "{{ node03_ip }}"
     hostname: node03
     description: "Talos node03"

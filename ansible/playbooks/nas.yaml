@@ -186,7 +186,7 @@
         headers: "{{ api_headers }}"
         body_format: json
         body:
-          pool: "data"
+          pool: "{{ truenas_pool }}"
           threshold: 35
           description: "Weekly scrub"
           schedule:
@@ -209,7 +209,7 @@
         headers: "{{ api_headers }}"
         body_format: json
         body:
-          dataset: "data/kubernetes"
+          dataset: "{{ truenas_pool }}/kubernetes"
           recursive: true
           lifetime_value: 7
           lifetime_unit: "DAY"
