@@ -423,28 +423,27 @@ data:
                     title: Musique
                     allow-insecure-html: true
                     cache: 30s
-                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/queue?apikey=$${LIDARR_API_KEY}&pageSize=8"
+                    url: "http://navidrome.media.svc.cluster.local:4533/rest/getNowPlaying.view?u=${NAVIDROME_USER}&p=${NAVIDROME_PASS}&c=glance&v=1.16.1&f=json"
                     template: |
-                      <div id="glance-nwp" class="gls-trigger" data-k="$${EMBY_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){fetch('https://emby.'+el.dataset.d+'/Sessions?api_key='+el.dataset.k).then(function(r){return r.json()}).then(function(d){var ps=(d||[]).filter(function(s){return s.NowPlayingItem&&s.NowPlayingItem.Type==='Audio'});if(!ps.length){el.style.display='none';return;}var s=ps[0],item=s.NowPlayingItem,pct=s.PlayState&&item.RunTimeTicks?Math.min(100,Math.round(s.PlayState.PositionTicks/item.RunTimeTicks*100)):0,paused=s.PlayState&&s.PlayState.IsPaused;el.innerHTML='<div class=\'gls-section-hdr\'>EN COURS</div><div style=\'padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px\'><div style=\'display:flex;gap:8px;align-items:center\'><img src=\'https://emby.'+el.dataset.d+'/Items/'+item.AlbumId+'/Images/Primary?maxHeight=60&api_key='+el.dataset.k+'\' style=\'width:44px;height:44px;object-fit:cover;border-radius:4px;flex-shrink:0\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(paused?'⏸ ':'▶ ')+item.Name+'</div><div style=\'font-size:.7em;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(item.Artists&&item.Artists[0]||item.AlbumArtist||'')+'</div><div style=\'font-size:.7em;opacity:.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(item.Album||'')+'</div></div></div>'+(pct>0?'<div style=\'margin-top:5px;background:rgba(255,255,255,.1);border-radius:2px;height:2px\'><div style=\'background:#3b82f6;width:'+pct+'%;height:2px;border-radius:2px\'></div></div>':'')+'</div><div class=\'gls-sep\'></div>';}).catch(function(){el.style.display='none'});})(this)"></div>
-                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
-                      {{else}}
-                      <div style="display:flex;flex-direction:column;gap:5px">
-                      {{range $records}}
-                      {{$st := .String "status"}}
-                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
-                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "album.title"}} <span style="opacity:.4;font-weight:400">— {{.String "artist.artistName"}}</span></div>
-                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
-                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
-                          <span style="opacity:.55">{{.String "timeleft"}}</span>
+                      {{$np := .JSON.Array "subsonic-response.nowPlaying.entry"}}
+                      {{if gt (len $np) 0}}
+                      <div class="gls-section-hdr">EN COURS</div>
+                      {{range $np}}
+                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;margin-bottom:8px">
+                        <div style="display:flex;gap:8px;align-items:center">
+                          <img src="https://navidrome.${SECRET_DOMAIN}/rest/getCoverArt.view?id={{.String "coverArt"}}&u=${NAVIDROME_USER}&p=${NAVIDROME_PASS}&c=glance&v=1.16.1" style="width:44px;height:44px;object-fit:cover;border-radius:4px;flex-shrink:0">
+                          <div style="min-width:0">
+                            <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">▶ {{.String "title"}}</div>
+                            <div style="font-size:.7em;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "artist"}}</div>
+                            <div style="font-size:.7em;opacity:.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "album"}}</div>
+                          </div>
                         </div>
                       </div>
                       {{end}}
-                      </div>
+                      <div class="gls-sep"></div>
                       {{end}}
+                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
+                      <div id="glance-ldq" class="gls-trigger" data-k="$${LIDARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){fetch('https://lidarr.'+el.dataset.d+'/api/v1/queue?apikey='+el.dataset.k+'&pageSize=8').then(function(r){return r.json()}).then(function(d){var recs=(d.records||[]);if(!recs.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun téléchargement en cours</div>';return;}var colors={downloading:'#3b82f6',completed:'#22c55e',failed:'#ef4444',paused:'#f59e0b',importPending:'#a855f7',importing:'#a855f7'};var labels={downloading:'⬇ Téléchargement',queued:'⏳ En attente',paused:'⏸ En pause',completed:'✓ Terminé',failed:'✗ Échec',importPending:'📥 Import en attente',importing:'📥 Import...'};var h='<div style=\'display:flex;flex-direction:column;gap:5px\'>';recs.forEach(function(r){var c=colors[r.status]||'#6b7280';h+='<div style=\'padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid '+c+'\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(r.album&&r.album.title||r.title||'')+' <span style=\'opacity:.4;font-weight:400\'>— '+(r.artist&&r.artist.artistName||'')+'</span></div><div style=\'display:flex;justify-content:space-between;font-size:.68em;margin-top:3px\'><span style=\'color:'+c+'\'>'+(labels[r.status]||r.status)+'</span><span style=\'opacity:.55\'>'+(r.timeleft||'')+'</span></div></div>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur</div>'});})(this)">Chargement...</div>
                       <div class="gls-sep"></div>
                       <div class="gls-section-hdr">LIENS</div>
                       <div style="display:flex;flex-direction:column;gap:4px">
