@@ -40,7 +40,7 @@ spec:
         enabled: true
     customRules:
       cni-exceptions.yaml: |-
-        - rule: Executing binary not part of base image
+        - rule: Drop and execute new binary in container
           append: true
           exceptions:
             - name: cni_binaries
