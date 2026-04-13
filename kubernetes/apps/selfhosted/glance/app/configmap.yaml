@@ -423,7 +423,7 @@ data:
                     title: Musique
                     allow-insecure-html: true
                     cache: 30s
-                    url: "http://navidrome.media.svc.cluster.local:4533/rest/getNowPlaying.view?u=${NAVIDROME_USER}&p=${NAVIDROME_PASS}&c=glance&v=1.16.1&f=json"
+                    url: "http://navidrome.media.svc.cluster.local:4533/rest/getNowPlaying.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=glance&v=1.16.1&f=json"
                     template: |
                       {{$np := .JSON.Array "subsonic-response.nowPlaying.entry"}}
                       {{if gt (len $np) 0}}
@@ -431,7 +431,7 @@ data:
                       {{range $np}}
                       <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;margin-bottom:8px">
                         <div style="display:flex;gap:8px;align-items:center">
-                          <img src="https://navidrome.${SECRET_DOMAIN}/rest/getCoverArt.view?id={{.String "coverArt"}}&u=${NAVIDROME_USER}&p=${NAVIDROME_PASS}&c=glance&v=1.16.1" style="width:44px;height:44px;object-fit:cover;border-radius:4px;flex-shrink:0">
+                          <img src="https://navidrome.${SECRET_DOMAIN}/rest/getCoverArt.view?id={{.String "coverArt"}}&u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=glance&v=1.16.1" style="width:44px;height:44px;object-fit:cover;border-radius:4px;flex-shrink:0">
                           <div style="min-width:0">
                             <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">▶ {{.String "title"}}</div>
                             <div style="font-size:.7em;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "artist"}}</div>
