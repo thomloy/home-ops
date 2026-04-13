@@ -442,9 +442,6 @@ data:
                       {{end}}
                       <div class="gls-sep"></div>
                       {{end}}
-                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
-                      <div id="glance-ldq" class="gls-trigger" data-k="$${LIDARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){fetch('https://lidarr.'+el.dataset.d+'/api/v1/queue?apikey='+el.dataset.k+'&pageSize=8').then(function(r){return r.json()}).then(function(d){var recs=(d.records||[]);if(!recs.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun téléchargement en cours</div>';return;}var colors={downloading:'#3b82f6',completed:'#22c55e',failed:'#ef4444',paused:'#f59e0b',importPending:'#a855f7',importing:'#a855f7'};var labels={downloading:'⬇ Téléchargement',queued:'⏳ En attente',paused:'⏸ En pause',completed:'✓ Terminé',failed:'✗ Échec',importPending:'📥 Import en attente',importing:'📥 Import...'};var h='<div style=\'display:flex;flex-direction:column;gap:5px\'>';recs.forEach(function(r){var c=colors[r.status]||'#6b7280';h+='<div style=\'padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid '+c+'\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(r.album&&r.album.title||r.title||'')+' <span style=\'opacity:.4;font-weight:400\'>— '+(r.artist&&r.artist.artistName||'')+'</span></div><div style=\'display:flex;justify-content:space-between;font-size:.68em;margin-top:3px\'><span style=\'color:'+c+'\'>'+(labels[r.status]||r.status)+'</span><span style=\'opacity:.55\'>'+(r.timeleft||'')+'</span></div></div>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur</div>'});})(this)">Chargement...</div>
-                      <div class="gls-sep"></div>
                       <div class="gls-section-hdr">LIENS</div>
                       <div style="display:flex;flex-direction:column;gap:4px">
                         <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Lidarr</a>
@@ -722,7 +719,6 @@ data:
                       {{else}}
                       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
                       {{range $records}}
-                      {{if gt (.Int "statistics.trackFileCount") 0}}
                       <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
                         {{$cover := .String "images.#[coverType==cover].remoteUrl"}}
                         {{if $cover}}<img src="{{$cover}}" style="width:100%;aspect-ratio:1/1;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:1/1;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:1.5em">🎵</div>{{end}}
@@ -731,7 +727,6 @@ data:
                           <div style="font-size:.65em;opacity:.6;margin-top:1px">{{.String "artist.artistName"}}</div>
                         </div>
                       </a>
-                      {{end}}
                       {{end}}
                       </div>
                       {{end}}
