@@ -115,7 +115,8 @@ Alternative solutions to the first two of these problems would be to host a Kube
 | [1Password](https://1password.com/)       | Secrets with [External Secrets](https://external-secrets.io/)  | ~€65/yr        |
 | [GitHub](https://github.com/)             | Hosting this repository and continuous integration/deployments | Free           |
 | [Pushover](https://pushover.net/)         | Kubernetes Alerts and application notifications                | €5 OTP         |
-|                                           |                                                                | Total: ~€5/mo |
+| Domain                                    | Public domain name                                             | €10.7/yr       |
+|                                           |                                                                | Total: ~€6/mo |
 
 ---
 
