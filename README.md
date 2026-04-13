@@ -106,7 +106,7 @@ graph TD
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f636_200d_1f32b_fe0f/512.gif" alt="😶" width="20" height="20"> Cloud Dependencies
 
-A few external services handle what doesn't make sense to self-host: secrets management, CI/CD, notifications, and the domain name.
+A few external services fill gaps the cluster can't cover itself: secrets must exist before the cluster boots (1Password via External Secrets), CI runs outside to avoid circular dependencies (GitHub Actions), alerts need a delivery path independent of cluster health (Pushover), and the public domain is managed externally.
 
 | Service                                   | Use                                                            | Cost           |
 |-------------------------------------------|----------------------------------------------------------------|----------------|
