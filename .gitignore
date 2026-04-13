@@ -17,9 +17,11 @@ kubeconfig
 talosconfig
 # Misc.
 CLAUDE.md
-scripts/
 .private/
+.scripts/
+.superpowers/
 .task/
 .venv/
+docs/superpowers/
 .DS_Store
 Thumbs.db
