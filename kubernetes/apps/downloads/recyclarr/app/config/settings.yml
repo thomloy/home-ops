@@ -2,4 +2,5 @@
 resource_providers:
   - name: config-templates
     type: config-templates
+    clone_url: https://github.com/recyclarr/config-templates.git
     reference: master
