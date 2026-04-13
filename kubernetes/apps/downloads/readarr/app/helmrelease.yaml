@@ -72,7 +72,7 @@ spec:
                 cpu: 20m
                 memory: 384Mi
               limits:
-                memory: 2Gi
+                memory: 512Mi
     service:
       app:
         ports:
