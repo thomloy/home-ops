@@ -18,6 +18,9 @@ spec:
       metrics:
         enabled: true
         interval: 15m
+        output_rule: true
+      webserver:
+        prometheus_metrics_enabled: true
     serviceMonitor:
       create: true
       interval: 15s
