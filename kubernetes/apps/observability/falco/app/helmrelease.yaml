@@ -29,10 +29,12 @@ spec:
       config:
         loki:
           hostport: "http://victoria-logs-server.observability.svc.cluster.local:9428"
+          endpoint: "/insert/loki/api/v1/push"
           minimumpriority: "debug"
           format: "json"
         alertmanager:
           hostport: "http://kube-prometheus-stack-alertmanager.observability.svc.cluster.local:9093"
+          endpoint: "/api/v2/alerts"
           minimumpriority: "warning"
       serviceMonitor:
         enabled: true
