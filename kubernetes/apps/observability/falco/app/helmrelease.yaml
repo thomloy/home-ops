@@ -17,7 +17,7 @@ spec:
       json_include_output_property: true
       metrics:
         enabled: true
-        prometheus_metrics_enabled: true
+        interval: 15m
     serviceMonitor:
       create: true
       interval: 15s
