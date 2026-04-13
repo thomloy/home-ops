@@ -1,0 +1,35 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: falco
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: falco
+  interval: 1h
+  values:
+    driver:
+      kind: modern_ebpf
+    falco:
+      json_output: true
+      json_include_output_property: true
+      metrics:
+        enabled: true
+        prometheus_metrics_enabled: true
+    serviceMonitor:
+      create: true
+      interval: 15s
+    falcosidekick:
+      enabled: true
+      config:
+        loki:
+          hostport: "http://victoria-logs-server.observability.svc.cluster.local:9428"
+          minimumpriority: "debug"
+          format: "json"
+        alertmanager:
+          hostport: "http://kube-prometheus-stack-alertmanager.observability.svc.cluster.local:9093"
+          minimumpriority: "warning"
+      serviceMonitor:
+        enabled: true
