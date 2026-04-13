@@ -33,3 +33,13 @@ spec:
           minimumpriority: "warning"
       serviceMonitor:
         enabled: true
+    falcoctl:
+      artifact:
+        install:
+          refs:
+            - "falco-rules:5"
+            - "falco-incubating-rules:5"
+        follow:
+          refs:
+            - "falco-rules:5"
+            - "falco-incubating-rules:5"
