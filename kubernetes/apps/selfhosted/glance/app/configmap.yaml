@@ -425,6 +425,7 @@ data:
                     cache: 30s
                     url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/queue?apikey=$${LIDARR_API_KEY}&pageSize=8"
                     template: |
+                      <div id="glance-nwp" class="gls-trigger" data-k="$${EMBY_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){fetch('https://emby.'+el.dataset.d+'/Sessions?api_key='+el.dataset.k).then(function(r){return r.json()}).then(function(d){var ps=(d||[]).filter(function(s){return s.NowPlayingItem&&s.NowPlayingItem.Type==='Audio'});if(!ps.length){el.style.display='none';return;}var s=ps[0],item=s.NowPlayingItem,pct=s.PlayState&&item.RunTimeTicks?Math.min(100,Math.round(s.PlayState.PositionTicks/item.RunTimeTicks*100)):0,paused=s.PlayState&&s.PlayState.IsPaused;el.innerHTML='<div class=\'gls-section-hdr\'>EN COURS</div><div style=\'padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px\'><div style=\'display:flex;gap:8px;align-items:center\'><img src=\'https://emby.'+el.dataset.d+'/Items/'+item.AlbumId+'/Images/Primary?maxHeight=60&api_key='+el.dataset.k+'\' style=\'width:44px;height:44px;object-fit:cover;border-radius:4px;flex-shrink:0\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(paused?'⏸ ':'▶ ')+item.Name+'</div><div style=\'font-size:.7em;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(item.Artists&&item.Artists[0]||item.AlbumArtist||'')+'</div><div style=\'font-size:.7em;opacity:.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+(item.Album||'')+'</div></div></div>'+(pct>0?'<div style=\'margin-top:5px;background:rgba(255,255,255,.1);border-radius:2px;height:2px\'><div style=\'background:#3b82f6;width:'+pct+'%;height:2px;border-radius:2px\'></div></div>':'')+'</div><div class=\'gls-sep\'></div>';}).catch(function(){el.style.display='none'});})(this)"></div>
                       <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
                       {{$records := .JSON.Array "records"}}
                       {{if eq (len $records) 0}}
@@ -713,24 +714,25 @@ data:
                     title: Musique
                     allow-insecure-html: true
                     cache: 30m
-                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/calendar?apikey=$${LIDARR_API_KEY}&start=2025-01-01&end=2027-12-31&unmonitored=false"
+                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/album?apikey=$${LIDARR_API_KEY}&pageSize=18&sortKey=releaseDate&sortDirection=descending"
                     template: |
-                      <div class="gls-section-hdr">ALBUMS À VENIR</div>
-                      {{$items := .JSON.Array "@this"}}
-                      {{if eq (len $items) 0}}
-                      <div style="font-size:.85em;opacity:.5">Aucun album à venir</div>
+                      <div class="gls-section-hdr">MES ALBUMS</div>
+                      {{$records := .JSON.Array "records"}}
+                      {{if eq (len $records) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun album</div>
                       {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px">
-                      {{range $items}}
-                      <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        {{$cover := .String "images.#[coverType==cover].url"}}
-                        {{if $cover}}<img src="{{$cover}}" style="width:35px;min-width:35px;height:35px;object-fit:cover;border-radius:3px;flex-shrink:0">{{else}}<div style="width:35px;min-width:35px;height:35px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center">🎵</div>{{end}}
-                        <div style="min-width:0">
-                          <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                          <div style="font-size:.7em;opacity:.65;margin-top:1px">{{.String "artist.artistName"}}</div>
-                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{slice $rd 0 10}}</div>
+                      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
+                      {{range $records}}
+                      {{if gt (.Int "statistics.trackFileCount") 0}}
+                      <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        {{$cover := .String "images.#[coverType==cover].remoteUrl"}}
+                        {{if $cover}}<img src="{{$cover}}" style="width:100%;aspect-ratio:1/1;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:1/1;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:1.5em">🎵</div>{{end}}
+                        <div style="padding:4px">
+                          <div style="font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{.String "title"}}</div>
+                          <div style="font-size:.65em;opacity:.6;margin-top:1px">{{.String "artist.artistName"}}</div>
                         </div>
                       </a>
+                      {{end}}
                       {{end}}
                       </div>
                       {{end}}
