@@ -62,7 +62,6 @@ spec:
                 - name: gpu
               requests:
                 cpu: 100m
-              requests:
                 memory: 1Gi
               limits:
                 memory: 4Gi
