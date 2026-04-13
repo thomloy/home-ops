@@ -38,6 +38,16 @@ spec:
           minimumpriority: "warning"
       serviceMonitor:
         enabled: true
+    customRules:
+      cni-exceptions.yaml: |-
+        - rule: Executing binary not part of base image
+          append: true
+          exceptions:
+            - name: cni_binaries
+              fields: [proc.exe]
+              comps: [startswith]
+              values:
+                - ["/opt/cni/bin/"]
     falcoctl:
       artifact:
         install:
