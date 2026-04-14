@@ -599,7 +599,7 @@ data:
               - type: custom-api
                 title: NAS HDD
                 cache: 60s
-                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(smartctl_device_temperature%7Btemperature_type%3D%22current%22%2Cjob%3D%22smartctl-exporter%22%7D%2C%22t%22%2C%22TMP%22%2C%22%22%2C%22%22)+or+label_replace(smartctl_device_smart_status%7Bjob%3D%22smartctl-exporter%22%7D%2C%22t%22%2C%22HLT%22%2C%22%22%2C%22%22)"
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=label_replace(max+by+(device)(smartctl_device_temperature%7Bjob%3D%22smartctl-exporter%22%7D)%2C%22t%22%2C%22TMP%22%2C%22%22%2C%22%22)+or+label_replace(max+by+(device)(smartctl_device_smart_status%7Bjob%3D%22smartctl-exporter%22%7D)%2C%22t%22%2C%22HLT%22%2C%22%22%2C%22%22)"
                 template: |
                   {{$results := .JSON.Array "data.result"}}
                   <div style="display:flex;flex-direction:column;gap:2px;padding:1px 0">
@@ -607,16 +607,18 @@ data:
                   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px">
                   {{range $results}}{{if eq (.String "metric.t") "HLT"}}
                   {{$dev := .String "metric.device"}}{{$ok := .Int "value.1"}}
+                  {{$label := $dev}}{{if eq $dev "nvme0"}}{{$label = "SYS"}}{{else if eq $dev "nvme1"}}{{$label = "CACHE"}}{{else if eq $dev "sda"}}{{$label = "HDD1"}}{{else if eq $dev "sdb"}}{{$label = "HDD2"}}{{else if eq $dev "sdc"}}{{$label = "HDD3"}}{{else if eq $dev "sdd"}}{{$label = "HDD4"}}{{end}}
                   <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
-                    <span style="font-size:.65em;opacity:.55">{{$dev}}</span>
+                    <span style="font-size:.65em;opacity:.55">{{$label}}</span>
                     <span style="font-size:.85em;font-weight:700;color:{{if eq $ok 1}}#22c55e{{else}}#ef4444{{end}}">{{if eq $ok 1}}✓{{else}}✗{{end}}</span>
                   </div>
                   {{end}}{{end}}
                   </div>
                   {{range $results}}{{if eq (.String "metric.t") "TMP"}}
                   {{$dev := .String "metric.device"}}{{$temp := .Int "value.1"}}
+                  {{$label := $dev}}{{if eq $dev "nvme0"}}{{$label = "SYS"}}{{else if eq $dev "nvme1"}}{{$label = "CACHE"}}{{else if eq $dev "sda"}}{{$label = "HDD1"}}{{else if eq $dev "sdb"}}{{$label = "HDD2"}}{{else if eq $dev "sdc"}}{{$label = "HDD3"}}{{else if eq $dev "sdd"}}{{$label = "HDD4"}}{{end}}
                   <div style="display:flex;align-items:center;gap:4px">
-                    <span style="font-size:.7em;min-width:36px;opacity:.75">{{$dev}}</span>
+                    <span style="font-size:.7em;min-width:40px;opacity:.75">{{$label}}</span>
                     <div style="flex:1;background:rgba(255,255,255,.1);border-radius:3px;height:4px">
                       <div style="background:{{if lt $temp 40}}#22c55e{{else if lt $temp 50}}#f59e0b{{else}}#ef4444{{end}};width:{{$temp}}%;height:4px;border-radius:3px"></div>
                     </div>
