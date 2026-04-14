@@ -711,29 +711,13 @@ data:
                     title: Musique
                     allow-insecure-html: true
                     cache: 30m
-                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/album?apikey=$${LIDARR_API_KEY}&pageSize=18&sortKey=releaseDate&sortDirection=descending"
+                    url: "http://navidrome.media.svc.cluster.local:4533/rest/ping.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=glance&v=1.16.1&f=json"
                     template: |
-                      <div class="gls-section-hdr">MES ALBUMS</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5">Aucun album</div>
-                      {{else}}
-                      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
-                      {{range $records}}
-                      <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        {{$cover := .String "images.#[coverType==cover].remoteUrl"}}
-                        {{if $cover}}<img src="{{$cover}}" style="width:100%;aspect-ratio:1/1;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:1/1;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:1.5em">🎵</div>{{end}}
-                        <div style="padding:4px">
-                          <div style="font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{.String "title"}}</div>
-                          <div style="font-size:.65em;opacity:.6;margin-top:1px">{{.String "artist.artistName"}}</div>
-                        </div>
-                      </a>
-                      {{end}}
-                      </div>
-                      {{end}}
+                      <div class="gls-section-hdr">ALBUMS RÉCENTS</div>
+                      <div id="glance-nab" class="gls-trigger" data-u="$${NAVIDROME_USER}" data-p="$${NAVIDROME_PASS}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var u=el.dataset.u,p=el.dataset.p,d=el.dataset.d,base='https://navidrome.'+d;fetch(base+'/rest/getAlbumList2.view?u='+u+'&p='+p+'&c=glance&v=1.16.1&f=json&type=newest&size=18').then(function(r){return r.json()}).then(function(j){var al=(j['subsonic-response']&&j['subsonic-response'].albumList2&&j['subsonic-response'].albumList2.album)||[];if(!al.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun album</div>';return;}var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';al.forEach(function(a){var cv=a.coverArt?base+'/rest/getCoverArt.view?id='+a.coverArt+'&u='+u+'&p='+p+'&c=glance&v=1.16.1':'';h+='<a href=\''+base+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+(cv?'<img src=\''+cv+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:1/1;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:1.5em\'>🎵</div>')+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.name+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(a.artist||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur</div>';});})(this)">Chargement...</div>
                       <div class="gls-sep"></div>
                       <div class="gls-section-hdr">TOP ALBUMS</div>
-                      <div id="glance-deezer" class="gls-trigger" onanimationstart="(function(el){fetch('https://api.deezer.com/chart/0/albums?limit=9').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d.data||[]).forEach(function(a){h+='<a href=\''+a.link+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\''+a.cover_medium+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'><div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.title+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(a.artist&&a.artist.name||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album</div>';}).catch(function(){el.innerHTML='';});})(this)">Chargement...</div>
+                      <div id="glance-deezer" class="gls-trigger" onanimationstart="(function(el){fetch('https://api.deezer.com/chart/0/albums?limit=9').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d.data||[]).forEach(function(a){h+='<a href=\''+a.link+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\''+a.cover_medium+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'><div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.title+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(a.artist&&a.artist.name||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album</div>';}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Indisponible</div>';});})(this)">Chargement...</div>
 
       # ── Stats ──────────────────────────────────────────────────────────────
       - name: stats
