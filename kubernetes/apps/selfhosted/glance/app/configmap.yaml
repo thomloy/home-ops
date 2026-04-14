@@ -509,7 +509,7 @@ data:
                         <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
-                          {{$rd := .String "release_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{slice $rd 8 10}}-{{slice $rd 5 7}}-{{slice $rd 0 4}}</div>
+                          {{$rd := .String "release_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $rd) 9}}{{slice $rd 8 10}}-{{slice $rd 5 7}}-{{slice $rd 0 4}}{{else}}{{$rd}}{{end}}</div>
                           <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
                       </a>
