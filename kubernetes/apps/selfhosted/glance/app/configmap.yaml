@@ -564,7 +564,7 @@ data:
                         <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
-                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}</div>
+                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $fad) 9}}{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}{{else}}{{$fad}}{{end}}</div>
                           <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
                       </a>
@@ -586,7 +586,7 @@ data:
                         <div style="padding:8px">
                           <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
                           <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "authorTitle"}}</div>
-                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:2px">{{slice $rd 0 10}}</div>
+                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:2px">{{if gt (len $rd) 9}}{{slice $rd 0 10}}{{else}}{{$rd}}{{end}}</div>
                           {{if eq (.Int "statistics.bookFileCount") 0}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Manquant</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Dispo</span>{{end}}
                         </div>
                       </a>
@@ -649,7 +649,7 @@ data:
                         <img src="{{.String "images.#[coverType==poster].remoteUrl"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
                         <div style="padding:4px">
                           <div style="font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{.String "title"}}</div>
-                          {{$ic := .String "inCinemas"}}<div style="font-size:.65em;opacity:.6;margin-top:1px">{{slice $ic 8 10}}-{{slice $ic 5 7}}-{{slice $ic 0 4}}</div>
+                          {{$ic := .String "inCinemas"}}<div style="font-size:.65em;opacity:.6;margin-top:1px">{{if gt (len $ic) 9}}{{slice $ic 8 10}}-{{slice $ic 5 7}}-{{slice $ic 0 4}}{{else}}{{$ic}}{{end}}</div>
                           {{if eq (.String "hasFile") "true"}}<span style="font-size:.6em;padding:1px 3px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:1px">✓</span>{{else}}<span style="font-size:.6em;padding:1px 3px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:1px">✗</span>{{end}}
                         </div>
                       </a>
@@ -700,7 +700,7 @@ data:
                         <div style="min-width:0">
                           <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
                           <div style="font-size:.7em;opacity:.65;margin-top:2px">{{.String "authorTitle"}}</div>
-                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{slice $rd 0 10}}</div>
+                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{if gt (len $rd) 9}}{{slice $rd 0 10}}{{else}}{{$rd}}{{end}}</div>
                         </div>
                       </a>
                       {{end}}
