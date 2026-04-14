@@ -521,7 +521,7 @@ data:
                     title: Séries
                     allow-insecure-html: true
                     cache: 30m
-                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/series?apikey=$${SONARR_API_KEY}&sortKey=nextAiring&sortDirection=ascending"
+                    url: "https://api.themoviedb.org/3/discover/tv?api_key=$${TMDB_API_KEY}&sort_by=first_air_date.asc&first_air_date.gte=2025-04-01&language=fr-FR&page=1"
                     template: |
                       <div id="glance-slk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('glance-slq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('glance-slr').innerHTML=h;document.getElementById('glance-slr').style.display='';document.getElementById('glance-sld').style.display='none';});})(this)" style="display:none"></div>
                       <div style="display:flex;gap:8px;margin-bottom:12px">
@@ -532,12 +532,13 @@ data:
                       <div id="glance-slr" style="display:none"></div>
                       <div id="glance-sld">
                       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
-                      {{range .JSON.Array "@this"}}
-                      <a href="https://sonarr.${SECRET_DOMAIN}/series/{{.String "titleSlug"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                        <img src="https://sonarr.${SECRET_DOMAIN}/MediaCover/{{.Int "id"}}/poster.jpg?apikey=$${SONARR_API_KEY}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
-                        <div style="padding:6px">
-                          <div style="font-weight:600;font-size:.8em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{.String "title"}}</div>
-                          {{if eq (.String "status") "ended"}}<span style="font-size:.6em;padding:1px 4px;background:#6b7280;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Terminée</span>{{else if eq (.String "status") "continuing"}}<span style="font-size:.6em;padding:1px 4px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">En cours</span>{{else}}<span style="font-size:.6em;padding:1px 4px;background:#f59e0b;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">{{.String "status"}}</span>{{end}}
+                      {{range .JSON.Array "results"}}
+                      <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        {{if .String "poster_path"}}<img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)"></div>{{end}}
+                        <div style="padding:8px">
+                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
+                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $fad) 9}}{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}{{else}}{{$fad}}{{end}}</div>
+                          <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
                         </div>
                       </a>
                       {{end}}
