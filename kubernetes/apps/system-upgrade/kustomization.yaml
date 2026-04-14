@@ -11,3 +11,4 @@ components:
 resources:
   - ./namespace.yaml
   - ./tuppr/ks.yaml
+  - ./nut-shutdown/ks.yaml

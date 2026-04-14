@@ -1,0 +1,114 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nut-shutdown-script
+data:
+  monitor.sh: |
+    #!/bin/sh
+    set -e
+
+    apk add --no-cache nut-client > /dev/null 2>&1
+
+    THRESHOLD="${THRESHOLD:-20}"
+    SHUTDOWN_DONE=0
+
+    echo "[nut-shutdown] Starting — host=${NAS_IP}, threshold=${THRESHOLD}%"
+
+    while true; do
+      UPS_DATA=$(upsc ups@"${NAS_IP}" 2>/dev/null) || {
+        echo "[nut-shutdown] WARN: Cannot reach NUT server at ${NAS_IP}"
+        sleep 60
+        continue
+      }
+
+      BATT=$(echo "${UPS_DATA}" | awk -F': ' '/^battery\.charge:/{print $2}')
+      STATUS=$(echo "${UPS_DATA}" | awk -F': ' '/^ups\.status:/{print $2}')
+
+      echo "[nut-shutdown] status=${STATUS} battery=${BATT}%"
+
+      if [ "${SHUTDOWN_DONE}" = "0" ] && \
+         echo "${STATUS}" | grep -q "OB" && \
+         [ -n "${BATT}" ] && [ "${BATT}" -lt "${THRESHOLD}" ]; then
+
+        echo "[nut-shutdown] CRITICAL: ${BATT}% on battery — shutting down cluster NOW"
+        SHUTDOWN_DONE=1
+
+        /shared/talosctl --talosconfig /talos/talosconfig shutdown \
+          -n 192.168.42.41 \
+          -n 192.168.42.42 \
+          -n 192.168.42.43 \
+          --wait=false || true
+
+        echo "[nut-shutdown] Shutdown signal sent — waiting for power off"
+        sleep 300
+        SHUTDOWN_DONE=0
+      fi
+
+      sleep 30
+    done
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nut-shutdown
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nut-shutdown
+  template:
+    metadata:
+      labels:
+        app: nut-shutdown
+    spec:
+      priorityClassName: system-cluster-critical
+      initContainers:
+        - name: copy-talosctl
+          image: ghcr.io/siderolabs/talosctl:v1.12.6
+          command: ["/bin/sh", "-c", "cp /talosctl /shared/talosctl && chmod +x /shared/talosctl"]
+          volumeMounts:
+            - name: shared
+              mountPath: /shared
+      containers:
+        - name: nut-shutdown
+          image: alpine:3.21
+          command: ["/bin/sh", "/scripts/monitor.sh"]
+          env:
+            - name: NAS_IP
+              value: "${NAS_IP}"
+            - name: THRESHOLD
+              value: "20"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: shared
+              mountPath: /shared
+            - name: talosconfig
+              mountPath: /talos
+              readOnly: true
+          resources:
+            requests:
+              cpu: 5m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
+      volumes:
+        - name: scripts
+          configMap:
+            name: nut-shutdown-script
+            defaultMode: 0755
+        - name: shared
+          emptyDir: {}
+        - name: talosconfig
+          secret:
+            secretName: nut-shutdown-secret
+            items:
+              - key: talosconfig
+                path: talosconfig
+      restartPolicy: Always
