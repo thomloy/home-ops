@@ -271,182 +271,53 @@ data:
                   </div>
                   {{end}}
 
-              - type: group
-                widgets:
-                  - type: custom-api
-                    title: Media
-                    allow-insecure-html: true
-                    cache: 1h
-                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/system/status?apikey=$${RADARR_API_KEY}"
-                    template: |
-                      <div class="gls-section-hdr">LIENS RAPIDES</div>
-                      <div style="display:flex;flex-direction:column;gap:4px">
-                        <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
-                        <a href="https://audiobookshelf.${SECRET_DOMAIN}" target="_blank" class="gls-link">Audiobookshelf</a>
-                        <a href="https://seerr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Seerr</a>
-                        <a href="https://radarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Radarr</a>
-                        <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
-                        <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Readarr</a>
-                        <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Lidarr</a>
-                        <a href="https://navidrome.${SECRET_DOMAIN}" target="_blank" class="gls-link">Navidrome</a>
-                      </div>
+              - type: custom-api
+                title: Musique en cours
+                allow-insecure-html: true
+                cache: 30s
+                url: "http://navidrome.media.svc.cluster.local:4533/rest/getNowPlaying.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=glance&v=1.16.1&f=json"
+                template: |
+                  {{$np := .JSON.Array "subsonic-response.nowPlaying.entry"}}
+                  {{if eq (len $np) 0}}
+                  <div style="font-size:.85em;opacity:.5">Aucune lecture musicale</div>
+                  {{else}}
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                  {{range $np}}
+                  <div style="display:flex;gap:8px;align-items:center;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:6px">
+                    <img src="https://navidrome.${SECRET_DOMAIN}/rest/getCoverArt.view?id={{.String "coverArt"}}&u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=glance&v=1.16.1" style="width:40px;height:40px;object-fit:cover;border-radius:4px;flex-shrink:0">
+                    <div style="min-width:0">
+                      <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">▶ {{.String "title"}}</div>
+                      <div style="font-size:.7em;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "artist"}}</div>
+                    </div>
+                  </div>
+                  {{end}}
+                  </div>
+                  {{end}}
 
-                  - type: custom-api
-                    title: Films
-                    allow-insecure-html: true
-                    cache: 30s
-                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/queue?apikey=$${RADARR_API_KEY}&pageSize=8"
-                    template: |
-                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
-                      {{else}}
-                      <div style="display:flex;flex-direction:column;gap:5px">
-                      {{range $records}}
-                      {{$st := .String "status"}}
-                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
-                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "movie.title"}}{{if .Int "movie.year"}} <span style="opacity:.4;font-weight:400">({{.Int "movie.year"}})</span>{{end}}</div>
-                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
-                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
-                          <span style="opacity:.55">{{.String "timeleft"}}</span>
-                        </div>
-                      </div>
-                      {{end}}
-                      </div>
-                      {{end}}
-                      <div class="gls-sep"></div>
-                      <div class="gls-section-hdr">LIENS</div>
-                      <div style="display:flex;flex-direction:column;gap:4px">
-                        <a href="https://radarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Radarr</a>
-                        <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
-                      </div>
+              - type: custom-api
+                title: Téléchargements
+                allow-insecure-html: true
+                cache: 30s
+                url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/health?apikey=$${RADARR_API_KEY}"
+                template: |
+                  <div id="glance-dlq" class="gls-trigger" data-kr="$${RADARR_API_KEY}" data-ks="$${SONARR_API_KEY}" data-krd="$${READARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var d=el.dataset.d,kr=el.dataset.kr,ks=el.dataset.ks,krd=el.dataset.krd;Promise.all([fetch('https://radarr.'+d+'/api/v3/queue?apikey='+kr+'&pageSize=5').then(function(r){return r.json()}).catch(function(){return{records:[]}}),fetch('https://sonarr.'+d+'/api/v3/queue?apikey='+ks+'&pageSize=5').then(function(r){return r.json()}).catch(function(){return{records:[]}}),fetch('https://readarr.'+d+'/api/v1/queue?apikey='+krd+'&pageSize=3').then(function(r){return r.json()}).catch(function(){return{records:[]}})]).then(function(res){var all=[];(res[0].records||[]).forEach(function(r){all.push(['🎬',(r.movie&&r.movie.title)||r.title||'',r.status,r.timeleft||''])});(res[1].records||[]).forEach(function(r){all.push(['📺',(r.series&&r.series.title)||r.title||'',r.status,r.timeleft||''])});(res[2].records||[]).forEach(function(r){all.push(['📚',(r.book&&r.book.title)||r.title||'',r.status,r.timeleft||''])});if(!all.length){el.innerHTML='<div style=\'opacity:.5;font-size:.85em\'>Aucun téléchargement</div>';return;}var col={downloading:\'#3b82f6\',completed:\'#22c55e\',failed:\'#ef4444\',paused:\'#f59e0b\',importPending:\'#a855f7\',importing:\'#a855f7\'};var lbl={downloading:\'⬇\',queued:\'⏳\',paused:\'⏸\',completed:\'✓\',failed:\'✗\',importPending:\'📥\',importing:\'📥\'};var h=\'\';all.forEach(function(r){var c=col[r[2]]||\'#6b7280\';h+=\'<div style=\'margin-bottom:4px;padding:5px 8px;background:rgba(0,0,0,.1);border-radius:5px;border-left:3px solid \'+c+\'\'><div style=\'font-size:.8em;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis\'>\'+r[0]+\' \'+r[1]+\'</div><div style=\'font-size:.68em;opacity:.6\'>\'+( lbl[r[2]]||r[2])+(r[3]?\' · \'+r[3]:\'\')+\'</div></div>\';});el.innerHTML=h;});})(this)">Chargement...</div>
 
-                  - type: custom-api
-                    title: Séries
-                    allow-insecure-html: true
-                    cache: 30s
-                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/queue?apikey=$${SONARR_API_KEY}&pageSize=8"
-                    template: |
-                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
-                      {{else}}
-                      <div style="display:flex;flex-direction:column;gap:5px">
-                      {{range $records}}
-                      {{$st := .String "status"}}
-                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
-                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "series.title"}} <span style="opacity:.55;font-weight:400">S{{printf "%02d" (.Int "episode.seasonNumber")}}E{{printf "%02d" (.Int "episode.episodeNumber")}}</span></div>
-                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
-                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
-                          <span style="opacity:.55">{{.String "timeleft"}}</span>
-                        </div>
-                      </div>
-                      {{end}}
-                      </div>
-                      {{end}}
-                      <div class="gls-sep"></div>
-                      <div class="gls-section-hdr">LIENS</div>
-                      <div style="display:flex;flex-direction:column;gap:4px">
-                        <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
-                        <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
-                      </div>
-
-                  - type: custom-api
-                    title: Animés
-                    allow-insecure-html: true
-                    cache: 30s
-                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/queue?apikey=$${SONARR_API_KEY}&pageSize=8"
-                    template: |
-                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
-                      {{else}}
-                      <div style="display:flex;flex-direction:column;gap:5px">
-                      {{range $records}}
-                      {{$st := .String "status"}}
-                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
-                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "series.title"}} <span style="opacity:.55;font-weight:400">S{{printf "%02d" (.Int "episode.seasonNumber")}}E{{printf "%02d" (.Int "episode.episodeNumber")}}</span></div>
-                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
-                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
-                          <span style="opacity:.55">{{.String "timeleft"}}</span>
-                        </div>
-                      </div>
-                      {{end}}
-                      </div>
-                      {{end}}
-                      <div class="gls-sep"></div>
-                      <div class="gls-section-hdr">LIENS</div>
-                      <div style="display:flex;flex-direction:column;gap:4px">
-                        <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
-                        <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
-                      </div>
-
-                  - type: custom-api
-                    title: Livres
-                    allow-insecure-html: true
-                    cache: 30s
-                    url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/queue?apikey=$${READARR_API_KEY}&pageSize=8"
-                    template: |
-                      <div class="gls-section-hdr">TÉLÉCHARGEMENTS</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5">Aucun téléchargement en cours</div>
-                      {{else}}
-                      <div style="display:flex;flex-direction:column;gap:5px">
-                      {{range $records}}
-                      {{$st := .String "status"}}
-                      {{$c := "#6b7280"}}{{if eq $st "downloading"}}{{$c = "#3b82f6"}}{{else if eq $st "completed"}}{{$c = "#22c55e"}}{{else if eq $st "failed"}}{{$c = "#ef4444"}}{{else if eq $st "paused"}}{{$c = "#f59e0b"}}{{else if eq $st "importPending"}}{{$c = "#a855f7"}}{{else if eq $st "importing"}}{{$c = "#a855f7"}}{{end}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;border-left:3px solid {{$c}}">
-                        <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "book.title"}} <span style="opacity:.4;font-weight:400">— {{.String "author.authorName"}}</span></div>
-                        <div style="display:flex;justify-content:space-between;font-size:.68em;margin-top:3px">
-                          <span style="color:{{$c}}">{{if eq $st "downloading"}}⬇ Téléchargement{{else if eq $st "queued"}}⏳ En attente{{else if eq $st "paused"}}⏸ En pause{{else if eq $st "completed"}}✓ Terminé{{else if eq $st "failed"}}✗ Échec{{else if eq $st "importPending"}}📥 Import en attente{{else if eq $st "importing"}}📥 Import...{{else}}{{$st}}{{end}}</span>
-                          <span style="opacity:.55">{{.String "timeleft"}}</span>
-                        </div>
-                      </div>
-                      {{end}}
-                      </div>
-                      {{end}}
-                      <div class="gls-sep"></div>
-                      <div class="gls-section-hdr">LIENS</div>
-                      <div style="display:flex;flex-direction:column;gap:4px">
-                        <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Readarr</a>
-                        <a href="https://audiobookshelf.${SECRET_DOMAIN}" target="_blank" class="gls-link">Audiobookshelf</a>
-                      </div>
-
-                  - type: custom-api
-                    title: Musique
-                    allow-insecure-html: true
-                    cache: 30s
-                    url: "http://navidrome.media.svc.cluster.local:4533/rest/getNowPlaying.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=glance&v=1.16.1&f=json"
-                    template: |
-                      {{$np := .JSON.Array "subsonic-response.nowPlaying.entry"}}
-                      {{if gt (len $np) 0}}
-                      <div class="gls-section-hdr">EN COURS</div>
-                      {{range $np}}
-                      <div style="padding:6px 8px;background:rgba(0,0,0,.1);border-radius:6px;margin-bottom:8px">
-                        <div style="display:flex;gap:8px;align-items:center">
-                          <img src="https://navidrome.${SECRET_DOMAIN}/rest/getCoverArt.view?id={{.String "coverArt"}}&u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=glance&v=1.16.1" style="width:44px;height:44px;object-fit:cover;border-radius:4px;flex-shrink:0">
-                          <div style="min-width:0">
-                            <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">▶ {{.String "title"}}</div>
-                            <div style="font-size:.7em;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "artist"}}</div>
-                            <div style="font-size:.7em;opacity:.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "album"}}</div>
-                          </div>
-                        </div>
-                      </div>
-                      {{end}}
-                      <div class="gls-sep"></div>
-                      {{end}}
-                      <div class="gls-section-hdr">LIENS</div>
-                      <div style="display:flex;flex-direction:column;gap:4px">
-                        <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Lidarr</a>
-                        <a href="https://navidrome.${SECRET_DOMAIN}" target="_blank" class="gls-link">Navidrome</a>
-                      </div>
+              - type: custom-api
+                title: Liens
+                allow-insecure-html: true
+                cache: 1h
+                url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/system/status?apikey=$${RADARR_API_KEY}"
+                template: |
+                  <div style="display:flex;flex-direction:column;gap:4px">
+                    <a href="https://emby.${SECRET_DOMAIN}" target="_blank" class="gls-link">Emby</a>
+                    <a href="https://audiobookshelf.${SECRET_DOMAIN}" target="_blank" class="gls-link">Audiobookshelf</a>
+                    <a href="https://seerr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Seerr</a>
+                    <a href="https://radarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Radarr</a>
+                    <a href="https://sonarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Sonarr</a>
+                    <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Readarr</a>
+                    <a href="https://lidarr.${SECRET_DOMAIN}" target="_blank" class="gls-link">Lidarr</a>
+                    <a href="https://navidrome.${SECRET_DOMAIN}" target="_blank" class="gls-link">Navidrome</a>
+                  </div>
 
           - size: full
             widgets:
@@ -597,32 +468,17 @@ data:
                   - type: custom-api
                     title: Musique
                     allow-insecure-html: true
-                    cache: 30s
-                    url: "http://lidarr.downloads.svc.cluster.local:8686/api/v1/queue?apikey=$${LIDARR_API_KEY}&pageSize=10"
+                    cache: 30m
+                    url: "http://navidrome.media.svc.cluster.local:4533/rest/ping.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=glance&v=1.16.1&f=json"
                     template: |
-                      <div class="gls-section-hdr">QUEUE LIDARR</div>
-                      {{$records := .JSON.Array "records"}}
-                      {{if eq (len $records) 0}}
-                      <div style="font-size:.85em;opacity:.5;margin-bottom:8px">Aucun téléchargement en cours</div>
-                      {{else}}
-                      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
-                      {{range $records}}
-                      <div class="gls-item">
-                        <div class="gls-item-title">{{.String "title"}}</div>
-                        <div class="gls-item-sub"><span>{{.String "status"}}</span> <span>{{.String "timeleft"}}</span></div>
-                      </div>
-                      {{end}}
-                      </div>
-                      {{end}}
-                      <div class="gls-section-hdr">ALBUMS RECHERCHÉS</div>
-                      <div id="glance-ldr" class="gls-trigger" data-k="$${LIDARR_API_KEY}" onanimationstart="(function(el){fetch('https://lidarr.${SECRET_DOMAIN}/api/v1/wanted/missing?apikey='+el.dataset.k+'&pageSize=10&sortKey=releaseDate&sortDirection=descending').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';(d.records||[]).forEach(function(a){h+='<div style=\'display:flex;gap:8px;align-items:center;padding:5px 8px;background:rgba(0,0,0,.06);border-radius:5px\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+a.title+'</div><div style=\'font-size:.7em;opacity:.65\'>'+(a.artistName||'')+'</div></div></div>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album manquant</div>';}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur de chargement</div>';});})(this)">Chargement...</div>
-
+                      <div class="gls-section-hdr">RÉCEMMENT ÉCOUTÉ</div>
+                      <div id="glance-nrp" class="gls-trigger" data-u="$${NAVIDROME_USER}" data-p="$${NAVIDROME_PASS}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var u=el.dataset.u,p=el.dataset.p,d=el.dataset.d,base='https://navidrome.'+d;fetch(base+'/rest/getAlbumList2.view?u='+u+'&p='+p+'&c=glance&v=1.16.1&f=json&type=recent&size=18').then(function(r){return r.json()}).then(function(j){var al=(j['subsonic-response']&&j['subsonic-response'].albumList2&&j['subsonic-response'].albumList2.album)||[];if(!al.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun album récent</div>';return;}var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';al.forEach(function(a){var cv=a.coverArt?base+'/rest/getCoverArt.view?id='+a.coverArt+'&u='+u+'&p='+p+'&c=glance&v=1.16.1':'';h+='<a href=\'https://navidrome.'+d+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+(cv?'<img src=\''+cv+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'>':'')+ '<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.name+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+( a.artist||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur</div>';});})(this)">Chargement...</div>
           - size: small
             widgets:
               - type: group
                 widgets:
                   - type: custom-api
-                    title: Media
+                    title: Bibliothèque
                     allow-insecure-html: true
                     cache: 30m
                     url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/health?apikey=$${SONARR_API_KEY}"
