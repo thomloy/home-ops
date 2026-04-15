@@ -8,7 +8,7 @@ data:
     #!/bin/sh
     set -e
 
-    apk add --no-cache nut-client > /dev/null 2>&1
+    apk add --no-cache nut > /dev/null 2>&1
 
     THRESHOLD="${THRESHOLD:-20}"
     SHUTDOWN_DONE=0
