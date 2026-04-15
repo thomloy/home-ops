@@ -63,6 +63,8 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
+            alerts:
+              - type: pushover
             conditions: ["[STATUS] == 200"]
             ui:
               hide-hostname: true

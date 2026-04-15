@@ -125,6 +125,8 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
+            alerts:
+              - type: pushover
             ui:
               hide-hostname: true
         hostnames:

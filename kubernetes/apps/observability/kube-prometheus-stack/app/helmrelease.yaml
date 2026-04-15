@@ -21,6 +21,8 @@ spec:
           enabled: true
           annotations:
             gatus.home-operations.com/endpoint: |-
+              alerts:
+                - type: pushover
               name: Alertmanager
               conditions: ["[STATUS] == 200"]
               url: http://kube-prometheus-stack-alertmanager.observability.svc.cluster.local:9093/-/healthy
@@ -54,6 +56,8 @@ spec:
           enabled: true
           annotations:
             gatus.home-operations.com/endpoint: |-
+              alerts:
+                - type: pushover
               name: Prometheus
               ui:
                 hide-hostname: true

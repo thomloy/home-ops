@@ -62,6 +62,8 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
+            alerts:
+              - type: pushover
             conditions: ["[STATUS] == 404"]
             ui:
               hide-hostname: true
