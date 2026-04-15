@@ -8,4 +8,5 @@ resources:
   - ./externalsecret.yaml
   - ./pvc.yaml
   - ./helmrelease.yaml
+  - ./cnpg-backup.yaml
   - ./volsync.yaml

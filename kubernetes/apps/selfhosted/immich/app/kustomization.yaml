@@ -5,5 +5,6 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./cluster.yaml
+  - ./cnpg-backup.yaml
   - ./pv.yaml
   - ./helmrelease.yaml

@@ -15,5 +15,21 @@ spec:
     initdb:
       database: nextcloud
       owner: nextcloud
+  backup:
+    retentionPolicy: "7d"
+    barmanObjectStore:
+      destinationPath: s3://cnpg-backups/nextcloud-postgres
+      endpointURL: ${CNPG_S3_ENDPOINT}
+      s3Credentials:
+        accessKeyId:
+          name: nextcloud-postgres-backup-secret
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: nextcloud-postgres-backup-secret
+          key: AWS_SECRET_ACCESS_KEY
+      wal:
+        compression: bzip2
+      data:
+        compression: bzip2
   monitoring:
     enablePodMonitor: true
