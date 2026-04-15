@@ -9,7 +9,7 @@ data:
     THRESHOLD="${THRESHOLD:-20}"
     SHUTDOWN_DONE=0
 
-    echo "[nut-shutdown] Starting — host=${NAS_IP}, threshold=${THRESHOLD}%"
+    echo "[nut-shutdown] Starting — host=${NAS_IP}, threshold=$${THRESHOLD}%"
 
     nut_var() {
       printf "GET VAR ups %s\n" "$1" | nc -w 3 "${NAS_IP}" 3493 2>/dev/null | awk -F'"' '{print $2}'
