@@ -6,7 +6,8 @@ metadata:
   name: nut-shutdown
 spec:
   dependsOn:
-    - name: external-secrets-stores
+    - name: onepassword
+      namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/system-upgrade/nut-shutdown/app
   prune: true
