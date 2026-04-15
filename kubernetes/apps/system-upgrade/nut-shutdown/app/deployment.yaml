@@ -6,30 +6,30 @@ metadata:
 data:
   monitor.sh: |
     #!/bin/sh
-    set -e
-
-    apk add --no-cache nut > /dev/null 2>&1
-
     THRESHOLD="${THRESHOLD:-20}"
     SHUTDOWN_DONE=0
 
     echo "[nut-shutdown] Starting — host=${NAS_IP}, threshold=${THRESHOLD}%"
 
+    nut_var() {
+      printf "GET VAR ups %s\n" "$1" | nc -w 3 "${NAS_IP}" 3493 2>/dev/null | awk -F'"' '{print $2}'
+    }
+
     while true; do
-      UPS_DATA=$(upsc ups@"${NAS_IP}" 2>/dev/null) || {
-        echo "[nut-shutdown] WARN: Cannot reach NUT server at ${NAS_IP}"
+      BATT=$(nut_var "battery.charge")
+      STATUS=$(nut_var "ups.status")
+
+      if [ -z "${BATT}" ] || [ -z "${STATUS}" ]; then
+        echo "[nut-shutdown] WARN: Cannot reach NUT server at ${NAS_IP}:3493"
         sleep 60
         continue
-      }
-
-      BATT=$(echo "${UPS_DATA}" | awk -F': ' '/^battery\.charge:/{print $2}')
-      STATUS=$(echo "${UPS_DATA}" | awk -F': ' '/^ups\.status:/{print $2}')
+      fi
 
       echo "[nut-shutdown] status=${STATUS} battery=${BATT}%"
 
       if [ "${SHUTDOWN_DONE}" = "0" ] && \
          echo "${STATUS}" | grep -q "OB" && \
-         [ -n "${BATT}" ] && [ "${BATT}" -lt "${THRESHOLD}" ]; then
+         [ "${BATT}" -lt "${THRESHOLD}" ]; then
 
         echo "[nut-shutdown] CRITICAL: ${BATT}% on battery — shutting down cluster NOW"
         SHUTDOWN_DONE=1
@@ -70,9 +70,8 @@ spec:
             - /bin/sh
             - -c
             - |
-              apk add --no-cache curl > /dev/null 2>&1
               # renovate: datasource=github-releases depName=siderolabs/talos
-              curl -fsSL -o /shared/talosctl \
+              wget -q -O /shared/talosctl \
                 "https://github.com/siderolabs/talos/releases/download/v1.12.6/talosctl-linux-amd64" \
                 && chmod +x /shared/talosctl
           volumeMounts:
