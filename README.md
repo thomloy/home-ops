@@ -168,6 +168,6 @@ Be sure to check out [kubesearch.dev](https://kubesearch.dev/) for ideas on how 
 
 <div align="center">
 
-[![DeepWiki](https://img.shields.io/badge/deepwiki-purple?label=&logo=deepl&style=for-the-badge&logoColor=white)](https://deepwiki.com/thomloy/home-ops)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/thomloy/home-ops)
 
 </div>
