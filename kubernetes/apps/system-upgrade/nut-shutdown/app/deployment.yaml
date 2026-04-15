@@ -70,9 +70,10 @@ spec:
             - /bin/sh
             - -c
             - |
+              apk add --no-cache curl > /dev/null 2>&1
               # renovate: datasource=github-releases depName=siderolabs/talos
               TALOS_VERSION=v1.12.6
-              wget -q -O /shared/talosctl \
+              curl -fsSL -o /shared/talosctl \
                 "https://github.com/siderolabs/talos/releases/download/${TALOS_VERSION}/talosctl-linux-amd64" \
                 && chmod +x /shared/talosctl
           volumeMounts:
