@@ -8,6 +8,11 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: actual-budget
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+    - name: volsync
+      namespace: volsync-system
   interval: 1h
   path: "./kubernetes/apps/selfhosted/actual-budget/app"
   prune: true

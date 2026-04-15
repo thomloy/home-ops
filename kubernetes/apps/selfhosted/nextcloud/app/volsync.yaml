@@ -1,0 +1,51 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/external-secrets.io/externalsecret_v1.json
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: nextcloud-volsync
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: onepassword
+  target:
+    name: nextcloud-volsync-secret
+    template:
+      data:
+        KOPIA_PASSWORD: "{{ .KOPIA_PASSWORD }}"
+        KOPIA_REPOSITORY: filesystem:///mnt/repository
+  dataFrom:
+    - extract:
+        key: volsync-template
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: nextcloud
+spec:
+  sourcePVC: nextcloud
+  trigger:
+    schedule: "0 2 * * *"
+  kopia:
+    accessModes:
+      - ReadWriteOnce
+    compression: zstd-fastest
+    copyMethod: Snapshot
+    moverSecurityContext:
+      runAsUser: 0
+      runAsGroup: 0
+      fsGroup: 0
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            path: /mnt/HDD1X4/VolsyncKopia
+            server: ${NAS_IP}
+    parallelism: 2
+    repository: nextcloud-volsync-secret
+    retain:
+      hourly: 24
+      daily: 7
+    storageClassName: ceph-block
+    volumeSnapshotClassName: csi-ceph-blockpool
