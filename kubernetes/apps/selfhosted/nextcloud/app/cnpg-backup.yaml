@@ -10,16 +10,9 @@ spec:
     name: onepassword
   target:
     name: nextcloud-postgres-backup-secret
-    template:
-      data:
-        AWS_ACCESS_KEY_ID: "{{ .AWS_ACCESS_KEY_ID }}"
-        AWS_SECRET_ACCESS_KEY: "{{ .AWS_SECRET_ACCESS_KEY }}"
-        ENDPOINT_URL: "https://{{ .CLOUDFLARE_ACCOUNT_TAG }}.r2.cloudflarestorage.com"
   dataFrom:
     - extract:
         key: cnpg-backup
-    - extract:
-        key: cloudflare
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/postgresql.cnpg.io/scheduledbackup_v1.json
 apiVersion: postgresql.cnpg.io/v1
