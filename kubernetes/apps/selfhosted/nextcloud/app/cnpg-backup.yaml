@@ -20,7 +20,7 @@ kind: ScheduledBackup
 metadata:
   name: nextcloud-postgres
 spec:
-  schedule: "0 3 * * 0"
+  schedule: "0 0 3 * * 0"
   backupOwnerReference: self
   cluster:
     name: nextcloud-postgres
