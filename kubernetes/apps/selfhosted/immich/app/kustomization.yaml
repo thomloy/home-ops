@@ -8,3 +8,4 @@ resources:
   - ./cnpg-backup.yaml
   - ./pv.yaml
   - ./helmrelease.yaml
+  - ./ciliumnetworkpolicy.yaml
