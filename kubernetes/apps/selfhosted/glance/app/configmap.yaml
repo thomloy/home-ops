@@ -37,9 +37,11 @@ data:
                 sites:
                   - title: Grafana
                     url: http://grafana-service.observability.svc.cluster.local:3000
+                    href: https://grafana.${SECRET_DOMAIN}
                     icon: di:grafana
                   - title: Prometheus
                     url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/-/healthy
+                    href: https://prometheus.${SECRET_DOMAIN}
                     icon: di:prometheus
                   - title: TrueNAS
                     url: http://${NAS_IP}
@@ -65,48 +67,61 @@ data:
                     sites:
                       - title: Emby
                         url: http://emby.media.svc.cluster.local:8096
+                        href: https://emby.${SECRET_DOMAIN}
                         icon: di:emby
                       - title: Audiobookshelf
                         url: http://audiobookshelf.media.svc.cluster.local:80
+                        href: https://audiobookshelf.${SECRET_DOMAIN}
                         icon: di:audiobookshelf
                   - type: monitor
                     title: Arr
                     sites:
                       - title: Radarr
                         url: http://radarr.downloads.svc.cluster.local:7878
+                        href: https://radarr.${SECRET_DOMAIN}
                         icon: di:radarr
                       - title: Sonarr
                         url: http://sonarr.downloads.svc.cluster.local:8989
+                        href: https://sonarr.${SECRET_DOMAIN}
                         icon: di:sonarr
                       - title: Bazarr
                         url: http://bazarr.downloads.svc.cluster.local:80
+                        href: https://bazarr.${SECRET_DOMAIN}
                         icon: di:bazarr
                       - title: Prowlarr
                         url: http://prowlarr.downloads.svc.cluster.local:80
+                        href: https://prowlarr.${SECRET_DOMAIN}
                         icon: di:prowlarr
                       - title: Sabnzbd
                         url: http://sabnzbd.downloads.svc.cluster.local:80
+                        href: https://sabnzbd.${SECRET_DOMAIN}
                         icon: di:sabnzbd
                       - title: qBittorrent
                         url: http://qbittorrent.downloads.svc.cluster.local:8080
+                        href: https://qbittorrent.${SECRET_DOMAIN}
                         icon: di:qbittorrent
                   - type: monitor
                     title: Other
                     sites:
                       - title: Paperless
                         url: http://paperless.selfhosted.svc.cluster.local:8000
+                        href: https://paperless.${SECRET_DOMAIN}
                         icon: di:paperless-ngx
                       - title: Mealie
                         url: http://tandoor.default.svc.cluster.local:80
+                        href: https://tandoor.${SECRET_DOMAIN}
                         icon: si:tandoorrecipes
                       - title: Nextcloud
                         url: http://nextcloud-app.selfhosted.svc.cluster.local:80
+                        href: https://nextcloud.${SECRET_DOMAIN}
                         icon: si:nextcloud
                       - title: IT-Tools
                         url: http://it-tools.selfhosted.svc.cluster.local:8080
+                        href: https://it-tools.${SECRET_DOMAIN}
                         icon: di:it-tools
                       - title: Actual Budget
                         url: http://actual-budget.selfhosted.svc.cluster.local:5006
+                        href: https://budget.${SECRET_DOMAIN}
                         icon: si:actualbudget
 
               - type: group
