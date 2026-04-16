@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -14,12 +14,6 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: network
             gateway.networking.k8s.io/gateway-name: envoy-internal
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: media
-            app.kubernetes.io/name: mumc
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: media
-            app.kubernetes.io/name: arrem-sync
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: downloads
             app.kubernetes.io/name: sonarr
@@ -36,3 +30,22 @@ spec:
         - ports:
             - port: "8096"
               protocol: TCP
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "8096"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    - toEntities:
+        - world
