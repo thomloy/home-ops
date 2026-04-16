@@ -42,7 +42,7 @@ spec:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: observability
-            app: grafana
+            app.kubernetes.io/name: grafana
       toPorts:
         - ports:
             - port: "3000"
@@ -152,4 +152,34 @@ spec:
       toPorts:
         - ports:
             - port: "80"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: media
+            app.kubernetes.io/name: seerr
+      toPorts:
+        - ports:
+            - port: "5055"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: media
+            app.kubernetes.io/name: navidrome
+      toPorts:
+        - ports:
+            - port: "4533"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: downloads
+            app.kubernetes.io/name: readarr
+      toPorts:
+        - ports:
+            - port: "8787"
+              protocol: TCP
+    - toCIDR:
+        - 192.168.42.110/32
+      toPorts:
+        - ports:
+            - port: "443"
               protocol: TCP
