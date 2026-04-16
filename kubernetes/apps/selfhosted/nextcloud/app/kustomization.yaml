@@ -10,3 +10,4 @@ resources:
   - ./helmrelease.yaml
   - ./cnpg-backup.yaml
   - ./volsync.yaml
+  - ./ciliumnetworkpolicy.yaml
