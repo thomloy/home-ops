@@ -22,11 +22,44 @@ spec:
         - ports:
             - port: "8000"
               protocol: TCP
-    - fromEndpoints:
+  egress:
+    - toEndpoints:
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: selfhosted
             app.kubernetes.io/name: paperless
-            app.kubernetes.io/instance: paperless
             app.kubernetes.io/controller: redis
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: selfhosted
+            app.kubernetes.io/name: paperless
+            app.kubernetes.io/controller: tika
+      toPorts:
+        - ports:
+            - port: "9998"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: selfhosted
+            app.kubernetes.io/name: paperless
+            app.kubernetes.io/controller: gotenberg
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
 ---
 # yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
 apiVersion: cilium.io/v2
@@ -48,4 +81,81 @@ spec:
       toPorts:
         - ports:
             - port: "6379"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+---
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: paperless-tika
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: paperless
+      app.kubernetes.io/instance: paperless
+      app.kubernetes.io/controller: tika
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: paperless
+            app.kubernetes.io/instance: paperless
+            app.kubernetes.io/controller: paperless
+      toPorts:
+        - ports:
+            - port: "9998"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+---
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: paperless-gotenberg
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: paperless
+      app.kubernetes.io/instance: paperless
+      app.kubernetes.io/controller: gotenberg
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: paperless
+            app.kubernetes.io/instance: paperless
+            app.kubernetes.io/controller: paperless
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
               protocol: TCP
