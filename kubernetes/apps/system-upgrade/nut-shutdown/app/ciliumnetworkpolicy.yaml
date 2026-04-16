@@ -27,6 +27,4 @@ spec:
         - ports:
             - port: "50000"
               protocol: TCP
-    - toEntities:
-        - world
 
