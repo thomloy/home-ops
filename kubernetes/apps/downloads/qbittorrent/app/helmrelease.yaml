@@ -29,6 +29,9 @@ spec:
             env:
               QBT_WEBUI_PORT: &port 8080
               QBT_TORRENTING_PORT: &torrentPort 50469
+            envFrom:
+              - secretRef:
+                  name: qbittorrent-secret
             nameOverride: qbittorrent
             probes:
               liveness:
