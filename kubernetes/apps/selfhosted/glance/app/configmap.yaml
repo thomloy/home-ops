@@ -252,7 +252,7 @@ data:
                 title: Requêtes
                 allow-insecure-html: true
                 cache: 2m
-                url: "https://seerr.${SECRET_DOMAIN}/api/v1/request?take=8&sort=added"
+                url: "http://seerr.media.svc.cluster.local:5055/api/v1/request?take=8&sort=added"
                 headers:
                   X-Api-Key: "MTc3NTMzODA5NjkxOTgxYzMwMmM5LTkwOWMtNDIxZi04M2Q4LTZhYzc5NjMyYzQwZg=="
                 template: |
