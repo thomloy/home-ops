@@ -21,6 +21,15 @@ spec:
       enabled: true
       controllers:
         main:
+          initContainers:
+            wait-for-dns:
+              image:
+                repository: busybox
+                tag: latest
+              command:
+                - /bin/sh
+                - -c
+                - until nslookup immich-postgres-rw.selfhosted.svc.cluster.local; do echo "waiting for DNS..."; sleep 2; done
           containers:
             main:
               env:
