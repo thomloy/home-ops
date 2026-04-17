@@ -19,8 +19,9 @@ spec:
             - port: "8080"
               protocol: TCP
   egress:
-    - toEntities:
-        - cluster
+    - toCIDRSet:
+        - cidr: 10.42.0.0/16
+        - cidr: 10.43.0.0/16
       toPorts:
         - ports:
             - port: "53"
