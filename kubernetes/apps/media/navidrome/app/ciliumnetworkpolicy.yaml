@@ -21,7 +21,3 @@ spec:
         - ports:
             - port: "4533"
               protocol: TCP
-  egress:
-    - toEntities:
-        - world
-        - cluster

@@ -18,7 +18,3 @@ spec:
         - ports:
             - port: "8686"
               protocol: TCP
-  egress:
-    - toEntities:
-        - world
-        - cluster

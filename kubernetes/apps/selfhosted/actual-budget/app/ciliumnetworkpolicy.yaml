@@ -21,6 +21,3 @@ spec:
         - ports:
             - port: "5006"
               protocol: TCP
-  egress:
-    - toEntities:
-        - cluster

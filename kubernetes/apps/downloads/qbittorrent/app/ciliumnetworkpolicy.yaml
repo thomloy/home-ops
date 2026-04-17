@@ -41,7 +41,3 @@ spec:
               protocol: TCP
             - port: "50469"
               protocol: UDP
-  egress:
-    - toEntities:
-        - world
-        - cluster

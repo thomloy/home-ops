@@ -27,7 +27,3 @@ spec:
         - ports:
             - port: "8989"
               protocol: TCP
-  egress:
-    - toEntities:
-        - world
-        - cluster

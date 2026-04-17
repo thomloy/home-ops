@@ -36,7 +36,3 @@ spec:
         - ports:
             - port: "8096"
               protocol: TCP
-  egress:
-    - toEntities:
-        - world
-        - cluster
