@@ -19,19 +19,19 @@ data:
       BATT=$(nut_var "battery.charge")
       STATUS=$(nut_var "ups.status")
 
-      if [ -z "${BATT}" ] || [ -z "${STATUS}" ]; then
+      if [ -z "$${BATT}" ] || [ -z "$${STATUS}" ]; then
         echo "[nut-shutdown] WARN: Cannot reach NUT server at ${NAS_IP}:3493"
         sleep 60
         continue
       fi
 
-      echo "[nut-shutdown] status=${STATUS} battery=${BATT}%"
+      echo "[nut-shutdown] status=$${STATUS} battery=$${BATT}%"
 
-      if [ "${SHUTDOWN_DONE}" = "0" ] && \
-         echo "${STATUS}" | grep -q "OB" && \
-         [ "${BATT}" -lt "${THRESHOLD}" ]; then
+      if [ "$${SHUTDOWN_DONE}" = "0" ] && \
+         echo "$${STATUS}" | grep -q "OB" && \
+         [ "$${BATT}" -lt "$${THRESHOLD}" ]; then
 
-        echo "[nut-shutdown] CRITICAL: ${BATT}% on battery — shutting down cluster NOW"
+        echo "[nut-shutdown] CRITICAL: $${BATT}% on battery — shutting down cluster NOW"
         SHUTDOWN_DONE=1
 
         /shared/talosctl --talosconfig /talos/talosconfig shutdown \
