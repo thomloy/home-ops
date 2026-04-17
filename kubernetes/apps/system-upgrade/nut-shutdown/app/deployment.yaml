@@ -105,6 +105,28 @@ spec:
             readOnlyRootFilesystem: false
             capabilities:
               drop: ["ALL"]
+        - name: nut-exporter
+          image: ghcr.io/druggeri/nut_exporter:3.1.1@sha256:0d9a0a00554081876178369ab9d46717e002fcf550b18dcd85f98c315438b524
+          env:
+            - name: NUT_EXPORTER_SERVER
+              value: "${NAS_IP}"
+            - name: NUT_EXPORTER_VARIABLES
+              value: "battery.charge,battery.runtime,ups.load,ups.status,output.voltage,ups.realpower"
+          ports:
+            - name: metrics
+              containerPort: 9199
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 5m
+              memory: 16Mi
+            limits:
+              memory: 32Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
       volumes:
         - name: scripts
           configMap:

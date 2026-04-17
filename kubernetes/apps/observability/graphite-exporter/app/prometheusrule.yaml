@@ -7,17 +7,30 @@ metadata:
   namespace: monitoring
 spec:
   groups:
-    - name: ups.graphite.rules
+    - name: ups.rules
       rules:
+
+        # =========================
+        # Sur batterie (coupure secteur)
+        # =========================
+        - alert: UPSOnBattery
+          expr: |
+            network_ups_tools_ups_status{flag="OB"} == 1
+          for: 30s
+          labels:
+            severity: critical
+          annotations:
+            summary: "UPS sur batterie — coupure secteur"
+            description: "L'UPS est passé sur batterie. Charge actuelle : {{ with query \"network_ups_tools_battery_charge\" }}{{ . | first | value }}%{{ end }}"
 
         # =========================
         # Batterie faible (< 20 %) + runtime < 20 min
         # =========================
         - alert: UPSOnBatteryLowRuntime
           expr: |
-            truenas_nas_nut_ups_charge_charge <= 80
+            network_ups_tools_battery_charge <= 20
             and
-            truenas_nas_nut_ups_runtime_runtime <= 1200
+            network_ups_tools_battery_runtime <= 1200
           for: 2m
           labels:
             severity: critical
@@ -30,7 +43,7 @@ spec:
         # =========================
         - alert: UPSLowBatteryCharge
           expr: |
-            truenas_nas_nut_ups_charge_charge <= 20
+            network_ups_tools_battery_charge <= 20
           for: 2m
           labels:
             severity: warning
@@ -43,10 +56,10 @@ spec:
         # =========================
         - alert: UPSExporterDown
           expr: |
-            absent(truenas_nas_nut_ups_charge_charge)
+            absent(network_ups_tools_battery_charge)
           for: 5m
           labels:
             severity: critical
           annotations:
             summary: "UPS métriques manquantes"
-            description: "Aucune métrique UPS reçue depuis 5 minutes"
+            description: "Aucune métrique NUT reçue depuis 5 minutes"

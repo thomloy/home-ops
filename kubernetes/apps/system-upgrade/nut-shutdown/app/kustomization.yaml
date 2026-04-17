@@ -5,3 +5,5 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./deployment.yaml
+  - ./service.yaml
+  - ./servicemonitor.yaml

@@ -1,0 +1,17 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nut-exporter
+spec:
+  selector:
+    matchLabels:
+      app: nut-shutdown
+  namespaceSelector:
+    matchNames:
+      - system-upgrade
+  endpoints:
+    - port: metrics
+      path: /ups_metrics
+      interval: 30s
+      scrapeTimeout: 10s
