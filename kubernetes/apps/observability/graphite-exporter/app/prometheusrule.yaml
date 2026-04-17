@@ -39,19 +39,6 @@ spec:
             description: "Batterie UPS à {{ $value }}%"
 
         # =========================
-        # Tension d'entrée anormale (coupure secteur)
-        # =========================
-        - alert: UPSInputVoltageLow
-          expr: |
-            truenas_nas_nut_ups_input_voltage_voltage < 200
-          for: 1m
-          labels:
-            severity: critical
-          annotations:
-            summary: "UPS tension secteur anormale"
-            description: "Tension d'entrée à {{ $value }}V (normal ~230V)"
-
-        # =========================
         # UPS non joignable
         # =========================
         - alert: UPSExporterDown
