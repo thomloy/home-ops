@@ -44,3 +44,11 @@ spec:
               protocol: UDP
             - port: "53"
               protocol: TCP
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "119"
+              protocol: TCP
+            - port: "563"
+              protocol: TCP
