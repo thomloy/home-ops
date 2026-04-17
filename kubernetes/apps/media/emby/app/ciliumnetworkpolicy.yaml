@@ -26,6 +26,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: media
             app.kubernetes.io/name: seerr
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: media
+            app.kubernetes.io/name: arrem-sync
       toPorts:
         - ports:
             - port: "8096"

@@ -14,3 +14,4 @@ resources:
   - ./emby/ks.yaml
   - ./seerr/ks.yaml
   - ./navidrome/ks.yaml
+  - ./arrem-sync/ks.yaml
