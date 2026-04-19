@@ -8,6 +8,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: glance
+  dependsOn:
+    - name: onepassword
+      namespace: external-secrets
   interval: 1h
   path: "./kubernetes/apps/selfhosted/glance/app"
   postBuild:
