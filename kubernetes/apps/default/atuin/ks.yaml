@@ -16,6 +16,7 @@ spec:
     substitute:
       APP: atuin
       VOLSYNC_CLAIM: atuin
+      VOLSYNC_SCHEDULE: "30 3 * * *"
       VOLSYNC_CAPACITY: 5Gi
   prune: true
   sourceRef:

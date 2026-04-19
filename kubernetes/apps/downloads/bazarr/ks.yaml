@@ -20,6 +20,7 @@ spec:
     substitute:
       APP: bazarr
       VOLSYNC_CLAIM: bazarr-config
+      VOLSYNC_SCHEDULE: "30 4 * * *"
   prune: true
   sourceRef:
     kind: GitRepository

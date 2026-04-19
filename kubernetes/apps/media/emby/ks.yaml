@@ -26,6 +26,7 @@ spec:
     substitute:
       APP: emby
       VOLSYNC_CLAIM: emby
+      VOLSYNC_SCHEDULE: "30 3 * * *"
       VOLSYNC_CAPACITY: 20Gi
   prune: true
   sourceRef:

@@ -22,6 +22,7 @@ spec:
       APP_UID: "1000"
       APP_GID: "65542"
       VOLSYNC_CLAIM: paperless
+      VOLSYNC_SCHEDULE: "30 2 * * *"
       VOLSYNC_CAPACITY: 15Gi
   prune: true
   sourceRef:

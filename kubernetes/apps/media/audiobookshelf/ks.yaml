@@ -22,6 +22,7 @@ spec:
     substitute:
       APP: audiobookshelf
       VOLSYNC_CLAIM: audiobookshelf
+      VOLSYNC_SCHEDULE: "30 3 * * *"
   prune: true
   sourceRef:
     kind: GitRepository

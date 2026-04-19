@@ -20,6 +20,7 @@ spec:
     substitute:
       APP: prowlarr
       VOLSYNC_CLAIM: prowlarr-config
+      VOLSYNC_SCHEDULE: "30 4 * * *"
       VOLSYNC_CAPACITY: 2Gi
   prune: true
   sourceRef:
