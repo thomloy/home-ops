@@ -65,15 +65,12 @@ spec:
       priorityClassName: system-cluster-critical
       initContainers:
         - name: copy-talosctl
-          image: alpine:3.21
+          # renovate: datasource=docker depName=ghcr.io/siderolabs/talosctl
+          image: ghcr.io/siderolabs/talosctl:v1.12.6
           command:
-            - /bin/sh
-            - -c
-            - |
-              # renovate: datasource=github-releases depName=siderolabs/talos
-              wget -q -O /shared/talosctl \
-                "https://github.com/siderolabs/talos/releases/download/v1.12.6/talosctl-linux-amd64" \
-                && chmod +x /shared/talosctl
+            - cp
+            - /talosctl
+            - /shared/talosctl
           volumeMounts:
             - name: shared
               mountPath: /shared
