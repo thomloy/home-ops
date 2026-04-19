@@ -21,6 +21,7 @@ spec:
           gatus.home-operations.com/endpoint: |-
             alerts:
               - type: pushover
+            conditions: ["[STATUS] < 500"]
             ui:
               hide-hostname: true
         host:
