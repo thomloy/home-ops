@@ -41,3 +41,7 @@ spec:
               protocol: TCP
             - port: "50469"
               protocol: UDP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns

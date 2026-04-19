@@ -21,3 +21,7 @@ spec:
         - ports:
             - port: "5006"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
