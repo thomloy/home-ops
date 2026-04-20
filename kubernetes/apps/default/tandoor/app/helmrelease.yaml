@@ -44,6 +44,28 @@ spec:
               CSRF_TRUSTED_ORIGINS: "https://tandoor.${SECRET_DOMAIN}"
               GUNICORN_CMD_ARGS: "--timeout 60 --workers 2"
               DEFAULT_LOCALE: fr
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 80
+                  failureThreshold: 60
+                  periodSeconds: 5
             resources:
               requests:
                 memory: 512Mi

@@ -53,6 +53,28 @@ spec:
               NEXTCLOUD_DATA_DIR: /nc-data
               PHP_MEMORY_LIMIT: 1024M
               PHP_UPLOAD_LIMIT: 10G
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /status.php
+                    port: 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /status.php
+                    port: 80
+                  failureThreshold: 60
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 100m

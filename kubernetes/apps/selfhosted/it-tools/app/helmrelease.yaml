@@ -33,6 +33,28 @@ spec:
             image:
               repository: ghcr.io/sharevb/it-tools
               tag: 2026.1.4@sha256:6d335b5d6f7d28a540ef36c0ab2e20cbf7df2c0d8b7adb16585ccd3ebcfeed59
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  failureThreshold: 30
+                  periodSeconds: 5
             resources:
               requests:
                 cpu: 5m
