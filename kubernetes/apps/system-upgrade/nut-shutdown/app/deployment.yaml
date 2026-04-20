@@ -63,17 +63,6 @@ spec:
         app: nut-shutdown
     spec:
       priorityClassName: system-cluster-critical
-      initContainers:
-        - name: copy-talosctl
-          # renovate: datasource=docker depName=ghcr.io/siderolabs/talosctl
-          image: ghcr.io/siderolabs/talosctl:v1.12.6
-          command:
-            - cp
-            - /talosctl
-            - /shared/talosctl
-          volumeMounts:
-            - name: shared
-              mountPath: /shared
       containers:
         - name: nut-shutdown
           image: alpine:3.21
@@ -130,7 +119,13 @@ spec:
             name: nut-shutdown-script
             defaultMode: 0755
         - name: shared
-          emptyDir: {}
+          # image volume (K8s 1.31+): mounts the talosctl image filesystem directly.
+          # The scratch image has only /talosctl at its root, so mounting at /shared
+          # makes the binary available at /shared/talosctl without cp or shell utils.
+          image:
+            # renovate: datasource=docker depName=ghcr.io/siderolabs/talosctl
+            reference: ghcr.io/siderolabs/talosctl:v1.12.6
+            pullPolicy: IfNotPresent
         - name: talosconfig
           secret:
             secretName: nut-shutdown-secret
