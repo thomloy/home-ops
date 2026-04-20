@@ -27,6 +27,12 @@ spec:
           - name: severity
             value: critical
             matchType: =
+      - receiver: pushover
+        repeatInterval: 24h
+        matchers:
+          - name: severity
+            value: warning
+            matchType: =
     groupBy:
       - alertname
       - cluster
@@ -82,7 +88,7 @@ spec:
             {{- end }}
           monospace: false
           priority: |-
-            {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
+            {{ if eq .Status "firing" }}{{ if eq .CommonLabels.severity "critical" }}1{{ else }}0{{ end }}{{ else }}0{{ end }}
           sendResolved: true
           sound: gamelan
           title: >-
