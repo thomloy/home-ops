@@ -18,12 +18,22 @@ spec:
           labels:
             severity: critical
 
-        - alert: GatusEndpointExposed
+        - alert: GatusInternalEndpointDown
           expr: |-
             gatus_results_endpoint_success{group="internal"} == 0
           for: 5m
           annotations:
             summary: >-
-              The {{ $labels.name }} endpoint has a public DNS record and is exposed
+              The {{ $labels.name }} internal endpoint is unavailable
           labels:
             severity: critical
+
+        - alert: GatusConnectivityDown
+          expr: |-
+            gatus_results_endpoint_success{group="connectivity"} == 0
+          for: 5m
+          annotations:
+            summary: >-
+              Internet connectivity check {{ $labels.name }} is failing
+          labels:
+            severity: warning
