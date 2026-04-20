@@ -3,20 +3,28 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: onepassword
+  name: gatus
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: onepassword
-      app.kubernetes.io/instance: onepassword
+      app.kubernetes.io/name: gatus
+      app.kubernetes.io/instance: gatus
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: external-secrets
-            app.kubernetes.io/name: external-secrets
+            k8s:io.kubernetes.pod.namespace: network
+            gateway.networking.k8s.io/gateway-name: envoy-external
       toPorts:
         - ports:
-            - port: "8080"
+            - port: "80"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "80"
               protocol: TCP
     - fromEndpoints:
         - matchLabels:

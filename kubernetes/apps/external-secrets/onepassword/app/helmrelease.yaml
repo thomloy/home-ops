@@ -53,6 +53,15 @@ spec:
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /heartbeat
+                    port: *apiPort
+                  failureThreshold: 30
+                  periodSeconds: 5
             resources: &resources
               requests:
                 cpu: 10m
@@ -100,6 +109,15 @@ spec:
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /heartbeat
+                    port: *syncPort
+                  failureThreshold: 30
+                  periodSeconds: 5
             resources: *resources
             securityContext: *securityContext
     defaultPodOptions:
