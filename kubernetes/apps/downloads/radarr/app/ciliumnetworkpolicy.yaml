@@ -24,6 +24,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: media
             app.kubernetes.io/name: arrem-sync
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: downloads
+            app.kubernetes.io/name: recyclarr
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: selfhosted
             app.kubernetes.io/name: glance
       toPorts:

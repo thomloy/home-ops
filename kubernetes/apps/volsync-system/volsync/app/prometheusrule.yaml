@@ -27,3 +27,13 @@ spec:
           for: 5m
           labels:
             severity: critical
+
+        - alert: VolSyncBackupStale
+          expr: |-
+            (time() - volsync_replication_source_last_sync_time_seconds) > 90000
+          annotations:
+            summary: >-
+              {{ $labels.obj_namespace }}/{{ $labels.obj_name }} backup has not run in over 25h
+          for: 30m
+          labels:
+            severity: warning
