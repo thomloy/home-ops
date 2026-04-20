@@ -63,6 +63,7 @@ spec:
               limits:
                 memory: 4Gi
     defaultPodOptions:
+      priorityClassName: cluster-low
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

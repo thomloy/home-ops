@@ -9,6 +9,8 @@ spec:
     name: cert-manager
   interval: 1h
   values:
+    global:
+      priorityClassName: cluster-high
     crds:
       enabled: true
     dns01RecursiveNameservers: https://cloudflare-dns.com:443/dns-query

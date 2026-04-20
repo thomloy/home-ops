@@ -10,6 +10,8 @@ spec:
     name: external-secrets
   interval: 1h
   values:
+    global:
+      priorityClassName: cluster-high
     leaderElect: true
     serviceMonitor:
       enabled: true

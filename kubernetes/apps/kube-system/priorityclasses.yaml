@@ -1,0 +1,18 @@
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: cluster-high
+value: 1000
+globalDefault: false
+description: "Critical cluster infrastructure (secrets, auth, PKI)"
+preemptionPolicy: PreemptLowerPriority
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: cluster-low
+value: -10
+globalDefault: false
+description: "Disposable workloads (downloads stack)"
+preemptionPolicy: Never

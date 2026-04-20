@@ -42,6 +42,7 @@ spec:
         pod:
           restartPolicy: Never
     defaultPodOptions:
+      priorityClassName: cluster-low
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
