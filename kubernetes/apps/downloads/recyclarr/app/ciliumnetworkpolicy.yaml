@@ -13,3 +13,7 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: kube-system
             k8s:k8s-app: kube-dns
+  egress:
+    - toEntities:
+        - cluster
+        - world

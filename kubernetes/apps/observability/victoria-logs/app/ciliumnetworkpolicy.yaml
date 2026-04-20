@@ -3,12 +3,11 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: lidarr
+  name: victoria-logs
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: lidarr
-      app.kubernetes.io/instance: lidarr
+      app.kubernetes.io/name: victoria-logs
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -16,7 +15,14 @@ spec:
             gateway.networking.k8s.io/gateway-name: envoy-internal
       toPorts:
         - ports:
-            - port: "8686"
+            - port: "9428"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+      toPorts:
+        - ports:
+            - port: "9428"
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
@@ -25,4 +31,3 @@ spec:
   egress:
     - toEntities:
         - cluster
-        - world
