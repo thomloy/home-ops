@@ -42,7 +42,7 @@ spec:
         - alert: LanProbeFailed
           expr: |-
             probe_success{service="blackbox-exporter-lan"} == 0
-          for: 15m
+          for: 5m
           labels:
             severity: critical
           annotations:

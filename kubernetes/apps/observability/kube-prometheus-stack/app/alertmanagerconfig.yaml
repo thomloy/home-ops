@@ -52,6 +52,15 @@ spec:
         - name: severity
           value: warning
           matchType: =
+    - equal: []
+      sourceMatch:
+        - name: alertname
+          value: UPSOnBattery
+          matchType: =
+      targetMatch:
+        - name: alertname
+          value: UPSLowBatteryCharge
+          matchType: =
 
   receivers:
     - name: blackhole
