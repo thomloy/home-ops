@@ -70,6 +70,11 @@ spec:
               limits:
                 memory: 256Mi
 
+    defaultPodOptions:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
     service:
       app:
         controller: tandoor

@@ -43,6 +43,11 @@ spec:
                   - ALL
               readOnlyRootFilesystem: false
 
+    defaultPodOptions:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
     service:
       app:
         controller: glance

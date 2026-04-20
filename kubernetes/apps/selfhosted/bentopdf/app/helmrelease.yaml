@@ -32,7 +32,9 @@ spec:
               limits:
                 memory: 256Mi
     defaultPodOptions:
-      securityContext: {}
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
     service:
       app:
         ports:

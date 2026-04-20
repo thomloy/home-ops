@@ -7,6 +7,7 @@ components:
   - ../../components/alerts
   - ../../components/sops
 resources:
+  - ./limitrange.yaml
   - ./namespace.yaml
   - ./it-tools/ks.yaml
   - ./bentopdf/ks.yaml

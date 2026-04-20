@@ -15,6 +15,9 @@ spec:
         replicas: 1
         strategy: Recreate
         pod:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           topologySpreadConstraints:
             - maxSkew: 1
               topologyKey: kubernetes.io/hostname

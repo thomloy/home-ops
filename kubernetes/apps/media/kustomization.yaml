@@ -9,6 +9,7 @@ components:
   - ../../components/sops
 
 resources:
+  - ./limitrange.yaml
   - ./namespace.yaml
   - ./audiobookshelf/ks.yaml
   - ./emby/ks.yaml

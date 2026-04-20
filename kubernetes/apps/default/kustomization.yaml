@@ -8,6 +8,7 @@ components:
   - ../../components/sops
 
 resources:
+  - ./limitrange.yaml
   - ./namespace.yaml
   - ./atuin/ks.yaml
   - ./tandoor/ks.yaml

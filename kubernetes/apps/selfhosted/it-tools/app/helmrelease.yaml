@@ -25,6 +25,8 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
             runAsGroup: 1000
             runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
 
         containers:
           app:

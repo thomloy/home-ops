@@ -43,6 +43,11 @@ spec:
                 drop:
                   - ALL
 
+    defaultPodOptions:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
     service:
       app:
         controller: actual-budget
