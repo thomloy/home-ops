@@ -7,31 +7,49 @@ data:
   monitor.sh: |
     #!/bin/sh
     THRESHOLD="${THRESHOLD:-20}"
+    # Require this many consecutive OB+low-battery readings before triggering (30s poll → 3 = 90s minimum)
+    CONSECUTIVE_REQUIRED="${CONSECUTIVE_REQUIRED:-3}"
     SHUTDOWN_DONE=0
+    OB_COUNT=0
 
-    echo "[nut-shutdown] Starting — host=${NAS_IP}, threshold=$${THRESHOLD}%"
+    echo "[nut-shutdown] Starting — host=${NAS_IP}, threshold=$${THRESHOLD}%, consecutive_required=$${CONSECUTIVE_REQUIRED}"
 
     nut_var() {
       printf "GET VAR ups %s\n" "$1" | nc -w 3 "${NAS_IP}" 3493 2>/dev/null | awk -F'"' '{print $2}'
     }
 
+    # Send shutdown.return: UPS cuts power after ups.delay.shutdown, restarts when AC returns
+    nut_shutdown_return() {
+      printf "USERNAME %s\nPASSWORD %s\nINSTCMD ups shutdown.return\nLOGOUT\n" \
+        "${NUT_USER}" "${NUT_PASS}" | nc -w 5 "${NAS_IP}" 3493 2>/dev/null
+    }
+
     while true; do
       BATT=$(nut_var "battery.charge")
       STATUS=$(nut_var "ups.status")
+      RUNTIME=$(nut_var "battery.runtime")
 
       if [ -z "$${BATT}" ] || [ -z "$${STATUS}" ]; then
-        echo "[nut-shutdown] WARN: Cannot reach NUT server at ${NAS_IP}:3493"
+        echo "[nut-shutdown] WARN: Cannot reach NUT server at ${NAS_IP}:3493 — resetting OB counter"
+        OB_COUNT=0
         sleep 60
         continue
       fi
 
-      echo "[nut-shutdown] status=$${STATUS} battery=$${BATT}%"
+      echo "[nut-shutdown] status=$${STATUS} battery=$${BATT}% runtime=$${RUNTIME}s ob_count=$${OB_COUNT}/$${CONSECUTIVE_REQUIRED}"
 
-      if [ "$${SHUTDOWN_DONE}" = "0" ] && \
-         echo "$${STATUS}" | grep -q "OB" && \
-         [ "$${BATT}" -lt "$${THRESHOLD}" ]; then
+      if echo "$${STATUS}" | grep -q "OB" && [ "$${BATT}" -lt "$${THRESHOLD}" ]; then
+        OB_COUNT=$((OB_COUNT + 1))
+        echo "[nut-shutdown] WARNING: On battery at $${BATT}% — count $${OB_COUNT}/$${CONSECUTIVE_REQUIRED}"
+      else
+        if [ "$${OB_COUNT}" -gt 0 ]; then
+          echo "[nut-shutdown] INFO: Status normalized ($${STATUS} $${BATT}%) — resetting OB counter"
+        fi
+        OB_COUNT=0
+      fi
 
-        echo "[nut-shutdown] CRITICAL: $${BATT}% on battery — shutting down cluster NOW"
+      if [ "$${SHUTDOWN_DONE}" = "0" ] && [ "$${OB_COUNT}" -ge "$${CONSECUTIVE_REQUIRED}" ]; then
+        echo "[nut-shutdown] CRITICAL: $${BATT}% on battery for $${CONSECUTIVE_REQUIRED} consecutive checks — shutting down cluster NOW"
         SHUTDOWN_DONE=1
 
         /shared/talosctl --talosconfig /talos/talosconfig shutdown \
@@ -40,9 +58,14 @@ data:
           -n 192.168.42.43 \
           --wait=false || true
 
-        echo "[nut-shutdown] Shutdown signal sent — waiting for power off"
+        echo "[nut-shutdown] Nodes shutdown sent — ordering UPS shutdown.return"
+        sleep 20
+        nut_shutdown_return && echo "[nut-shutdown] UPS shutdown.return accepted" || echo "[nut-shutdown] WARN: UPS shutdown.return failed"
+
+        echo "[nut-shutdown] UPS will cut power in ~20s and restart automatically when AC returns"
         sleep 300
         SHUTDOWN_DONE=0
+        OB_COUNT=0
       fi
 
       sleep 30
@@ -72,6 +95,18 @@ spec:
               value: "${NAS_IP}"
             - name: THRESHOLD
               value: "20"
+            - name: CONSECUTIVE_REQUIRED
+              value: "3"
+            - name: NUT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nut-shutdown-secret
+                  key: nut-user
+            - name: NUT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: nut-shutdown-secret
+                  key: nut-pass
           volumeMounts:
             - name: scripts
               mountPath: /scripts
