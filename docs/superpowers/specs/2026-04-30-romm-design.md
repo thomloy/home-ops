@@ -153,10 +153,16 @@ The exact tag is fixed at implementation time against the latest stable RomM 3.x
 ```yaml
 env:
   TZ: Europe/Paris
-  DATABASE_URL:
-    valueFrom: { secretKeyRef: { name: romm-postgres-app, key: uri } }
   REDIS_HOST: romm-valkey
   REDIS_PORT: "6379"
+  ROMM_DB_DRIVER: postgresql
+  DB_HOST: romm-postgres-rw
+  DB_PORT: "5432"
+  DB_NAME: romm
+  DB_USER:
+    valueFrom: { secretKeyRef: { name: romm-postgres-app, key: username } }
+  DB_PASSWD:
+    valueFrom: { secretKeyRef: { name: romm-postgres-app, key: password } }
   ROMM_AUTH_USERNAME:
     valueFrom: { secretKeyRef: { name: romm-secret, key: ROMM_AUTH_USERNAME } }
   ROMM_AUTH_PASSWORD:
