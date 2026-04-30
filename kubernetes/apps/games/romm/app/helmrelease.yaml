@@ -1,0 +1,218 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: romm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: romm
+  interval: 1h
+  maxHistory: 3
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      romm:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          terminationGracePeriodSeconds: 60
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              # renovate: datasource=docker depName=docker.io/rommapp/romm
+              repository: docker.io/rommapp/romm
+              tag: "4.8.1"
+            env:
+              TZ: Europe/Paris
+              REDIS_HOST: romm-valkey
+              REDIS_PORT: "6379"
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: romm-postgres-app
+                    key: uri
+              ROMM_AUTH_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: romm-secret
+                    key: ROMM_AUTH_USERNAME
+              ROMM_AUTH_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: romm-secret
+                    key: ROMM_AUTH_PASSWORD
+              ROMM_AUTH_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: romm-secret
+                    key: ROMM_AUTH_SECRET_KEY
+              IGDB_CLIENT_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: romm-secret
+                    key: IGDB_CLIENT_ID
+              IGDB_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: romm-secret
+                    key: IGDB_CLIENT_SECRET
+              STEAMGRIDDB_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: romm-secret
+                    key: STEAMGRIDDB_API_KEY
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/heartbeat
+                    port: 8080
+                  failureThreshold: 30
+                  periodSeconds: 10
+              liveness: &romm_probe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/heartbeat
+                    port: 8080
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness: *romm_probe
+            resources:
+              requests:
+                cpu: 200m
+                memory: 1Gi
+              limits:
+                memory: 4Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+              readOnlyRootFilesystem: false
+
+      valkey:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          valkey:
+            image:
+              # renovate: datasource=docker depName=ghcr.io/valkey-io/valkey
+              repository: ghcr.io/valkey-io/valkey
+              tag: 9.0.3
+            probes:
+              liveness: &valkey_probe
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 6379
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness: *valkey_probe
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+              readOnlyRootFilesystem: true
+
+    service:
+      app:
+        controller: romm
+        primary: true
+        ports:
+          http:
+            port: 8080
+            targetPort: 8080
+      valkey:
+        controller: valkey
+        ports:
+          valkey:
+            port: 6379
+            targetPort: 6379
+
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            alerts:
+              - type: pushover
+            conditions: ["[STATUS] < 500"]
+            ui:
+              hide-hostname: true
+        hostnames:
+          - romm.${SECRET_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: ceph-block
+        advancedMounts:
+          romm:
+            app:
+              - path: /romm/resources
+                subPath: resources
+              - path: /romm/assets
+                subPath: assets
+              - path: /romm/config
+                subPath: config
+              - path: /romm/.cache
+                subPath: cache
+      library:
+        existingClaim: romm-library
+        advancedMounts:
+          romm:
+            app:
+              - path: /romm/library
+      valkey-tmp:
+        type: emptyDir
+        advancedMounts:
+          valkey:
+            valkey:
+              - path: /tmp
+                subPath: tmp
+              - path: /data
+                subPath: data
