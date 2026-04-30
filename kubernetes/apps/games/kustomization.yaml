@@ -10,3 +10,4 @@ resources:
   - ./limitrange.yaml
   - ./namespace.yaml
   - ./crafty/ks.yaml
+  - ./romm/ks.yaml
