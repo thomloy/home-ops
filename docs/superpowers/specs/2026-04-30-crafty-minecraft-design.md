@@ -90,8 +90,8 @@ kubernetes/apps/games/
     └── app/
         ├── kustomization.yaml        # Resources index
         ├── ocirepository.yaml        # bjw-s app-template 4.6.2
-        ├── helmrelease.yaml          # Crafty StatefulSet + 2 Services + inline PVC + HTTPRoute
-        ├── configmap.yaml            # Crafty config.yml (HTTP-only mode)
+        ├── helmrelease.yaml          # Crafty + nginx sidecar StatefulSet + 2 Services + inline PVC + HTTPRoute
+        ├── configmap.yaml            # nginx.conf for the in-pod HTTPS-to-HTTP reverse proxy
         ├── volsync.yaml              # ExternalSecret (Kopia creds) + ReplicationSource (extended retention)
         └── ciliumnetworkpolicy.yaml  # Ingress + egress rules
 ```
@@ -119,12 +119,21 @@ A new `kubernetes/apps/games/` root entry must be referenced from the cluster-le
 
 **Chart**: `oci://ghcr.io/bjw-s-labs/helm/app-template` tag `4.6.2` via OCIRepository.
 
-**Image**:
-```
-# renovate: datasource=docker depName=registry.gitlab.com/crafty-controller/crafty-4
-registry.gitlab.com/crafty-controller/crafty-4:4.4.7
-```
-Pinned tag, manual Renovate bump approval (not auto-merge — major Crafty versions can require DB migration).
+**Containers** (two-container pod):
+
+1. `app` — Crafty Controller
+   ```
+   # renovate: datasource=docker depName=registry.gitlab.com/crafty-controller/crafty-4
+   registry.gitlab.com/crafty-controller/crafty-4:4.4.7
+   ```
+   Pinned tag, manual Renovate bump approval (not auto-merge — major Crafty versions can require DB migration).
+
+2. `proxy` — nginx-alpine acting as in-pod HTTPS-to-HTTP reverse proxy
+   ```
+   # renovate: datasource=docker depName=nginx
+   nginx:1.27-alpine
+   ```
+   Listens on `:8000` (plain HTTP), proxies to `https://127.0.0.1:8443` with TLS verify off and WebSocket headers. Pattern is taken directly from the upstream Crafty repository's `config_examples/nginx.conf.example`. Required because Crafty 4 has no HTTP-only mode and serves only HTTPS:8443 with a self-signed certificate.
 
 **Controller**: `StatefulSet`, single replica. Chosen over `Deployment` for the stable pod name `crafty-0` (log retrieval ergonomics) and ordered shutdown semantics; both are functionally valid against an RWO PVC.
 
@@ -136,16 +145,17 @@ Pinned tag, manual Renovate bump approval (not auto-merge — major Crafty versi
 - `seccompProfile: RuntimeDefault`
 - `terminationGracePeriodSeconds: 60` (allow Crafty to gracefully stop child JVMs on SIGTERM)
 
-**Resources**:
-- requests: `cpu 250m`, `memory 1Gi`
-- limits: `memory 6Gi` (no CPU limit — Kubernetes best practice)
+**Resources** (per container):
+- `app`: requests `cpu 250m / memory 1Gi`, limit `memory 6Gi` (no CPU limit). Sized for Crafty (~200 MiB) + 1 Paper server with `MEMORY=4G` + JVM headroom.
+- `proxy`: requests `cpu 10m / memory 16Mi`, limit `memory 64Mi`. nginx is essentially free.
 
-Sized for Crafty (~200 MiB) + 1 Paper server with `MEMORY=4G` + JVM headroom. Bump to ~10–12 GiB if a second server is started concurrently.
+Bump `app` memory limit to ~10–12 GiB if a second server is started concurrently.
 
 **Probes**:
-- `startupProbe`: HTTP GET `/login` on port 8000, `failureThreshold: 30`, `periodSeconds: 10` (Crafty cold-start ~30–60s)
-- `livenessProbe`: TCP port 8000
-- `readinessProbe`: TCP port 8000
+- `app` (Crafty): TCP port 8443
+  - `startupProbe`: TCP 8443, `failureThreshold: 30`, `periodSeconds: 10` (Crafty cold-start ~30–60s)
+  - `livenessProbe`, `readinessProbe`: TCP 8443
+- `proxy` (nginx): no probes (single nginx process, restarts via pod liveness if pod-wide failure)
 
 **Persistence** (PVC created inline by app-template, name = `crafty` per app-template default):
 ```yaml
@@ -162,25 +172,26 @@ persistence:
           - path: /crafty/backups
           - path: /crafty/import
           - path: /crafty/logs
-  config:
+  nginx-config:
     type: configMap
-    name: crafty-config
+    name: crafty-nginx
     advancedMounts:
       crafty:
-        app:
-          - path: /crafty/app/config/config.yml
-            subPath: config.yml
+        proxy:
+          - path: /etc/nginx/nginx.conf
+            subPath: nginx.conf
 ```
 
 **Services** (two distinct):
 ```yaml
 service:
-  app:                         # Web UI behind internal gateway
+  app:                         # Web UI: gateway → nginx sidecar (port 8000) → Crafty HTTPS (8443)
     controller: crafty
     primary: true
     ports:
       http:
-        port: 8000
+        port: 8000             # nginx sidecar listen port
+        targetPort: 8000
   minecraft:                   # MC port via Tailscale operator
     controller: crafty
     type: LoadBalancer
@@ -221,11 +232,19 @@ route:
 
 ---
 
-## ConfigMap: Crafty `config.yml`
+## ConfigMap: nginx sidecar (`crafty-nginx`)
 
-Crafty 4.x defaults to HTTPS on port 8443 with a self-signed cert. We override to HTTP-only on port 8000 because TLS is terminated at the gateway. The ConfigMap content sets `https_enabled: false`, `http_port: 8000`, `https_port: 8443` (unused but kept), and standard Crafty defaults for everything else.
+A minimal nginx config that listens on port 8000 (HTTP) and reverse-proxies to `https://127.0.0.1:8443` with TLS verification disabled and full WebSocket header support. Pattern derived directly from the upstream Crafty repository's `config_examples/nginx.conf.example`, simplified to remove the SSL-termination front-end (TLS is terminated at the cluster gateway, not in-pod).
 
-The exact contents of `config.yml` are populated during implementation by referencing the upstream Crafty default config and modifying only the listener block.
+Key elements:
+- `listen 8000;` (HTTP only, no TLS in-pod)
+- `proxy_pass https://127.0.0.1:8443;`
+- WebSocket headers: `Upgrade`, `Connection $http_connection`
+- `proxy_ssl_verify off;` (Crafty's cert is self-signed, untrusted)
+- `proxy_buffering off;`, `client_max_body_size 0;` (file uploads via UI: plugins/mods/imports)
+- Long timeouts (`3600s`) — Crafty UI streams server logs over long-lived connections
+
+The exact `nginx.conf` is provided verbatim in the implementation plan.
 
 ---
 
@@ -329,12 +348,13 @@ Option 1 is a 5-minute one-time task. The chosen password is then archived in 1P
 client → 192.168.42.110:443 (envoy-internal, TLS *.kryzql.space)
        → HTTPRoute crafty.kryzql.space
        → Service ClusterIP crafty:8000 (plain HTTP in-cluster)
-       → Pod
+       → Pod nginx sidecar :8000 (plain HTTP)
+       → loopback https://127.0.0.1:8443 (TLS, skip-verify) → Crafty
 ```
 
 DNS `crafty.kryzql.space` is published to the UDM Pro Max via ExternalDNS internal provider — no Cloudflare record. Auth is Crafty's built-in login plus optional TOTP 2FA configurable in-app.
 
-HTTP backend is acceptable because (a) the pod has no external network path (CNP-enforced), (b) every other selfhosted app in this repo follows the same pattern.
+The HTTP hop between gateway and nginx sidecar is acceptable because (a) the pod has no external network path (CNP-enforced), (b) every other selfhosted app in this repo follows the same pattern. The HTTPS hop between nginx and Crafty is loopback within the pod's own network namespace — never visible on any wire.
 
 ### Tailscale (Minecraft port)
 
