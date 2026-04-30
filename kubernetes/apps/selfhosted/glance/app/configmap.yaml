@@ -771,8 +771,7 @@ data:
                 cache: 6h
                 url: "https://api.papermc.io/v2/projects/paper/versions/1.21.11"
                 template: |
-                  {{$builds := .JSON.Array "builds"}}
-                  {{$latest := index $builds (sub (len $builds) 1)}}
+                  {{$latest := .JSON.Int "builds.|-1"}}
                   <div style="padding:8px;background:rgba(0,0,0,.08);border-radius:6px">
                     <div style="font-size:.7em;opacity:.6">Dernier build 1.21.11</div>
                     <div style="font-weight:700;font-size:1.1em;margin-top:2px">#{{$latest}}</div>
@@ -814,10 +813,10 @@ data:
                 cache: 6h
                 token: $${GITHUB_TOKEN}
                 repositories:
-                  - PaperMC/Paper
                   - ViaVersion/ViaVersion
                   - ViaVersion/ViaBackwards
                   - BlueMap-Minecraft/BlueMap
+                  - rommapp/romm
 
   custom.css: |
     body {
