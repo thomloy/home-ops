@@ -1,0 +1,49 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: romm
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: romm
+      app.kubernetes.io/instance: romm
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+            gateway.networking.k8s.io/gateway-name: envoy-internal
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+  egress:
+    - toEntities:
+        - cluster
+        - world
+---
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: romm-valkey
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: valkey
+      app.kubernetes.io/instance: romm
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: games
+            app.kubernetes.io/name: romm
+            app.kubernetes.io/instance: romm
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
