@@ -139,10 +139,8 @@ spec:
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
-    - name: external-secrets-stores
+    - name: onepassword
       namespace: external-secrets
-    - name: tailscale
-      namespace: network
   interval: 1h
   path: "./kubernetes/apps/games/crafty/app"
   prune: true
