@@ -730,6 +730,95 @@ data:
                       - title: Grafana
                         url: https://grafana.${SECRET_DOMAIN}
                         icon: di:grafana
+
+      # ── Games ──────────────────────────────────────────────────────────────
+      - name: games
+        columns:
+          - size: small
+            widgets:
+              - type: monitor
+                title: Panneaux
+                sites:
+                  - title: Crafty Controller
+                    url: https://crafty.${SECRET_DOMAIN}
+                    icon: si:minecraft
+
+              - type: custom-api
+                title: Connexion
+                allow-insecure-html: true
+                cache: 6h
+                url: "https://api.papermc.io/v2/projects/paper"
+                template: |
+                  <div style="display:flex;flex-direction:column;gap:8px;font-size:.85em">
+                    <div class="gls-section-hdr">MINECRAFT JAVA</div>
+                    <div style="padding:10px;background:rgba(0,0,0,.1);border-radius:6px">
+                      <div style="font-weight:600;margin-bottom:3px;font-size:.85em">Adresse serveur</div>
+                      <div style="font-family:monospace;font-size:.78em;opacity:.85;word-break:break-all">homelab.taila01f06.ts.net:25565</div>
+                    </div>
+                    <div style="padding:10px;background:rgba(0,0,0,.1);border-radius:6px">
+                      <div style="font-weight:600;margin-bottom:3px;font-size:.85em">Version</div>
+                      <div style="font-size:.78em">Paper 1.21.11 — client Java 1.21.11 requis</div>
+                    </div>
+                    <div style="padding:10px;background:rgba(0,0,0,.1);border-radius:6px">
+                      <div style="font-weight:600;margin-bottom:3px;font-size:.85em">Pré-requis joueur</div>
+                      <div style="font-size:.78em;line-height:1.4">1. Tailscale installé + connecté au tailnet<br>2. Pseudo Mojang ajouté à la whitelist Crafty</div>
+                    </div>
+                  </div>
+
+              - type: custom-api
+                title: Builds Paper
+                allow-insecure-html: true
+                cache: 6h
+                url: "https://api.papermc.io/v2/projects/paper/versions/1.21.11"
+                template: |
+                  {{$builds := .JSON.Array "builds"}}
+                  {{$latest := index $builds (sub (len $builds) 1)}}
+                  <div style="padding:8px;background:rgba(0,0,0,.08);border-radius:6px">
+                    <div style="font-size:.7em;opacity:.6">Dernier build 1.21.11</div>
+                    <div style="font-weight:700;font-size:1.1em;margin-top:2px">#{{$latest}}</div>
+                  </div>
+
+          - size: full
+            widgets:
+              - type: bookmarks
+                title: Liens
+                groups:
+                  - title: Administration
+                    links:
+                      - title: Crafty Controller
+                        url: https://crafty.${SECRET_DOMAIN}
+                        icon: si:minecraft
+                  - title: Plugins & mods
+                    links:
+                      - title: Modrinth
+                        url: https://modrinth.com
+                        icon: si:modrinth
+                      - title: SpigotMC Resources
+                        url: https://www.spigotmc.org/resources/
+                      - title: PaperMC Hangar
+                        url: https://hangar.papermc.io
+                        icon: si:papermc
+                      - title: CurseForge
+                        url: https://www.curseforge.com/minecraft
+                        icon: si:curseforge
+                  - title: Docs
+                    links:
+                      - title: PaperMC Docs
+                        url: https://docs.papermc.io
+                        icon: si:papermc
+                      - title: Crafty Docs
+                        url: https://docs.craftycontrol.com
+
+              - type: releases
+                title: Releases à suivre
+                cache: 6h
+                token: $${GITHUB_TOKEN}
+                repositories:
+                  - PaperMC/Paper
+                  - ViaVersion/ViaVersion
+                  - ViaVersion/ViaBackwards
+                  - BlueMap-Minecraft/BlueMap
+
   custom.css: |
     body {
       background-image: url('/assets/bg.jpg') !important;
