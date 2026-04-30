@@ -1,0 +1,158 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opnsense-dns-orphan-cleanup
+data:
+  cleanup.py: |
+    #!/usr/bin/env python3
+    """
+    Repair orphan TXT registry entries left behind by the
+    external-dns-opnsense webhook silently failing on the A record
+    while still creating the TXT registry marker.
+
+    Strategy: for every TXT entry of the form
+      k8s.main.cname-<host>.<DOMAIN>
+    check whether <host>.<DOMAIN> has a corresponding A host_override.
+    If not, add one pointing at GATEWAY_IP, then reconfigure Unbound.
+    """
+    import os, json, sys, ssl, base64
+    import urllib.request
+
+    HOST = "https://opnsense.internal"
+    DOMAIN = "kryzql.space"
+    PREFIX = "k8s.main.cname-"
+    KEY = os.environ["OPNSENSE_API_KEY"]
+    SECRET = os.environ["OPNSENSE_API_SECRET"]
+    GATEWAY_IP = os.environ["GATEWAY_IP"]
+    CTX = ssl._create_unverified_context()
+    AUTH = "Basic " + base64.b64encode(f"{KEY}:{SECRET}".encode()).decode()
+
+    def call(path, body=None, method="POST"):
+        url = f"{HOST}{path}"
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(
+            url, data=data, method=method,
+            headers={"Authorization": AUTH, "Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, context=CTX, timeout=10) as resp:
+            return json.loads(resp.read())
+
+    overrides = call(
+        "/api/unbound/settings/search_host_override",
+        {"current": 1, "rowCount": 1000},
+    )
+    a_records = {
+        f"{r['hostname']}.{r['domain']}"
+        for r in overrides.get("rows", [])
+        if r.get("rr") == "A"
+    }
+
+    local = call("/api/unbound/diagnostics/list_local_data", method="GET")
+    txt_hosts = []
+    for r in local.get("data", []):
+        if r.get("rrtype") != "TXT":
+            continue
+        name = r.get("name", "")
+        if not name.startswith(PREFIX):
+            continue
+        host = name[len(PREFIX):].rstrip(".")
+        if host.endswith("." + DOMAIN):
+            txt_hosts.append(host)
+
+    orphans = [h for h in txt_hosts if h not in a_records]
+
+    if not orphans:
+        print(
+            f"OK: no orphans "
+            f"({len(txt_hosts)} TXT registry, {len(a_records)} A records)"
+        )
+        sys.exit(0)
+
+    healed = 0
+    for orphan in orphans:
+        hostname = orphan[: -(len(DOMAIN) + 1)]
+        print(f"ORPHAN: {orphan} — adding A record -> {GATEWAY_IP}")
+        try:
+            resp = call(
+                "/api/unbound/settings/add_host_override",
+                {
+                    "host": {
+                        "hostname": hostname,
+                        "domain": DOMAIN,
+                        "rr": "A",
+                        "server": GATEWAY_IP,
+                        "enabled": "1",
+                    }
+                },
+            )
+            if resp.get("result") == "saved":
+                healed += 1
+                print("  -> ok")
+            else:
+                print(f"  -> FAILED: {resp}")
+        except Exception as exc:
+            print(f"  -> ERROR: {exc}")
+
+    if healed:
+        print(f"Reconfiguring Unbound after {healed} healed entrie(s)...")
+        call("/api/unbound/service/reconfigure", {})
+        print("Done.")
+        sys.exit(0)
+    else:
+        print("No orphans were healed (all attempts failed).")
+        sys.exit(1)
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: opnsense-dns-orphan-cleanup
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: cleanup
+              image: docker.io/library/python:3.13-alpine
+              command:
+                - python3
+                - /scripts/cleanup.py
+              env:
+                - name: GATEWAY_IP
+                  value: "${CLUSTER_GATEWAY_INTERNAL_IP}"
+              envFrom:
+                - secretRef:
+                    name: opnsense-dns-secret
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: [ALL]
+                readOnlyRootFilesystem: true
+          volumes:
+            - name: script
+              configMap:
+                name: opnsense-dns-orphan-cleanup
+                defaultMode: 0555
