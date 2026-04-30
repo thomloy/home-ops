@@ -1,0 +1,53 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/external-secrets.io/externalsecret_v1.json
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: crafty-volsync
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: onepassword
+  target:
+    name: crafty-volsync-secret
+    template:
+      data:
+        KOPIA_PASSWORD: "{{ .KOPIA_PASSWORD }}"
+        KOPIA_REPOSITORY: filesystem:///mnt/repository
+  dataFrom:
+    - extract:
+        key: volsync-template
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: crafty
+spec:
+  sourcePVC: crafty
+  trigger:
+    schedule: "0 4 * * *"
+  kopia:
+    accessModes:
+      - ReadWriteOnce
+    compression: zstd-fastest
+    copyMethod: Snapshot
+    moverSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            path: /mnt/HDD1X4/VolsyncKopia
+            server: ${NAS_IP}
+    parallelism: 2
+    repository: crafty-volsync-secret
+    retain:
+      hourly: 24
+      daily: 30
+      weekly: 12
+      monthly: 6
+    storageClassName: ceph-block
+    volumeSnapshotClassName: csi-ceph-blockpool
