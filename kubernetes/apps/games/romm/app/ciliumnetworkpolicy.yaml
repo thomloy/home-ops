@@ -9,6 +9,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: romm
       app.kubernetes.io/instance: romm
+      app.kubernetes.io/controller: romm
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -35,14 +36,16 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: valkey
+      app.kubernetes.io/name: romm
       app.kubernetes.io/instance: romm
+      app.kubernetes.io/controller: valkey
   ingress:
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: games
             app.kubernetes.io/name: romm
             app.kubernetes.io/instance: romm
+            app.kubernetes.io/controller: romm
       toPorts:
         - ports:
             - port: "6379"

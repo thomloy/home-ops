@@ -438,7 +438,7 @@ spec:
 
 ### DB credentials — auto-generated
 
-CNPG creates the secret `romm-postgres-app` with fields `username`, `password`, `host`, `port`, `dbname`, `uri`, `jdbc-uri`. We consume `uri` directly into `DATABASE_URL` — no manual ExternalSecret for DB creds.
+CNPG creates the secret `romm-postgres-app` with fields `username`, `password`, `host`, `port`, `dbname`, `uri`, `jdbc-uri`. We consume `username` and `password` from this secret, plus hard-coded `DB_HOST: romm-postgres-rw`, `DB_PORT: "5432"`, `DB_NAME: romm`, and `ROMM_DB_DRIVER: postgresql` env vars on the romm container — no manual ExternalSecret for DB creds. (RomM's upstream config reads discrete `DB_*` env vars; it does not parse a `DATABASE_URL`.)
 
 ### Bootstrap behaviour
 
