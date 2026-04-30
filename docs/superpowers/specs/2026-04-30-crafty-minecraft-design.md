@@ -13,14 +13,16 @@ Host a Minecraft server in the cluster, accessible to a small group of players (
 The server starts as Paper (vanilla-compatible client, plugin-ready) and may later switch to a hybrid loader (Arclight / Mohist) when modpacks are introduced. Crafty Controller is the platform — it manages the Minecraft Java processes as child processes inside its own container.
 
 This is the first consumer in the cluster of:
-- The Tailscale operator's `loadBalancerClass: tailscale` Service type
 - A `games` namespace (created here)
+- The existing `tailscale` Pod's serve-config feature, used to forward a TCP port from the tailnet into a Service in another namespace.
+
+The cluster's existing Tailscale install is **not** the official Tailscale Kubernetes Operator — it is a single userspace `tailscaled` Pod acting as an exit node. We adapt that Pod (add `TS_SERVE_CONFIG`) rather than installing the operator, so this design adds no new infrastructure component.
 
 ---
 
 ## Goals
 
-- Single Minecraft server reachable at `minecraft.<tailnet>.ts.net:25565` for Tailscale peers, with whitelist enforced.
+- Single Minecraft server reachable at `homelab.<tailnet>.ts.net:25565` for Tailscale peers, with whitelist enforced. (Hostname is the existing tailnet node `homelab`; only one Tailscale identity exists in this cluster, so one hostname per cluster.)
 - Crafty Controller web UI reachable at `https://crafty.kryzql.space` over the internal gateway (LAN + Tailscale, no public DNS).
 - World data on Rook-Ceph block storage with 3-replica durability.
 - Daily VolSync backups to NFS NAS with extended retention (world data has long-tail value).
@@ -41,32 +43,41 @@ This is the first consumer in the cluster of:
 ## Architecture
 
 ```
-Tailscale peer ──► minecraft.<tailnet>.ts.net:25565
-                          │
-                          ▼
+Tailscale peer ──► homelab.<tailnet>.ts.net:25565
+                              │
+                              ▼
+              ┌──────── network ns ────────┐
+              │  tailscale Pod              │
+              │  (existing, modified)       │
+              │  TS_SERVE_CONFIG forwards   │
+              │  tailnet TCP/25565 →        │
+              │  crafty-minecraft ClusterIP │
+              └──────────────┬──────────────┘
+                             │ in-cluster TCP
+                             ▼
               ┌──────── games ns ────────┐
-              │                          │
-LAN/Tailscale │  Service: minecraft      │
-client        │  type: LoadBalancer      │
-   │          │  loadBalancerClass:      │
-   │          │  tailscale (TCP 25565)   │
-   │          │           │              │
-   │          │           ▼              │
-   │          │      ┌─────────┐         │
-   │          │      │ Crafty  │ Pod     │
-   │          │      │ pod     │         │
-   ▼          │      │ + child │         │
-192.168.42.110│      │ JVM(s)  │         │
-envoy-internal│      └────┬────┘         │
-(network ns)  │           │              │
-   │  HTTPS   │  Service: crafty (ClusterIP, HTTP 8000)
-   └──HTTPRoute──────►   │              │
-              │           ▼              │
-              │      ┌─────────┐         │
-              │      │ PVC     │ 50Gi    │
-              │      │ Ceph    │ RBD     │
-              │      └────┬────┘         │
-              └───────────┼──────────────┘
+              │  Service: crafty-minecraft│
+              │  type: ClusterIP          │
+              │  TCP 25565                │
+              │           │               │
+              │           ▼               │
+              │      ┌──────────┐         │
+LAN/Tailscale │      │ pod:     │         │
+client        │      │ - app    │ Crafty  │
+   │          │      │ - proxy  │ nginx   │
+   │          │      │  (Java   │         │
+   │          │      │   child  │         │
+   │          │      │   JVMs)  │         │
+   ▼          │      └────┬─────┘         │
+192.168.42.110│           │               │
+envoy-internal│  Service: crafty (ClusterIP, HTTP 8000)
+(network ns)  │           ▼               │
+   │  HTTPS   │      ┌─────────┐          │
+   └──HTTPRoute──────►         │          │
+              │      │ PVC     │ 50 Gi    │
+              │      │ Ceph    │ RBD      │
+              │      └────┬────┘          │
+              └───────────┼───────────────┘
                           │ daily snapshot
                           ▼
               ┌── volsync-system ns ──┐
@@ -81,19 +92,24 @@ envoy-internal│      └────┬────┘         │
 ## Files
 
 ```
-kubernetes/apps/games/
-├── kustomization.yaml                # Namespace root, references ./crafty/ks.yaml + sops/alerts components
-├── namespace.yaml                    # Namespace games
-├── limitrange.yaml                   # Default container limits (copied from selfhosted)
+kubernetes/apps/games/                                # New
+├── kustomization.yaml                                # Namespace root, references ./crafty/ks.yaml + sops/alerts components
+├── namespace.yaml                                    # Namespace games
+├── limitrange.yaml                                   # Default container limits (copied from selfhosted)
 └── crafty/
-    ├── ks.yaml                       # Flux Kustomization
+    ├── ks.yaml                                       # Flux Kustomization
     └── app/
-        ├── kustomization.yaml        # Resources index
-        ├── ocirepository.yaml        # bjw-s app-template 4.6.2
-        ├── helmrelease.yaml          # Crafty + nginx sidecar StatefulSet + 2 Services + inline PVC + HTTPRoute
-        ├── configmap.yaml            # nginx.conf for the in-pod HTTPS-to-HTTP reverse proxy
-        ├── volsync.yaml              # ExternalSecret (Kopia creds) + ReplicationSource (extended retention)
-        └── ciliumnetworkpolicy.yaml  # Ingress + egress rules
+        ├── kustomization.yaml                        # Resources index
+        ├── ocirepository.yaml                        # bjw-s app-template 4.6.2
+        ├── helmrelease.yaml                          # Crafty + nginx sidecar StatefulSet + 2 Services + inline PVC + HTTPRoute
+        ├── configmap.yaml                            # nginx.conf for the in-pod HTTPS-to-HTTP reverse proxy
+        ├── volsync.yaml                              # ExternalSecret (Kopia creds) + ReplicationSource (extended retention)
+        └── ciliumnetworkpolicy.yaml                  # Ingress + egress rules
+
+kubernetes/apps/network/tailscale/app/                # Modified (existing dir)
+├── helmrelease.yaml                                  # Add TS_SERVE_CONFIG env + serve-config volume mount
+├── configmap.yaml                                    # New: tailscale-serve ConfigMap holding serve.json
+└── kustomization.yaml                                # Add ./configmap.yaml to resources
 ```
 
 The `volsync` Kustomize component is **not** included; pattern follows `actual-budget` (full inline definition for both ExternalSecret and ReplicationSource so retention can be customised).
@@ -109,7 +125,7 @@ A new `kubernetes/apps/games/` root entry must be referenced from the cluster-le
   - `rook-ceph-cluster` (rook-ceph) — for the Ceph RBD PVC
   - `volsync` (volsync-system) — for the inline `ReplicationSource` to be reconciled
   - `external-secrets-stores` (external-secrets) — for the Kopia-credentials `ExternalSecret`
-  - `tailscale` (network) — first consumer of `loadBalancerClass: tailscale`
+  - `tailscale` (network) — the existing tailscale Pod must already have its `TS_SERVE_CONFIG` patch applied so MC traffic from the tailnet can reach the cluster Service. (The patch is part of this same PR; Flux will reconcile both Kustomizations and the dependency just orders them.)
 - No Kustomize `components` entry (no volsync component, full inline definition).
 - `interval: 1h`, `timeout: 5m`, `wait: false`, `prune: true` (matching repo defaults).
 
@@ -182,7 +198,7 @@ persistence:
             subPath: nginx.conf
 ```
 
-**Services** (two distinct):
+**Services** (two distinct, both `ClusterIP`):
 ```yaml
 service:
   app:                         # Web UI: gateway → nginx sidecar (port 8000) → Crafty HTTPS (8443)
@@ -192,20 +208,16 @@ service:
       http:
         port: 8000             # nginx sidecar listen port
         targetPort: 8000
-  minecraft:                   # MC port via Tailscale operator
+  minecraft:                   # MC port: tailscale Pod (in `network` ns) forwards to this ClusterIP
     controller: crafty
-    type: LoadBalancer
-    annotations:
-      tailscale.com/hostname: minecraft
-    spec:
-      loadBalancerClass: tailscale
-      externalTrafficPolicy: Local
     ports:
       mc:
         port: 25565
         protocol: TCP
         targetPort: 25565
 ```
+
+The bjw-s app-template names the rendered Service `<release>-<service-key>`, so the MC Service's full DNS name is `crafty-minecraft.games.svc.cluster.local`. That hostname is referenced in the `tailscale-serve` ConfigMap.
 
 **HTTPRoute** (generated by app-template):
 ```yaml
@@ -359,18 +371,33 @@ The HTTP hop between gateway and nginx sidecar is acceptable because (a) the pod
 ### Tailscale (Minecraft port)
 
 ```
-peer → minecraft.<tailnet>.ts.net:25565
-     → Service LoadBalancer (loadBalancerClass: tailscale, hostname: minecraft)
-     → Pod:25565 → Java child process
+peer → homelab.<tailnet>.ts.net:25565
+     → tailscale Pod (network ns)        ← TS_SERVE_CONFIG forwards TCP/25565
+     → crafty-minecraft.games.svc:25565  ← cluster DNS resolves to ClusterIP
+     → Crafty Pod :25565 → Java child process
 ```
 
-`externalTrafficPolicy: Local` to preserve client source IPs in Minecraft logs (helpful for ban management). Whitelist enforced inside Crafty as defense in depth — a Tailscale peer who somehow appears uninvited cannot join without being on the Mojang whitelist.
+The existing `tailscale` Pod runs in userspace mode and joins the tailnet as `homelab`. We add `TS_SERVE_CONFIG=/etc/tsconfig/serve.json` and mount a ConfigMap containing:
+
+```json
+{
+  "TCP": {
+    "25565": {
+      "TCPForward": "crafty-minecraft.games.svc.cluster.local:25565"
+    }
+  }
+}
+```
+
+The pod accepts `TCP/25565` on its tailnet IP and forwards to the in-cluster Service via cluster DNS. Source-IP preservation is **not** available with this approach (the Crafty pod sees the tailscale Pod's pod IP as source); whitelist enforcement inside Crafty therefore relies on the Mojang username, not the source IP. Acceptable: Tailscale identity is already strongly authenticated upstream.
+
+**Open question**, validated at first reconcile: `tailscale serve --tcp` is documented as supported in `TS_USERSPACE=true` mode. If reconcile shows the feature unavailable, fallback is to drop `TS_USERSPACE` and add a TUN device + privileges to the tailscale Pod (existing pattern, but bigger blast radius — to avoid).
 
 ### CiliumNetworkPolicy
 
 **Ingress**:
-- From namespace `network` (envoy gateway pod identity) → port 8000/TCP
-- From Tailscale operator pod identity → port 25565/TCP
+- From namespace `network` with label `gateway.networking.k8s.io/gateway-name: envoy-internal` → port 8000/TCP (web UI)
+- From namespace `network` with label `app.kubernetes.io/name: tailscale` → port 25565/TCP (MC traffic forwarded by the existing tailscale Pod)
 
 **Egress**:
 - DNS to kube-dns (CoreDNS)
@@ -395,12 +422,13 @@ Auto-merge **disabled** for Crafty for at least the first few releases — DB sc
 
 1. `kubectl -n games get pods` → `crafty-0` Running, all probes passing.
 2. `kubectl -n games get pvc crafty` → Bound, 50Gi.
-3. `kubectl -n games get svc` → two Services; `minecraft` has an `EXTERNAL-IP` in the Tailscale CGNAT range (`100.x.x.x`).
+3. `kubectl -n games get svc` → two ClusterIP Services (`crafty` on 8000 and `crafty-minecraft` on 25565). No EXTERNAL-IP expected.
+3a. `kubectl -n network exec deploy/tailscale -- tailscale serve status` lists `TCP 25565` forwarding to `crafty-minecraft.games.svc.cluster.local:25565`.
 4. `dig crafty.kryzql.space @192.168.42.99` → `192.168.42.110`.
 5. Browser `https://crafty.kryzql.space` → Crafty login page, valid wildcard cert.
 6. `kubectl -n games logs crafty-0 | grep -i password` returns the bootstrap admin password (one-time retrieval, then archived in 1Password and rotated via UI).
 7. After 24 h: `kubectl -n games get replicationsource crafty` shows `LAST_SYNC` recent and `STATUS: Idle`; corresponding Kopia snapshot visible on the NAS NFS share.
-8. Minecraft client connects from a Tailscale peer to `minecraft.<tailnet>.ts.net:25565` and joins the Paper server (after being added to the whitelist via Crafty UI).
+8. Minecraft client connects from a Tailscale peer to `homelab.<tailnet>.ts.net:25565` and joins the Paper server (after being added to the whitelist via Crafty UI).
 9. CiliumNetworkPolicy `kubectl -n games describe cnp` shows expected ingress/egress; pod can `curl https://api.papermc.io/` (egress works), cannot reach a random pod in another namespace (ingress to others denied).
 
 ---
@@ -409,7 +437,7 @@ Auto-merge **disabled** for Crafty for at least the first few releases — DB sc
 
 | Risk | Mitigation |
 |---|---|
-| First consumer of Tailscale `loadBalancerClass` — operator bugs may surface | Validate the LoadBalancer Service comes up green before connecting clients; fallback is NodePort + Tailscale subnet routing if the operator path fails. |
+| `tailscale serve --tcp` may not work in `TS_USERSPACE=true` mode on this image | Validate at first reconcile via `tailscale serve status`. Fallback (only if blocked): drop `TS_USERSPACE`, add NET_ADMIN/SYS_MODULE caps and TUN device — bigger blast radius for the existing exit-node Pod, avoid unless necessary. |
 | Pod kill leaves orphan Java processes | `terminationGracePeriodSeconds: 60` lets Crafty SIGTERM its children; on hard kill, Paper journal recovery handles it. |
 | Crafty major-version upgrade breaks SQLite schema | Manual Renovate approval + VolSync J-1 backup + Flux rollback via `helmrelease.spec.chartRef.tag`. |
 | World corruption on ungraceful node failure | Ceph 3-replica + daily VolSync snapshot. Granular restore via Crafty UI from internal backup, full-PVC restore via VolSync ReplicationDestination. |
