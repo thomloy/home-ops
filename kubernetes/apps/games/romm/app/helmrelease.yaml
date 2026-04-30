@@ -33,6 +33,33 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
+        initContainers:
+          config-init:
+            image:
+              # renovate: datasource=docker depName=docker.io/library/busybox
+              repository: docker.io/library/busybox
+              tag: "1.37"
+            command:
+              - /bin/sh
+              - -c
+              - |
+                if [ ! -f /romm/config/config.yml ]; then
+                  printf '# RomM user configuration — created by config-init initContainer.\n# Edit via the RomM UI (Config tab) or by replacing this file.\n# Reference: https://github.com/rommapp/romm/wiki\n' > /romm/config/config.yml
+                  echo "Initialized empty config.yml"
+                else
+                  echo "config.yml already present, leaving as-is"
+                fi
+            resources:
+              requests:
+                cpu: 5m
+                memory: 8Mi
+              limits:
+                memory: 32Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+              readOnlyRootFilesystem: true
         containers:
           app:
             image:
@@ -210,6 +237,9 @@ spec:
                 subPath: config
               - path: /romm/.cache
                 subPath: cache
+            config-init:
+              - path: /romm/config
+                subPath: config
       library:
         existingClaim: romm-library
         advancedMounts:
