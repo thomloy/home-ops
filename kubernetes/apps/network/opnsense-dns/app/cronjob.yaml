@@ -48,7 +48,7 @@ data:
         if r.get("rr") == "A"
     }
 
-    local = call("/api/unbound/diagnostics/list_local_data", method="GET")
+    local = call("/api/unbound/diagnostics/list_local_data", {})
     txt_hosts = []
     for r in local.get("data", []):
         if r.get("rrtype") != "TXT":
