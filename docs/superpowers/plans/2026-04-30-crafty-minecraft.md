@@ -415,7 +415,7 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-              - identifier: crafty
+              - identifier: app
                 port: http
 
     persistence:
@@ -452,8 +452,11 @@ spec:
           crafty:
             proxy:
               - path: /tmp
+                subPath: tmp
               - path: /var/cache/nginx
+                subPath: cache
               - path: /var/log/nginx
+                subPath: log
 ```
 
 Notes for the engineer:
