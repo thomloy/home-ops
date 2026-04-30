@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tailscale-serve
+data:
+  serve.json: |
+    {
+      "TCP": {
+        "25565": {
+          "TCPForward": "crafty-minecraft.games.svc.cluster.local:25565"
+        }
+      }
+    }

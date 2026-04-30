@@ -27,6 +27,7 @@ spec:
               TS_AUTH_ONCE: "true"
               TS_HOSTNAME: homelab
               TS_EXTRA_ARGS: "--advertise-exit-node"
+              TS_SERVE_CONFIG: /etc/tsconfig/serve.json
             envFrom:
               - secretRef:
                   name: tailscale-oauth
@@ -46,3 +47,12 @@ spec:
         runAsUser: 0
         seccompProfile:
           type: RuntimeDefault
+    persistence:
+      tsconfig:
+        type: configMap
+        name: tailscale-serve
+        advancedMounts:
+          tailscale:
+            app:
+              - path: /etc/tsconfig
+                readOnly: true
