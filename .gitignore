@@ -25,3 +25,4 @@ CLAUDE.md
 .DS_Store
 Thumbs.db
 .worktrees/
+.wrangler/
