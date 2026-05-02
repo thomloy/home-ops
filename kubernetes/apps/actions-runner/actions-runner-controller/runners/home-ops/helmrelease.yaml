@@ -28,6 +28,9 @@ spec:
       namespace: actions-runner
     template:
       spec:
+        securityContext:
+          fsGroup: 1001
+          fsGroupChangePolicy: OnRootMismatch
         containers:
           - name: runner
             image: ghcr.io/home-operations/actions-runner:2.333.1@sha256:1a7726bcaeba4e46fe07fe98e1805b4df78618a71e67758f932862b929f852d4
