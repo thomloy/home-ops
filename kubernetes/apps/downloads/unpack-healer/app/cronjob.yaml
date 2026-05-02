@@ -1,0 +1,75 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: unpack-healer
+spec:
+  schedule: "*/30 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: healer
+              image: docker.io/library/alpine:3.20
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  base=/media/downloads/complete
+                  if [ ! -d "$base" ]; then
+                    echo "Base path $base not mounted, exiting cleanly"
+                    exit 0
+                  fi
+                  count=0
+                  # Find _UNPACK_* dirs untouched for >30 min (Sabnzbd safe-guard:
+                  # active extraction touches mtime). Strip the _UNPACK_ prefix
+                  # so Sonarr/Radarr import them at next scan.
+                  find "$base" -maxdepth 4 -type d -name '_UNPACK_*' -mmin +30 -print | while read -r d; do
+                    parent=$(dirname "$d")
+                    name=$(basename "$d")
+                    new="$parent/${name#_UNPACK_}"
+                    if [ -e "$new" ]; then
+                      echo "SKIP (target exists): $d"
+                      continue
+                    fi
+                    if mv "$d" "$new"; then
+                      echo "HEALED: $d -> $new"
+                      count=$((count+1))
+                    else
+                      echo "FAILED: $d"
+                    fi
+                  done
+                  echo "Run complete (count not propagated through pipe; check log lines above)."
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 16Mi
+                limits:
+                  memory: 64Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: [ALL]
+                readOnlyRootFilesystem: true
+              volumeMounts:
+                - name: media
+                  mountPath: /media
+          volumes:
+            - name: media
+              nfs:
+                server: ${NAS_IP}
+                path: /mnt/HDD1X4/media

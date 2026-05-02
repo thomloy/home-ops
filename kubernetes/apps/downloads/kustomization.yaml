@@ -20,3 +20,4 @@ resources:
   - ./sabnzbd/ks.yaml
   - ./sonarr/ks.yaml
   - ./lidarr/ks.yaml
+  - ./unpack-healer/ks.yaml
