@@ -68,9 +68,13 @@ radarr:
         assign_scores_to:
           - name: SQP-1 (2160p)
 
-lidarr:
-  lidarr:
-    base_url: http://lidarr.downloads.svc.cluster.local:8686
-    api_key: !env_var LIDARR_API_KEY
-    quality_definition:
-      type: music
+# Lidarr support is not yet available in Recyclarr 8.5.1 (issue tracker
+# at recyclarr/recyclarr). Re-enable this block once a Recyclarr
+# release ships the `lidarr:` top-level config key.
+#
+# lidarr:
+#   lidarr:
+#     base_url: http://lidarr.downloads.svc.cluster.local:8686
+#     api_key: !env_var LIDARR_API_KEY
+#     quality_definition:
+#       type: music
