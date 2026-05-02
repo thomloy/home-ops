@@ -171,7 +171,7 @@ git commit -m "feat(crafty): add Flux Kustomization"
 
 ```yaml
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1.json
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
@@ -486,7 +486,7 @@ git commit -m "feat(crafty): add HelmRelease (Crafty + nginx sidecar)"
 
 ```yaml
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/external-secrets.io/externalsecret_v1.json
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/external-secrets.io/externalsecret_v1.json
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
@@ -505,7 +505,7 @@ spec:
     - extract:
         key: volsync-template
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/volsync.backube/replicationsource_v1alpha1.json
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/volsync.backube/replicationsource_v1alpha1.json
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
