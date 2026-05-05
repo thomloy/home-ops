@@ -15,8 +15,29 @@ Profiles that must exist (managed by Recyclarr — do not delete via UI):
 | Sonarr | `WEB-1080p` | HD WEB, English |
 | Sonarr | `WEB-2160p` | 4K WEB |
 | Sonarr | `FR-MULTi-VO-WEB-1080p` | HD WEB, French audio preferred |
+| Sonarr | `FR-ANIME-VOSTFR` | Anime, JP audio + FR subs (BluRay/WEB/HDTV 480p–1080p) |
 
 Anything else in the UI is residual and can be deleted.
+
+## Anime: how to add a series in JP audio + FR subs (VOSTFR)
+
+1. In Sonarr → Add Series → set **Series Type = Anime** (enables absolute
+   episode numbering, which anime indexers use).
+2. Quality Profile = `FR-ANIME-VOSTFR` (no language filter, accepts BATCH
+   season packs from anime release groups like Erai-raws / SubsPlease).
+3. Anime releases come from **Nyaa.si** (Prowlarr indexer id 2, public
+   torrent, configured with category=Anime, filter=Trusted only). They do
+   NOT come from NZBFinder usenet.
+4. Subtitles are handled by **Bazarr** post-import — most Erai-raws/SubsPlease
+   releases are already MultiSub (FR included) so often no extra fetching is
+   needed.
+
+**If Sonarr's auto-search loops on per-episode searches and never grabs the
+season pack:** that's normal for old anime. The Erai-raws BATCH titles are
+formatted `S01 - 01 ~ 25` which Sonarr's per-episode parser doesn't match.
+Use Sonarr UI → Series → Manual Search (Season tab) and grab the BATCH
+manually. Or push the magnet directly to qBittorrent with `category=sonarr`
+— Sonarr will auto-import on completion.
 
 ## ⚠️ Radarr Release Profile "French" must stay disabled
 
