@@ -17,6 +17,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: selfhosted
             app.kubernetes.io/name: glance
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: downloads
+            app.kubernetes.io/name: prowlarr
       toPorts:
         - ports:
             - port: "8787"
