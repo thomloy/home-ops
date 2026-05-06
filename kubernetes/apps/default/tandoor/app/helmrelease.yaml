@@ -30,9 +30,6 @@ spec:
             image:
               repository: vabene1111/recipes
               tag: "2.6.9"
-            securityContext:
-              runAsUser: 1000
-              runAsGroup: 1000
             envFrom:
               - secretRef:
                   name: tandoor-secret
@@ -124,9 +121,9 @@ spec:
 
     persistence:
       media:
-        type: nfs
-        server: ${NAS_IP}
-        path: /mnt/HDD1X4/apps/cuisine
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        storageClass: ceph-block
         advancedMounts:
           tandoor:
             app:
