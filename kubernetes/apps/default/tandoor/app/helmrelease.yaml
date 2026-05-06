@@ -30,6 +30,9 @@ spec:
             image:
               repository: vabene1111/recipes
               tag: "2.6.9"
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
             envFrom:
               - secretRef:
                   name: tandoor-secret
@@ -94,10 +97,6 @@ spec:
 
     defaultPodOptions:
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
 
