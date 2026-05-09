@@ -162,7 +162,7 @@ spec:
             image:
               # renovate: datasource=docker depName=ghcr.io/valkey-io/valkey
               repository: ghcr.io/valkey-io/valkey
-              tag: 9.0.3
+              tag: 9.0.4
             probes:
               liveness: &valkey_probe
                 enabled: true
