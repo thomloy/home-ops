@@ -48,7 +48,6 @@ spec:
                 spec:
                   tcpSocket:
                     port: 5984
-                  initialDelaySeconds: 30
                   periodSeconds: 10
                   timeoutSeconds: 3
                   failureThreshold: 3
@@ -73,7 +72,7 @@ spec:
                   periodSeconds: 5
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities:
                 drop:
                   - ALL
