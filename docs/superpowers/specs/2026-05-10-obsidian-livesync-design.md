@@ -75,8 +75,10 @@ kubernetes/apps/selfhosted/obsidian-livesync/
 | Container image | `docker.io/library/couchdb:3.4.x` (pin SHA256 + `# renovate:` annotation) |
 | Replicas | 1, strategy `Recreate` |
 | User/Group | runAsUser/runAsGroup `5984` (couchdb container default), fsGroup `5984` |
-| Probes | TCP `5984` liveness/readiness/startup |
+| Probes | TCP `5984` (liveness, startup) + httpGet `/_up` (readiness — endpoint CouchDB natif) |
 | readOnlyRootFilesystem | `true` (CouchDB n'écrit qu'à `/opt/couchdb/data` PVC + `/tmp` emptyDir) |
+| Annotations | `reloader.stakater.com/auto: "true"` (recharge sur changement secret/configmap), Gatus pushover via `route` annotation |
+| TZ env | `Europe/Paris` (cohérent autres apps) |
 | capabilities drop | `["ALL"]` |
 | Resources | requests `cpu: 50m / mem: 256Mi`, limits `mem: 1Gi` |
 | Service | ClusterIP, port `5984` |
@@ -129,9 +131,8 @@ Mapped to k8s secret `obsidian-livesync-secret` :
 
 ### CiliumNetworkPolicy
 
-- **ingress** : depuis pods `envoy-internal` (label `gateway.envoyproxy.io/owning-gateway-name=envoy-internal`)
-- **egress** : DNS (kube-dns), NAS NFS port 2049/tcp+udp pour VolSync
-- **deny** : tout autre trafic
+- **ingress** : depuis pods Envoy Gateway (label `gateway.networking.k8s.io/gateway-name=envoy-internal`) sur 5984/TCP, plus stanza ingress kube-dns par cohérence avec le pattern repo
+- **egress** : aucune règle déclarée → autorisé par défaut (pattern documenté en mémoire `feedback_cilium_toentities_world` et `feedback_cilium_socketlb` : les egress rules sont fragiles en mode Cilium socketLB+DSR ; seul `immich` les utilise et avec un workaround spécifique)
 
 ### VolSync ReplicationSource
 
@@ -146,9 +147,9 @@ Mapped to k8s secret `obsidian-livesync-secret` :
 
 ### Flux Kustomization (`ks.yaml`)
 
-- `dependsOn` : `cluster-apps-rook-ceph-cluster`, `cluster-apps-volsync`, `cluster-apps-external-secrets-stores`
+- `dependsOn` : `rook-ceph-cluster` (ns `rook-ceph`) + `volsync` (ns `volsync-system`) — pattern repo (les autres apps `selfhosted` ne référencent pas `external-secrets-stores` ou `healthChecks`, ces dépendances sont assumées implicitement par l'ordre de bootstrap)
 - targetNamespace : `selfhosted`
-- healthChecks : HelmRelease `obsidian-livesync`
+- pas de `healthChecks` ni `wait: true` (pattern repo : `wait: false`, monitoring via Gatus)
 
 ## Data flow
 
