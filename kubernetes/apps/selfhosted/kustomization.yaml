@@ -16,3 +16,4 @@ resources:
   - ./immich/ks.yaml
   - ./nextcloud/ks.yaml
   - ./actual-budget/ks.yaml
+  - ./obsidian-livesync/ks.yaml

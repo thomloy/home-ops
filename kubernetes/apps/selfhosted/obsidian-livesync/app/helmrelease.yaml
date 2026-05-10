@@ -1,0 +1,124 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: obsidian-livesync
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: obsidian-livesync
+  values:
+    controllers:
+      obsidian-livesync:
+        replicas: 1
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          securityContext:
+            runAsUser: 5984
+            runAsGroup: 5984
+            fsGroup: 5984
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: docker.io/library/couchdb
+              tag: 3.4.3@sha256:0e3999e6f460dea5051824c80a8709a877fe4ebe4c31c1490026f1c238deb665
+            env:
+              TZ: Europe/Paris
+              COUCHDB_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: obsidian-livesync-secret
+                    key: COUCHDB_USER
+              COUCHDB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: obsidian-livesync-secret
+                    key: COUCHDB_PASSWORD
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5984
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /_up
+                    port: 5984
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 3
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5984
+                  failureThreshold: 30
+                  periodSeconds: 5
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+    service:
+      app:
+        controller: obsidian-livesync
+        ports:
+          http:
+            port: 5984
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            alerts:
+              - type: pushover
+            conditions: ["[STATUS] < 500"]
+            ui:
+              hide-hostname: true
+        hostnames:
+          - obsidian.${SECRET_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 20Gi
+        storageClass: ceph-block
+        globalMounts:
+          - path: /opt/couchdb/data
+      config:
+        type: configMap
+        name: obsidian-livesync-config
+        globalMounts:
+          - path: /opt/couchdb/etc/local.d/local.ini
+            subPath: local.ini
+            readOnly: true
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
