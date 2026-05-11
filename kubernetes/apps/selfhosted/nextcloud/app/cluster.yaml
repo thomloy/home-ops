@@ -10,7 +10,7 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16
   storage:
     storageClass: ceph-block
-    size: 5Gi
+    size: 15Gi
   bootstrap:
     initdb:
       database: nextcloud
