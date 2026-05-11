@@ -32,7 +32,7 @@ spec:
               TZ: Europe/Paris
               ND_DATAFOLDER: /data
               ND_MUSICFOLDER: /media/musique
-              ND_SCANSCHEDULE: 5m
+              ND_SCANSCHEDULE: "@every 5m"
               ND_LOGLEVEL: info
               ND_PORT: &port 4533
               ND_ENABLETRANSCODINGCONFIG: "true"
