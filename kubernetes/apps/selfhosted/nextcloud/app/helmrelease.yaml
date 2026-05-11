@@ -61,6 +61,9 @@ spec:
                   httpGet:
                     path: /status.php
                     port: 80
+                    httpHeaders:
+                      - name: Host
+                        value: nextcloud.${SECRET_DOMAIN}
                   initialDelaySeconds: 0
                   periodSeconds: 30
                   timeoutSeconds: 5
@@ -73,6 +76,9 @@ spec:
                   httpGet:
                     path: /status.php
                     port: 80
+                    httpHeaders:
+                      - name: Host
+                        value: nextcloud.${SECRET_DOMAIN}
                   failureThreshold: 60
                   periodSeconds: 10
             resources:
