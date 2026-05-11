@@ -90,6 +90,10 @@ spec:
               - /bin/sh
               - -c
               - while true; do php -f /var/www/html/cron.php; sleep 300; done
+            securityContext:
+              runAsUser: 33
+              runAsGroup: 33
+              runAsNonRoot: true
             resources:
               requests:
                 cpu: 50m
