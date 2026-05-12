@@ -20,7 +20,7 @@ data:
     import urllib.request
 
     HOST = "https://opnsense.internal"
-    DOMAIN = "kryzql.space"
+    DOMAIN = "${SECRET_DOMAIN}"
     PREFIX = "k8s.main.cname-"
     KEY = os.environ["OPNSENSE_API_KEY"]
     SECRET = os.environ["OPNSENSE_API_SECRET"]
