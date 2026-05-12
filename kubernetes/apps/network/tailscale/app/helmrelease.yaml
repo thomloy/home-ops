@@ -37,7 +37,7 @@ spec:
                   - NET_ADMIN
             resources:
               requests:
-                cpu: 10m
+                cpu: 100m
                 memory: 256Mi
               limits:
                 memory: 512Mi

@@ -125,7 +125,7 @@ spec:
               tag: 3.3.0.0
             resources:
               requests:
-                cpu: 200m
+                cpu: 50m
                 memory: 512Mi
               limits:
                 memory: 1Gi
@@ -141,7 +141,7 @@ spec:
               - --chromium-disable-routes=true
             resources:
               requests:
-                cpu: 200m
+                cpu: 50m
                 memory: 512Mi
               limits:
                 memory: 1Gi
