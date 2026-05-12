@@ -12,3 +12,4 @@ resources:
   - ./namespace.yaml
   - ./tuppr/ks.yaml
   - ./nut-shutdown/ks.yaml
+  - ./etcd-snapshot/ks.yaml

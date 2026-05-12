@@ -1,0 +1,106 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: etcd-snapshot
+spec:
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: snapshot
+              image: public.ecr.aws/aws-cli/aws-cli:2.31.34
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  set -euo pipefail
+                  TS=$(date -u +%Y%m%dT%H%M%SZ)
+                  echo "[etcd-snapshot] Taking snapshot from $TALOS_NODE…"
+                  /talosctl/talosctl --talosconfig=/talos/talosconfig \
+                    --nodes="$TALOS_NODE" \
+                    etcd snapshot /tmp/etcd-${TS}.snap
+                  SIZE=$(stat -c %s /tmp/etcd-${TS}.snap)
+                  echo "[etcd-snapshot] Snapshot OK (${SIZE} bytes), uploading to R2…"
+                  aws s3 cp /tmp/etcd-${TS}.snap \
+                    "s3://cnpg-backups/etcd-snapshots/etcd-${TS}.snap" \
+                    --endpoint-url="$R2_ENDPOINT" \
+                    --no-progress
+                  echo "[etcd-snapshot] Pruning snapshots older than 14 days…"
+                  CUTOFF=$(date -u -d '14 days ago' +%Y%m%d)
+                  aws s3 ls "s3://cnpg-backups/etcd-snapshots/" \
+                    --endpoint-url="$R2_ENDPOINT" |
+                  awk '{print $4}' |
+                  while read -r f; do
+                    [ -z "$f" ] && continue
+                    fdate=$(echo "$f" | sed -n 's/etcd-\([0-9]\{8\}\)T.*/\1/p')
+                    if [ -n "$fdate" ] && [ "$fdate" -lt "$CUTOFF" ]; then
+                      echo "[etcd-snapshot] Deleting old snapshot $f"
+                      aws s3 rm "s3://cnpg-backups/etcd-snapshots/$f" \
+                        --endpoint-url="$R2_ENDPOINT"
+                    fi
+                  done
+                  echo "[etcd-snapshot] Done."
+              env:
+                - name: TALOS_NODE
+                  value: "192.168.42.41"
+                - name: R2_ENDPOINT
+                  value: "https://1aeea9a5d6274c321f9a4805ebaebb51.r2.cloudflarestorage.com"
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: etcd-snapshot-secret
+                      key: AWS_ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: etcd-snapshot-secret
+                      key: AWS_SECRET_ACCESS_KEY
+              volumeMounts:
+                - name: talosctl
+                  mountPath: /talosctl
+                  readOnly: true
+                - name: talosconfig
+                  mountPath: /talos
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+          volumes:
+            - name: talosctl
+              # renovate: datasource=docker depName=ghcr.io/siderolabs/talosctl
+              image:
+                reference: ghcr.io/siderolabs/talosctl:v1.12.7
+                pullPolicy: IfNotPresent
+            - name: talosconfig
+              secret:
+                secretName: etcd-snapshot-secret
+                items:
+                  - key: talosconfig
+                    path: talosconfig
+            - name: tmp
+              emptyDir: {}
