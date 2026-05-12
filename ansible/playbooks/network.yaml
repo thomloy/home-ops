@@ -99,7 +99,7 @@
 
     # ── DNS statique — domaine .internal ─────────────────────────────────────
     # Entrées nécessaires avant ExternalDNS (infra bootstrap)
-    # Les entrées *.kryzql.space des apps sont gérées dynamiquement par ExternalDNS
+    # Les entrées *.${SECRET_DOMAIN} des apps sont gérées dynamiquement par ExternalDNS
     - name: Create static DNS entries (.internal)
       tags: [dns]
       ansibleguy.opnsense.unbound_host:

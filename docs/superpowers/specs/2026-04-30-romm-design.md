@@ -43,10 +43,10 @@ Architecture-wise it's bigger than Crafty:
 ## Architecture
 
 ```
-LAN/Tailscale ──► 192.168.42.110:443 (envoy-internal, TLS *.kryzql.space)
+LAN/Tailscale ──► 192.168.42.110:443 (envoy-internal, TLS *.${SECRET_DOMAIN})
                         │
                         ▼
-                 HTTPRoute romm.kryzql.space
+                 HTTPRoute romm.${SECRET_DOMAIN}
                         │
                         ▼
               ┌──────── games ns ────────────┐

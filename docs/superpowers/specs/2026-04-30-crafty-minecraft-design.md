@@ -23,7 +23,7 @@ The cluster's existing Tailscale install is **not** the official Tailscale Kuber
 ## Goals
 
 - Single Minecraft server reachable at `homelab.<tailnet>.ts.net:25565` for Tailscale peers, with whitelist enforced. (Hostname is the existing tailnet node `homelab`; only one Tailscale identity exists in this cluster, so one hostname per cluster.)
-- Crafty Controller web UI reachable at `https://crafty.kryzql.space` over the internal gateway (LAN + Tailscale, no public DNS).
+- Crafty Controller web UI reachable at `https://crafty.${SECRET_DOMAIN}` over the internal gateway (LAN + Tailscale, no public DNS).
 - World data on Rook-Ceph block storage with 3-replica durability.
 - Daily VolSync backups to NFS NAS with extended retention (world data has long-tail value).
 - All Minecraft content (worlds, plugins, mods, configs) lives in the PVC and is uploaded via the Crafty UI — accepted GitOps drift in exchange for the requested UX.
@@ -240,7 +240,7 @@ route:
           - identifier: crafty
             port: http
 ```
-`${SECRET_DOMAIN}` resolves to `kryzql.space` via Flux substitution — consistent with every other selfhosted app in the repo.
+`${SECRET_DOMAIN}` is replaced at apply-time via Flux substitution from `cluster-secrets` — consistent with every other selfhosted app in the repo.
 
 ---
 
@@ -357,14 +357,14 @@ Option 1 is a 5-minute one-time task. The chosen password is then archived in 1P
 ### Internal gateway (web UI)
 
 ```
-client → 192.168.42.110:443 (envoy-internal, TLS *.kryzql.space)
-       → HTTPRoute crafty.kryzql.space
+client → 192.168.42.110:443 (envoy-internal, TLS *.${SECRET_DOMAIN})
+       → HTTPRoute crafty.${SECRET_DOMAIN}
        → Service ClusterIP crafty:8000 (plain HTTP in-cluster)
        → Pod nginx sidecar :8000 (plain HTTP)
        → loopback https://127.0.0.1:8443 (TLS, skip-verify) → Crafty
 ```
 
-DNS `crafty.kryzql.space` is published to the UDM Pro Max via ExternalDNS internal provider — no Cloudflare record. Auth is Crafty's built-in login plus optional TOTP 2FA configurable in-app.
+DNS `crafty.${SECRET_DOMAIN}` is published to the UDM Pro Max via ExternalDNS internal provider — no Cloudflare record. Auth is Crafty's built-in login plus optional TOTP 2FA configurable in-app.
 
 The HTTP hop between gateway and nginx sidecar is acceptable because (a) the pod has no external network path (CNP-enforced), (b) every other selfhosted app in this repo follows the same pattern. The HTTPS hop between nginx and Crafty is loopback within the pod's own network namespace — never visible on any wire.
 
@@ -424,8 +424,8 @@ Auto-merge **disabled** for Crafty for at least the first few releases — DB sc
 2. `kubectl -n games get pvc crafty` → Bound, 50Gi.
 3. `kubectl -n games get svc` → two ClusterIP Services (`crafty` on 8000 and `crafty-minecraft` on 25565). No EXTERNAL-IP expected.
 3a. `kubectl -n network exec deploy/tailscale -- tailscale serve status` lists `TCP 25565` forwarding to `crafty-minecraft.games.svc.cluster.local:25565`.
-4. `dig crafty.kryzql.space @192.168.42.99` → `192.168.42.110`.
-5. Browser `https://crafty.kryzql.space` → Crafty login page, valid wildcard cert.
+4. `dig crafty.${SECRET_DOMAIN} @192.168.42.99` → `192.168.42.110`.
+5. Browser `https://crafty.${SECRET_DOMAIN}` → Crafty login page, valid wildcard cert.
 6. `kubectl -n games logs crafty-0 | grep -i password` returns the bootstrap admin password (one-time retrieval, then archived in 1Password and rotated via UI).
 7. After 24 h: `kubectl -n games get replicationsource crafty` shows `LAST_SYNC` recent and `STATUS: Idle`; corresponding Kopia snapshot visible on the NAS NFS share.
 8. Minecraft client connects from a Tailscale peer to `homelab.<tailnet>.ts.net:25565` and joins the Paper server (after being added to the whitelist via Crafty UI).
