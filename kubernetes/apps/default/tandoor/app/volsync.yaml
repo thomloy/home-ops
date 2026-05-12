@@ -27,7 +27,7 @@ spec:
   sourcePVC: tandoor-media
   trigger:
     schedule: "0 3 * * *"
-  kopia: &kopia
+  kopia:
     accessModes:
       - ReadWriteOnce
     compression: zstd-fastest
@@ -58,4 +58,25 @@ spec:
   sourcePVC: tandoor-postgres-data
   trigger:
     schedule: "30 3 * * *"
-  kopia: *kopia
+  kopia:
+    accessModes:
+      - ReadWriteOnce
+    compression: zstd-fastest
+    copyMethod: Snapshot
+    moverSecurityContext:
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            path: /mnt/HDD1X4/VolsyncKopia
+            server: ${NAS_IP}
+    parallelism: 2
+    repository: tandoor-volsync-secret
+    retain:
+      hourly: 24
+      daily: 7
+    storageClassName: ceph-block
+    volumeSnapshotClassName: csi-ceph-blockpool
