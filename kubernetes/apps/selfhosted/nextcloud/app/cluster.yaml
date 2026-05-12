@@ -11,6 +11,11 @@ spec:
   storage:
     storageClass: ceph-block
     size: 15Gi
+  resources:
+    requests:
+      memory: 256Mi
+    limits:
+      memory: 512Mi
   bootstrap:
     initdb:
       database: nextcloud

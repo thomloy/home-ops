@@ -52,6 +52,11 @@ spec:
 
     machine-learning:
       enabled: true
+      resources:
+        requests:
+          memory: 256Mi
+        limits:
+          memory: 512Mi
 
     valkey:
       enabled: true
