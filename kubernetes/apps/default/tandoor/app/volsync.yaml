@@ -22,12 +22,12 @@ spec:
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
-  name: tandoor
+  name: tandoor-media
 spec:
-  sourcePVC: tandoor
+  sourcePVC: tandoor-media
   trigger:
     schedule: "0 3 * * *"
-  kopia:
+  kopia: &kopia
     accessModes:
       - ReadWriteOnce
     compression: zstd-fastest
@@ -49,3 +49,13 @@ spec:
       daily: 7
     storageClassName: ceph-block
     volumeSnapshotClassName: csi-ceph-blockpool
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: tandoor-postgres-data
+spec:
+  sourcePVC: tandoor-postgres-data
+  trigger:
+    schedule: "30 3 * * *"
+  kopia: *kopia
