@@ -29,29 +29,30 @@ spec:
                 - -c
                 - |
                   set -euo pipefail
-                  TS=$(date -u +%Y%m%dT%H%M%SZ)
-                  echo "[etcd-snapshot] Taking snapshot from $TALOS_NODE…"
+                  TS=$$(date -u +%Y%m%dT%H%M%SZ)
+                  SNAP=/tmp/etcd-$${TS}.snap
+                  echo "[etcd-snapshot] Taking snapshot from $${TALOS_NODE}…"
                   /talosctl/talosctl --talosconfig=/talos/talosconfig \
-                    --nodes="$TALOS_NODE" \
-                    etcd snapshot /tmp/etcd-${TS}.snap
-                  SIZE=$(stat -c %s /tmp/etcd-${TS}.snap)
-                  echo "[etcd-snapshot] Snapshot OK (${SIZE} bytes), uploading to R2…"
-                  aws s3 cp /tmp/etcd-${TS}.snap \
-                    "s3://cnpg-backups/etcd-snapshots/etcd-${TS}.snap" \
-                    --endpoint-url="$R2_ENDPOINT" \
+                    --nodes="$${TALOS_NODE}" \
+                    etcd snapshot "$${SNAP}"
+                  SIZE=$$(stat -c %s "$${SNAP}")
+                  echo "[etcd-snapshot] Snapshot OK ($${SIZE} bytes), uploading to R2…"
+                  aws s3 cp "$${SNAP}" \
+                    "s3://cnpg-backups/etcd-snapshots/etcd-$${TS}.snap" \
+                    --endpoint-url="$${R2_ENDPOINT}" \
                     --no-progress
                   echo "[etcd-snapshot] Pruning snapshots older than 14 days…"
-                  CUTOFF=$(date -u -d '14 days ago' +%Y%m%d)
+                  CUTOFF=$$(date -u -d '14 days ago' +%Y%m%d)
                   aws s3 ls "s3://cnpg-backups/etcd-snapshots/" \
-                    --endpoint-url="$R2_ENDPOINT" |
-                  awk '{print $4}' |
+                    --endpoint-url="$${R2_ENDPOINT}" |
+                  awk '{print $$4}' |
                   while read -r f; do
-                    [ -z "$f" ] && continue
-                    fdate=$(echo "$f" | sed -n 's/etcd-\([0-9]\{8\}\)T.*/\1/p')
-                    if [ -n "$fdate" ] && [ "$fdate" -lt "$CUTOFF" ]; then
-                      echo "[etcd-snapshot] Deleting old snapshot $f"
-                      aws s3 rm "s3://cnpg-backups/etcd-snapshots/$f" \
-                        --endpoint-url="$R2_ENDPOINT"
+                    [ -z "$${f}" ] && continue
+                    fdate=$$(echo "$${f}" | sed -n 's/etcd-\([0-9]\{8\}\)T.*/\1/p')
+                    if [ -n "$${fdate}" ] && [ "$${fdate}" -lt "$${CUTOFF}" ]; then
+                      echo "[etcd-snapshot] Deleting old snapshot $${f}"
+                      aws s3 rm "s3://cnpg-backups/etcd-snapshots/$${f}" \
+                        --endpoint-url="$${R2_ENDPOINT}"
                     fi
                   done
                   echo "[etcd-snapshot] Done."
