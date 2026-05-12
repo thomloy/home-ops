@@ -1,8 +1,0 @@
-name = "homelab-badges"
-main = "worker.js"
-compatibility_date = "2026-05-13"
-workers_dev = true
-
-# Upstream targets are set via wrangler secrets — do not commit values here:
-#   wrangler secret put KROMGO_TARGET   # e.g. https://kromgo.your-domain.tld
-#   wrangler secret put STATUS_TARGET   # e.g. https://status.your-domain.tld

@@ -18,6 +18,7 @@ talosconfig
 # Misc.
 CLAUDE.md
 .scripts/
+scripts/
 .private/
 .superpowers
 .task/
