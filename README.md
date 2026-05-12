@@ -136,7 +136,7 @@ In my cluster there are two instances of [ExternalDNS](https://github.com/kubern
 
 | Device                   | Num | OS Disk Size | Data Disk Size     | Ram  | OS            | Function              |
 |--------------------------|-----|--------------|--------------------|------|---------------|-----------------------|
-| Minisforum MS-01         | 3   | 256GB SSD    | 3x1TB (rook-ceph)  | 32GB | Talos         | Kubernetes            |
+| Minisforum MS-01         | 3   | 256GB SSD    | 3x1TB (rook-ceph)  | 96GB | Talos         | Kubernetes            |
 | NAS - N150 Motherboard   | 1   | 1TB SSD      | 4x4TB ZFS          | 16GB | TrueNAS SCALE | NFS + Backup Server   |
 | JetKVM                   | 3   | -            | -                  | -    | -             | KVM for Kubernetes    |
 | Lenovo m720q             | 1   | 256GB SSD    | -                  | -    | OPNsense      | Router                |
