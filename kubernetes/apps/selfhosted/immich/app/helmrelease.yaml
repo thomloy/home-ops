@@ -52,11 +52,16 @@ spec:
 
     machine-learning:
       enabled: true
-      resources:
-        requests:
-          memory: 256Mi
-        limits:
-          memory: 1Gi
+      controllers:
+        main:
+          containers:
+            main:
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 256Mi
+                limits:
+                  memory: 1Gi
 
     valkey:
       enabled: true
