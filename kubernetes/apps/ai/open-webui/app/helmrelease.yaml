@@ -35,6 +35,11 @@ spec:
               WEBUI_AUTH: "true"
               ENABLE_OPENAI_API: "false"
               DATA_DIR: /app/backend/data
+              WEBUI_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: open-webui-secret
+                    key: WEBUI_SECRET_KEY
             probes:
               liveness: &probes
                 enabled: true
