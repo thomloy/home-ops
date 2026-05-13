@@ -23,7 +23,6 @@ spec:
   configuration:
     destinationPath: s3://cnpg-backups/nextcloud-postgres
     endpointURL: ${CNPG_S3_ENDPOINT}
-    serverName: nextcloud-postgres
     s3Credentials:
       accessKeyId:
         name: nextcloud-postgres-backup-secret

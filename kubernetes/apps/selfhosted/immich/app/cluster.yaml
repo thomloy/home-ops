@@ -30,5 +30,6 @@ spec:
       isWALArchiver: true
       parameters:
         barmanObjectName: immich-postgres-store
+        serverName: immich-postgres
   monitoring:
     enablePodMonitor: true
