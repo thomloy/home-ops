@@ -1,0 +1,105 @@
+---
+name: "Image Scan"
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "kubernetes/**.yaml"
+      - "kubernetes/**.yml"
+      - ".github/workflows/image-scan.yaml"
+      - ".github/scripts/extract_changed_images.py"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  list-images:
+    name: List changed images
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.extract.outputs.images }}
+      count: ${{ steps.extract.outputs.count }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891  # v47.0.1
+        with:
+          files: |
+            kubernetes/**/*.yaml
+            kubernetes/**/*.yml
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install PyYAML
+        run: pip install --quiet pyyaml
+
+      - name: Extract image refs from changed files
+        id: extract
+        env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          # tj-actions emits space-separated paths; one per line for the script
+          export CHANGED_FILES=$(echo "$CHANGED_FILES" | tr ' ' '\n')
+          mapfile -t imgs < <(python3 .github/scripts/extract_changed_images.py)
+          count=${#imgs[@]}
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          if [ "$count" -eq 0 ]; then
+            echo "images=[]" >> "$GITHUB_OUTPUT"
+          else
+            printf '%s\n' "${imgs[@]}"
+            json=$(printf '%s\n' "${imgs[@]}" | jq -R . | jq -cs .)
+            echo "images=$json" >> "$GITHUB_OUTPUT"
+          fi
+
+  scan:
+    name: "Trivy: ${{ matrix.image }}"
+    needs: list-images
+    if: ${{ needs.list-images.outputs.count != '0' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.list-images.outputs.images) }}
+    steps:
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.34.0
+        with:
+          image-ref: ${{ matrix.image }}
+          severity: "CRITICAL,HIGH"
+          ignore-unfixed: true
+          format: "table"
+          exit-code: "1"
+          vuln-type: "os,library"
+          timeout: "5m"
+        env:
+          TRIVY_DISABLE_VEX_NOTICE: "true"
+
+  scan-status:
+    name: Image Scan Success
+    needs: ["list-images", "scan"]
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    steps:
+      - name: Any scans failed?
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+
+      - name: All clean or skipped?
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: echo "No fixable CRITICAL/HIGH vulns in changed images"
