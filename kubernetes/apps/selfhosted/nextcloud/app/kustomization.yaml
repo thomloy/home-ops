@@ -10,5 +10,6 @@ resources:
   - ./helmrelease.yaml
   - ./cnpg-backup.yaml
   - ./podmonitor.yaml
+  - ./pgdump.yaml
   - ./volsync.yaml
   - ./ciliumnetworkpolicy.yaml

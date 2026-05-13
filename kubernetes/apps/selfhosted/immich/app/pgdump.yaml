@@ -1,0 +1,74 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: immich-postgres-pgdump
+spec:
+  schedule: "30 4 * * 0"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: pgdump
+              image: postgres:16-alpine
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -euo pipefail
+                  TS=$$(date -u +%Y%m%dT%H%M%SZ)
+                  DEST=/dumps/postgres-dumps/immich-postgres
+                  OUT=$${DEST}/immich-$${TS}.sql.gz
+                  mkdir -p "$${DEST}"
+                  echo "[pgdump] Dumping $${PGDATABASE} from $${PGHOST}…"
+                  pg_dump --no-owner --no-privileges --clean --if-exists \
+                    "$${PGDATABASE}" | gzip -9 > "$${OUT}"
+                  SIZE=$$(stat -c %s "$${OUT}")
+                  echo "[pgdump] Wrote $${OUT} ($${SIZE} bytes)"
+                  echo "[pgdump] Pruning dumps older than 30 days…"
+                  find "$${DEST}" -name 'immich-*.sql.gz' \
+                    -mtime +30 -print -delete || true
+                  echo "[pgdump] Done."
+              env:
+                - name: PGHOST
+                  valueFrom: { secretKeyRef: { name: immich-postgres-app, key: host } }
+                - name: PGPORT
+                  valueFrom: { secretKeyRef: { name: immich-postgres-app, key: port } }
+                - name: PGUSER
+                  valueFrom: { secretKeyRef: { name: immich-postgres-app, key: username } }
+                - name: PGPASSWORD
+                  valueFrom: { secretKeyRef: { name: immich-postgres-app, key: password } }
+                - name: PGDATABASE
+                  valueFrom: { secretKeyRef: { name: immich-postgres-app, key: dbname } }
+              volumeMounts:
+                - { name: dumps, mountPath: /dumps }
+                - { name: tmp, mountPath: /tmp }
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }
+          volumes:
+            - name: dumps
+              nfs:
+                server: ${NAS_IP}
+                path: /mnt/HDD1X4/repository
+            - name: tmp
+              emptyDir: {}
