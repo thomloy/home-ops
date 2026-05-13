@@ -27,5 +27,5 @@ spec:
       parameters:
         barmanObjectName: nextcloud-postgres-store
         serverName: nextcloud-postgres
-  monitoring:
-    enablePodMonitor: true
+  # PodMonitor managed explicitly in podmonitor.yaml (enablePodMonitor is
+  # deprecated in CNPG 1.29 and will be removed)

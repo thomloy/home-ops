@@ -9,5 +9,6 @@ resources:
   - ./pvc.yaml
   - ./helmrelease.yaml
   - ./cnpg-backup.yaml
+  - ./podmonitor.yaml
   - ./volsync.yaml
   - ./ciliumnetworkpolicy.yaml

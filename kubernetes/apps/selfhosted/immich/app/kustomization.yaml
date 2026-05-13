@@ -6,6 +6,7 @@ resources:
   - ./ocirepository.yaml
   - ./cluster.yaml
   - ./cnpg-backup.yaml
+  - ./podmonitor.yaml
   - ./pv.yaml
   - ./helmrelease.yaml
   - ./ciliumnetworkpolicy.yaml
