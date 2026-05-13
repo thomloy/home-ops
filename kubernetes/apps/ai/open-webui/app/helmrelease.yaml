@@ -16,10 +16,9 @@ spec:
           reloader.stakater.com/auto: "true"
         pod:
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            # Open-WebUI image expects root for writing into
+            # /app/backend/open_webui/static at startup
+            fsGroup: 0
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
