@@ -25,21 +25,10 @@ spec:
         - CREATE EXTENSION IF NOT EXISTS cube;
         - CREATE EXTENSION IF NOT EXISTS earthdistance;
         - CREATE EXTENSION IF NOT EXISTS vector;
-  backup:
-    retentionPolicy: "7d"
-    barmanObjectStore:
-      destinationPath: s3://cnpg-backups/immich-postgres
-      endpointURL: ${CNPG_S3_ENDPOINT}
-      s3Credentials:
-        accessKeyId:
-          name: immich-postgres-backup-secret
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: immich-postgres-backup-secret
-          key: AWS_SECRET_ACCESS_KEY
-      wal:
-        compression: bzip2
-      data:
-        compression: bzip2
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: immich-postgres-store
   monitoring:
     enablePodMonitor: true

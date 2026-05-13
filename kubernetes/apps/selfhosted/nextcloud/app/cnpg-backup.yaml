@@ -14,6 +14,28 @@ spec:
     - extract:
         key: cnpg-backup
 ---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: nextcloud-postgres-store
+spec:
+  retentionPolicy: 7d
+  configuration:
+    destinationPath: s3://cnpg-backups/nextcloud-postgres
+    endpointURL: ${CNPG_S3_ENDPOINT}
+    serverName: nextcloud-postgres
+    s3Credentials:
+      accessKeyId:
+        name: nextcloud-postgres-backup-secret
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: nextcloud-postgres-backup-secret
+        key: AWS_SECRET_ACCESS_KEY
+    wal:
+      compression: bzip2
+    data:
+      compression: bzip2
+---
 # yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/postgresql.cnpg.io/scheduledbackup_v1.json
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
@@ -24,4 +46,6 @@ spec:
   backupOwnerReference: self
   cluster:
     name: nextcloud-postgres
-  method: barmanObjectStore
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
