@@ -78,7 +78,7 @@ jobs:
         image: ${{ fromJSON(needs.list-images.outputs.images) }}
     steps:
       - name: Trivy scan
-        uses: aquasecurity/trivy-action@0.34.0
+        uses: aquasecurity/trivy-action@v0.34.0
         with:
           image-ref: ${{ matrix.image }}
           severity: "CRITICAL,HIGH"
