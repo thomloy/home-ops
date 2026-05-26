@@ -17,6 +17,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: selfhosted
             app.kubernetes.io/name: glance
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: selfhosted
+            app.kubernetes.io/name: sparkyfitness
       toPorts:
         - ports:
             - port: "80"
