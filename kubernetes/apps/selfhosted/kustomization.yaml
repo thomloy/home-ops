@@ -17,3 +17,4 @@ resources:
   - ./nextcloud/ks.yaml
   - ./actual-budget/ks.yaml
   - ./obsidian-livesync/ks.yaml
+  - ./sparkyfitness/ks.yaml

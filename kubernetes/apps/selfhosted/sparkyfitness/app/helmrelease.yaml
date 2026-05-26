@@ -1,0 +1,304 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sparkyfitness
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: sparkyfitness
+  interval: 1h
+  maxHistory: 3
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      sparkyfitness:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          postgres:
+            image:
+              repository: postgres
+              tag: "18.3-alpine"
+            env:
+              POSTGRES_USER: sparky
+              POSTGRES_DB: sparkyfitness
+              POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: sparkyfitness-secret
+                    key: POSTGRES_PASSWORD
+              PGDATA: /var/lib/postgresql/data/pgdata
+            probes:
+              liveness: &pgprobe
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5432
+                  initialDelaySeconds: 10
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *pgprobe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5432
+                  failureThreshold: 30
+                  periodSeconds: 5
+            resources:
+              requests:
+                memory: 128Mi
+                cpu: 20m
+              limits:
+                memory: 256Mi
+          server:
+            image:
+              repository: codewithcj/sparkyfitness_server
+              tag: "v0.16.6.3"
+            envFrom:
+              - secretRef:
+                  name: sparkyfitness-secret
+            env:
+              TZ: Europe/Paris
+              NODE_ENV: production
+              SPARKY_FITNESS_LOG_LEVEL: INFO
+              SPARKY_FITNESS_DB_USER: sparky
+              SPARKY_FITNESS_DB_NAME: sparkyfitness
+              SPARKY_FITNESS_DB_HOST: localhost
+              SPARKY_FITNESS_DB_PORT: "5432"
+              SPARKY_FITNESS_APP_DB_USER: sparky_app
+              SPARKY_FITNESS_DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: sparkyfitness-secret
+                    key: POSTGRES_PASSWORD
+              SPARKY_FITNESS_APP_DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: sparkyfitness-secret
+                    key: APP_DB_PASSWORD
+              SPARKY_FITNESS_FRONTEND_URL: "https://fitness.${SECRET_DOMAIN}"
+              SPARKY_FITNESS_DISABLE_SIGNUP: "true"
+              GARMIN_MICROSERVICE_URL: http://localhost:8000
+            probes:
+              liveness: &srvprobe
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 3010
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *srvprobe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 3010
+                  failureThreshold: 60
+                  periodSeconds: 5
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 50m
+              limits:
+                memory: 768Mi
+          frontend:
+            image:
+              repository: codewithcj/sparkyfitness
+              tag: "v0.16.6.3"
+            env:
+              SPARKY_FITNESS_FRONTEND_URL: "https://fitness.${SECRET_DOMAIN}"
+              SPARKY_FITNESS_SERVER_HOST: localhost
+              SPARKY_FITNESS_SERVER_PORT: "3010"
+            probes:
+              liveness: &feprobe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *feprobe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 80
+                  failureThreshold: 60
+                  periodSeconds: 5
+            resources:
+              requests:
+                memory: 32Mi
+                cpu: 10m
+              limits:
+                memory: 96Mi
+          garmin:
+            image:
+              repository: codewithcj/sparkyfitness_garmin
+              tag: "v0.16.6.3"
+            env:
+              GARMIN_SERVICE_PORT: "8000"
+              GARMIN_SERVICE_IS_CN: "false"
+            probes:
+              liveness: &gmprobe
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 8000
+                  initialDelaySeconds: 20
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *gmprobe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 8000
+                  failureThreshold: 60
+                  periodSeconds: 5
+            resources:
+              requests:
+                memory: 128Mi
+                cpu: 20m
+              limits:
+                memory: 384Mi
+          mcp:
+            image:
+              repository: codewithcj/sparkyfitness_mcp
+              tag: "v0.16.6.3"
+            envFrom:
+              - secretRef:
+                  name: sparkyfitness-secret
+            env:
+              SPARKY_FITNESS_DB_USER: sparky
+              SPARKY_FITNESS_DB_NAME: sparkyfitness
+              SPARKY_FITNESS_DB_HOST: localhost
+              SPARKY_FITNESS_DB_PORT: "5432"
+              SPARKY_FITNESS_APP_DB_USER: sparky_app
+              SPARKY_FITNESS_DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: sparkyfitness-secret
+                    key: POSTGRES_PASSWORD
+              SPARKY_FITNESS_APP_DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: sparkyfitness-secret
+                    key: APP_DB_PASSWORD
+              MCP_TRANSPORT: http
+            probes:
+              liveness: &mcpprobe
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 3001
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *mcpprobe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 3001
+                  failureThreshold: 60
+                  periodSeconds: 5
+            resources:
+              requests:
+                memory: 96Mi
+                cpu: 10m
+              limits:
+                memory: 256Mi
+
+    defaultPodOptions:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
+    service:
+      app:
+        controller: sparkyfitness
+        ports:
+          http:
+            port: 80
+          mcp:
+            port: 3001
+
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            alerts:
+              - type: pushover
+            conditions: ["[STATUS] < 500"]
+            ui:
+              hide-hostname: true
+        hostnames:
+          - "fitness.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - name: sparkyfitness
+                port: 80
+
+    persistence:
+      postgres-data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 2Gi
+        storageClass: ceph-block
+        advancedMounts:
+          sparkyfitness:
+            postgres:
+              - path: /var/lib/postgresql/data
+      uploads:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: ceph-block
+        advancedMounts:
+          sparkyfitness:
+            server:
+              - path: /app/SparkyFitnessServer/uploads
+      backup:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 2Gi
+        storageClass: ceph-block
+        advancedMounts:
+          sparkyfitness:
+            server:
+              - path: /app/SparkyFitnessServer/backup
+
+    disableDefaultSecurityContext: All
