@@ -90,6 +90,11 @@ spec:
                   secretKeyRef:
                     name: sparkyfitness-secret
                     key: APP_DB_PASSWORD
+              SPARKY_FITNESS_API_ENCRYPTION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sparkyfitness-secret
+                    key: API_ENCRYPTION_KEY
               SPARKY_FITNESS_FRONTEND_URL: "https://fitness.${SECRET_DOMAIN}"
               SPARKY_FITNESS_DISABLE_SIGNUP: "true"
               GARMIN_MICROSERVICE_URL: http://localhost:8000
