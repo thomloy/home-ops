@@ -1,0 +1,82 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/external-secrets.io/externalsecret_v1.json
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: sparkyfitness-volsync
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: onepassword
+  target:
+    name: sparkyfitness-volsync-secret
+    template:
+      data:
+        KOPIA_PASSWORD: "{{ .KOPIA_PASSWORD }}"
+        KOPIA_REPOSITORY: filesystem:///mnt/repository
+  dataFrom:
+    - extract:
+        key: volsync-template
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: sparkyfitness-postgres-data
+spec:
+  sourcePVC: sparkyfitness-postgres-data
+  trigger:
+    schedule: "0 3 * * *"
+  kopia:
+    accessModes:
+      - ReadWriteOnce
+    compression: zstd-fastest
+    copyMethod: Snapshot
+    moverSecurityContext:
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            path: /mnt/HDD1X4/VolsyncKopia
+            server: ${NAS_IP}
+    parallelism: 2
+    repository: sparkyfitness-volsync-secret
+    retain:
+      hourly: 24
+      daily: 7
+    storageClassName: ceph-block
+    volumeSnapshotClassName: csi-ceph-blockpool
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: sparkyfitness-uploads
+spec:
+  sourcePVC: sparkyfitness-uploads
+  trigger:
+    schedule: "30 3 * * *"
+  kopia:
+    accessModes:
+      - ReadWriteOnce
+    compression: zstd-fastest
+    copyMethod: Snapshot
+    moverSecurityContext:
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            path: /mnt/HDD1X4/VolsyncKopia
+            server: ${NAS_IP}
+    parallelism: 2
+    repository: sparkyfitness-volsync-secret
+    retain:
+      hourly: 24
+      daily: 7
+    storageClassName: ceph-block
+    volumeSnapshotClassName: csi-ceph-blockpool
