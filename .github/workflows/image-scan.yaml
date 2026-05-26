@@ -81,12 +81,14 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ matrix.image }}
+          version: "v0.69.1"
           severity: "CRITICAL,HIGH"
           ignore-unfixed: true
           format: "table"
           exit-code: "1"
           vuln-type: "os,library"
           timeout: "5m"
+          trivyignores: ".trivyignore"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 

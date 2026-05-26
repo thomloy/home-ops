@@ -1,0 +1,8 @@
+# Trivy ignore file — accepted-risk CVEs with justification.
+# Format: one CVE ID per line. Lines starting with '#' are comments.
+# See https://aquasecurity.github.io/trivy/latest/docs/configuration/filtering/#by-finding-ids
+#
+# Each entry below documents why the finding is accepted in this homelab
+# (no public ingress, no untrusted clients, trust boundary inside cluster).
+#
+# To be populated after first full CI run produces complete findings list.
