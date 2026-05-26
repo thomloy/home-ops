@@ -34,10 +34,10 @@ Deploy [SparkyFitness](https://github.com/CodeWithCJ/SparkyFitness) (self-hosted
 |-----------|-------|---------------|---------|
 | `init-db` (initContainer) | `postgres:18.3-alpine` | — | `pg_isready` gate |
 | `postgres` | `postgres:18.3-alpine` | 5432 | DB; `PGDATA=/var/lib/postgresql/data/pgdata` |
-| `server` | `codewithcj/sparkyfitness_server:0.16.6.3` | 3010 | Node API; runs migrations on boot |
-| `frontend` | `codewithcj/sparkyfitness:0.16.6.3` | 80 | nginx; proxies `/api/*` to `localhost:3010` |
-| `garmin` | `codewithcj/sparkyfitness_garmin:0.16.6.3` | 8000 | Python microservice (upstream marks WIP) |
-| `mcp` | `codewithcj/sparkyfitness_mcp:0.16.6.3` | 3001 | MCP server for external automation |
+| `server` | `codewithcj/sparkyfitness_server:v0.16.6.3` | 3010 | Node API; runs migrations on boot |
+| `frontend` | `codewithcj/sparkyfitness:v0.16.6.3` | 80 | nginx; proxies `/api/*` to `localhost:3010` |
+| `garmin` | `codewithcj/sparkyfitness_garmin:v0.16.6.3` | 8000 | Python microservice (upstream marks WIP) |
+| `mcp` | `codewithcj/sparkyfitness_mcp:v0.16.6.3` | 3001 | MCP server for external automation |
 
 All inter-container comms go through `localhost`, mirroring upstream `docker-compose.prod.yml` service names but collapsed onto a single network namespace.
 
