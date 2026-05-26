@@ -139,8 +139,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ./externalsecret.yaml
-  - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./helmrelease.yaml
   - ./volsync.yaml
   - ./ciliumnetworkpolicy.yaml
 ```
@@ -253,18 +253,6 @@ spec:
       sparkyfitness:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-db:
-            image:
-              repository: postgres
-              tag: "18.3-alpine"
-            command:
-              - /bin/sh
-              - -c
-              - |
-                until pg_isready -h localhost -U sparky; do
-                  echo "waiting for postgres..."; sleep 2;
-                done
         containers:
           postgres:
             image:

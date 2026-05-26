@@ -32,7 +32,6 @@ Deploy [SparkyFitness](https://github.com/CodeWithCJ/SparkyFitness) (self-hosted
 
 | Container | Image | Loopback port | Purpose |
 |-----------|-------|---------------|---------|
-| `init-db` (initContainer) | `postgres:18.3-alpine` | — | `pg_isready` gate |
 | `postgres` | `postgres:18.3-alpine` | 5432 | DB; `PGDATA=/var/lib/postgresql/data/pgdata` |
 | `server` | `codewithcj/sparkyfitness_server:v0.16.6.3` | 3010 | Node API; runs migrations on boot |
 | `frontend` | `codewithcj/sparkyfitness:v0.16.6.3` | 80 | nginx; proxies `/api/*` to `localhost:3010` |
@@ -168,7 +167,7 @@ Two `ReplicationSource` resources (`volsync.yaml`), modelled on `kubernetes/apps
 | Source PVC | Repo path | Schedule |
 |------------|-----------|----------|
 | `postgres-data` | `sparkyfitness/postgres-data` | `0 3 * * *` |
-| `uploads` | `sparkyfitness/uploads` | `0 4 * * *` |
+| `uploads` | `sparkyfitness/uploads` | `30 3 * * *` |
 
 `runAsUser` must match the directory owner UID on the NFS repo to avoid root_squash (see [[project_truenas_nfs_root_squash]] and [[project_volsync_nfs_perms]]).
 
