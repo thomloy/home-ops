@@ -12,7 +12,7 @@ resources:
   - ./it-tools/ks.yaml
   - ./bentopdf/ks.yaml
   - ./paperless/ks.yaml
-  - ./glance/ks.yaml
+  - ./dynacat/ks.yaml
   - ./immich/ks.yaml
   - ./nextcloud/ks.yaml
   - ./actual-budget/ks.yaml

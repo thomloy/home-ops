@@ -3,12 +3,12 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: glance
+  name: dynacat
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: glance
-      app.kubernetes.io/instance: glance
+      app.kubernetes.io/name: dynacat
+      app.kubernetes.io/instance: dynacat
   ingress:
     - fromEndpoints:
         - matchLabels:

@@ -22,7 +22,7 @@ spec:
             app.kubernetes.io/name: radarr
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: selfhosted
-            app.kubernetes.io/name: glance
+            app.kubernetes.io/name: dynacat
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: media
             app.kubernetes.io/name: seerr

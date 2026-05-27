@@ -16,10 +16,10 @@ spec:
             gateway.networking.k8s.io/gateway-name: envoy-internal
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: selfhosted
-            app.kubernetes.io/name: glance
+            app.kubernetes.io/name: sparkyfitness
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: selfhosted
-            app.kubernetes.io/name: sparkyfitness
+            app.kubernetes.io/name: dynacat
       toPorts:
         - ports:
             - port: "80"
