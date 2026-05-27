@@ -20,6 +20,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: selfhosted
             app.kubernetes.io/name: sparkyfitness
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: selfhosted
+            app.kubernetes.io/name: dynacat
       toPorts:
         - ports:
             - port: "80"
