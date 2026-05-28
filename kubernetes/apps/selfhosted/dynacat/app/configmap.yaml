@@ -46,7 +46,7 @@ data:
                     url: http://${NAS_IP}
                     icon: di:truenas
                   - title: Gatus
-                    url: https://status.${SECRET_DOMAIN}
+                    url: http://gatus.observability.svc.cluster.local
                     icon: di:gatus
 
           # Col 2 : search + services + reddit
@@ -639,7 +639,7 @@ data:
                         url: https://prometheus.${SECRET_DOMAIN}/-/healthy
                         icon: di:prometheus
                       - title: Gatus
-                        url: https://gatus.${SECRET_DOMAIN}/api/v1/endpoints/statuses
+                        url: http://gatus.observability.svc.cluster.local
                         icon: di:gatus
                       - title: TrueNAS
                         url: http://${NAS_IP}
@@ -764,7 +764,7 @@ data:
                 allow-insecure-html: true
                 cache: 30s
                 update-interval: 30s
-                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=(kube_pod_container_status_restarts_total>5)+or+(kube_pod_status_phase%7Bphase=~%22Pending%7CFailed%7CUnknown%22%7D==1)+or+(kube_pod_container_status_waiting_reason%7Breason=%22CrashLoopBackOff%22%7D==1)"
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=(sum+by+(namespace,pod)+(increase(kube_pod_container_status_restarts_total%5B1h%5D))+>+1)+or+(kube_pod_status_phase%7Bphase=~%22Pending%7CFailed%7CUnknown%22%7D==1)+or+(kube_pod_container_status_waiting_reason%7Breason=%22CrashLoopBackOff%22%7D==1)"
                 template: |
                   {{$results := .JSON.Array "data.result"}}
                   {{if eq (len $results) 0}}
@@ -785,7 +785,7 @@ data:
                 title: Gatus (santé globale)
                 sites:
                   - title: Tous les endpoints
-                    url: https://gatus.${SECRET_DOMAIN}/api/v1/endpoints/statuses
+                    url: http://gatus.observability.svc.cluster.local
                     icon: di:gatus
 
               - type: bookmarks
