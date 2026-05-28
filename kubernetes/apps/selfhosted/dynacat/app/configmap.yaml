@@ -737,10 +737,8 @@ data:
                   {{else}}
                   <div style="display:flex;flex-direction:column;gap:4px">
                   {{range $commits}}
-                  {{$msg := .String "commit.message"}}
-                  {{$title := index (split $msg "\n") 0}}
                   <a href="{{.String "html_url"}}" target="_blank" style="text-decoration:none;color:inherit;padding:5px 8px;background:rgba(0,0,0,.08);border-radius:5px;border-left:3px solid #22c55e;display:block" onmouseover="this.style.opacity=.7" onmouseout="this.style.opacity=1">
-                    <div style="font-size:.78em;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{$title}}</div>
+                    <div style="font-size:.78em;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{.String "commit.message"}}</div>
                     <div style="font-size:.68em;opacity:.55;margin-top:2px">{{.String "commit.author.name"}} · {{.String "commit.author.date"}}</div>
                   </a>
                   {{end}}
