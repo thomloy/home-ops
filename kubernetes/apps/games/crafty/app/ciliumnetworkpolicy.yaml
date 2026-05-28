@@ -28,6 +28,15 @@ spec:
         - ports:
             - port: "25565"
               protocol: TCP
+    # Dashboard widget probes (Crafty API for players/stats)
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: selfhosted
+            app.kubernetes.io/name: dynacat
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
     # DNS
     - fromEndpoints:
         - matchLabels:
