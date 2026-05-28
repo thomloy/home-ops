@@ -46,7 +46,8 @@ data:
                     url: http://${NAS_IP}
                     icon: di:truenas
                   - title: Gatus
-                    url: http://gatus.observability.svc.cluster.local
+                    url: https://status.${SECRET_DOMAIN}
+                    check-url: http://gatus.observability.svc.cluster.local
                     icon: di:gatus
 
           # Col 2 : search + services + reddit
@@ -639,7 +640,8 @@ data:
                         url: https://prometheus.${SECRET_DOMAIN}/-/healthy
                         icon: di:prometheus
                       - title: Gatus
-                        url: http://gatus.observability.svc.cluster.local
+                        url: https://status.${SECRET_DOMAIN}
+                        check-url: http://gatus.observability.svc.cluster.local
                         icon: di:gatus
                       - title: TrueNAS
                         url: http://${NAS_IP}
@@ -785,7 +787,8 @@ data:
                 title: Gatus (santé globale)
                 sites:
                   - title: Tous les endpoints
-                    url: http://gatus.observability.svc.cluster.local
+                    url: https://status.${SECRET_DOMAIN}
+                    check-url: http://gatus.observability.svc.cluster.local
                     icon: di:gatus
 
               - type: bookmarks
