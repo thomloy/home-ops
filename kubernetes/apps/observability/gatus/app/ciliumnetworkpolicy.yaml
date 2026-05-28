@@ -22,6 +22,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: observability
             app.kubernetes.io/name: prometheus
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: selfhosted
+            app.kubernetes.io/name: dynacat
       toPorts:
         - ports:
             - port: "80"
