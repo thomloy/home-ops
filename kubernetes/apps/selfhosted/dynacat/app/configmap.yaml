@@ -835,7 +835,7 @@ data:
                   <div style="display:flex;flex-direction:column;gap:6px;font-size:.85em">
                     <div style="display:flex;justify-content:space-between;padding:5px 10px;background:rgba(0,0,0,.06);border-radius:5px">
                       <span style="opacity:.65">Statut</span>
-                      <span style="font-weight:600;color:{{if eq ($d.String "running") "true"}}#22c55e{{else}}#ef4444{{end}}">{{if eq ($d.String "running") "true"}}● En ligne{{else}}○ Hors ligne{{end}}</span>
+                      <span style="font-weight:600;color:{{if .JSON.Bool "data.running"}}#22c55e{{else}}#ef4444{{end}}">{{if .JSON.Bool "data.running"}}● En ligne{{else}}○ Hors ligne{{end}}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;padding:5px 10px;background:rgba(0,0,0,.06);border-radius:5px">
                       <span style="opacity:.65">Version</span>
