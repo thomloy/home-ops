@@ -804,21 +804,23 @@ data:
                 allow-insecure-html: true
                 cache: 30s
                 update-interval: 30s
-                url: "http://crafty-app.games.svc.cluster.local:8000/api/v2/servers/51ebc4d3-9008-42ee-8de6-c3b347fc701f/players"
+                url: "http://crafty-app.games.svc.cluster.local:8000/api/v2/servers/51ebc4d3-9008-42ee-8de6-c3b347fc701f/stats"
                 headers:
                   Authorization: Bearer $${CRAFTY_API_TOKEN}
                 template: |
-                  {{$players := .JSON.Array "data"}}
-                  {{if eq (len $players) 0}}
-                  <div style="font-size:.85em;opacity:.6;padding:8px 0;text-align:center">Serveur vide — aucun joueur connecté</div>
+                  {{$running := .JSON.Bool "data.running"}}
+                  {{$online := .JSON.Int "data.online"}}
+                  {{$max := .JSON.Int "data.max"}}
+                  {{if not $running}}
+                  <div style="font-size:.85em;opacity:.6;padding:8px 0;text-align:center">○ Serveur hors ligne</div>
+                  {{else if eq $online 0}}
+                  <div style="font-size:.85em;opacity:.6;padding:8px 0;text-align:center">● Serveur en ligne — aucun joueur connecté ({{$max}} max)</div>
                   {{else}}
                   <div style="display:flex;flex-direction:column;gap:6px">
-                    <div style="font-size:.75em;opacity:.7;margin-bottom:4px">{{len $players}} joueur(s) en ligne</div>
-                    {{range $players}}
-                    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(34,197,94,.12);border-radius:6px;border-left:3px solid #22c55e">
-                      <div style="font-weight:600;font-size:.85em">{{.String "name"}}</div>
+                    <div style="font-size:.75em;opacity:.7;margin-bottom:4px">{{$online}} / {{$max}} joueur(s) en ligne</div>
+                    <div style="padding:6px 10px;background:rgba(34,197,94,.12);border-radius:6px;border-left:3px solid #22c55e;font-size:.85em">
+                      {{.JSON.String "data.players"}}
                     </div>
-                    {{end}}
                   </div>
                   {{end}}
 
@@ -831,24 +833,37 @@ data:
                 headers:
                   Authorization: Bearer $${CRAFTY_API_TOKEN}
                 template: |
-                  {{$d := .JSON.Get "data"}}
+                  {{$running := .JSON.Bool "data.running"}}
+                  {{$version := .JSON.String "data.version"}}
+                  {{$desc := .JSON.String "data.desc"}}
+                  {{$cpu := .JSON.String "data.cpu"}}
+                  {{$mem := .JSON.String "data.mem_percent"}}
+                  {{$world := .JSON.String "data.world_size"}}
                   <div style="display:flex;flex-direction:column;gap:6px;font-size:.85em">
                     <div style="display:flex;justify-content:space-between;padding:5px 10px;background:rgba(0,0,0,.06);border-radius:5px">
                       <span style="opacity:.65">Statut</span>
-                      <span style="font-weight:600;color:{{if .JSON.Bool "data.running"}}#22c55e{{else}}#ef4444{{end}}">{{if .JSON.Bool "data.running"}}● En ligne{{else}}○ Hors ligne{{end}}</span>
+                      <span style="font-weight:600;color:{{if $running}}#22c55e{{else}}#ef4444{{end}}">{{if $running}}● En ligne{{else}}○ Hors ligne{{end}}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;padding:5px 10px;background:rgba(0,0,0,.06);border-radius:5px">
                       <span style="opacity:.65">Version</span>
-                      <span style="font-family:monospace;font-size:.85em">{{$d.String "version"}}</span>
+                      <span style="font-family:monospace;font-size:.85em">{{if and $running (ne $version "False")}}{{$version}}{{else}}—{{end}}</span>
                     </div>
+                    {{if $running}}
                     <div style="display:flex;justify-content:space-between;padding:5px 10px;background:rgba(0,0,0,.06);border-radius:5px">
-                      <span style="opacity:.65">Joueurs max</span>
-                      <span>{{$d.Int "max"}}</span>
+                      <span style="opacity:.65">CPU / RAM</span>
+                      <span>{{$cpu}}% / {{$mem}}%</span>
                     </div>
+                    {{end}}
+                    <div style="display:flex;justify-content:space-between;padding:5px 10px;background:rgba(0,0,0,.06);border-radius:5px">
+                      <span style="opacity:.65">Taille monde</span>
+                      <span>{{$world}}</span>
+                    </div>
+                    {{if and $running (ne $desc "False")}}
                     <div style="padding:5px 10px;background:rgba(0,0,0,.06);border-radius:5px">
                       <div style="opacity:.65;font-size:.85em;margin-bottom:3px">MOTD</div>
-                      <div style="font-size:.85em">{{$d.String "desc"}}</div>
+                      <div style="font-size:.85em">{{$desc}}</div>
                     </div>
+                    {{end}}
                   </div>
 
           - size: small
