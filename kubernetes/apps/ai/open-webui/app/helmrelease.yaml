@@ -27,7 +27,7 @@ spec:
             image:
               # renovate: datasource=docker depName=ghcr.io/open-webui/open-webui
               repository: ghcr.io/open-webui/open-webui
-              tag: v0.6.39
+              tag: v0.9.5
             env:
               OLLAMA_BASE_URL: http://ollama.ai.svc.cluster.local:11434
               ENABLE_SIGNUP: "true"
