@@ -78,7 +78,7 @@ spec:
             image:
               # renovate: datasource=docker depName=nginx
               repository: nginx
-              tag: 1.27-alpine
+              tag: 1.31-alpine
             resources:
               requests:
                 cpu: 10m
