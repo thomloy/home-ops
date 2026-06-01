@@ -19,5 +19,10 @@
       matchPackageNames: ["nextcloud"],
       separateMultipleMajor: true,
     },
+    {
+      description: "Disable python/cpython lookup — GraphQL empty-response bug aborts the run with false-positive 'repository-changed'. Python version pinned by mise anyway.",
+      matchPackageNames: ["python/cpython", "python"],
+      enabled: false,
+    },
   ],
 }
