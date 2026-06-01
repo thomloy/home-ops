@@ -122,7 +122,7 @@ spec:
           tika:
             image:
               repository: apache/tika
-              tag: 3.3.0.0
+              tag: 3.3.1.0
             resources:
               requests:
                 cpu: 50m
