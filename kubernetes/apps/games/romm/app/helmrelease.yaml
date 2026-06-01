@@ -38,7 +38,7 @@ spec:
             image:
               # renovate: datasource=docker depName=docker.io/library/busybox
               repository: docker.io/library/busybox
-              tag: "1.37"
+              tag: "1.38"
             command:
               - /bin/sh
               - -c
