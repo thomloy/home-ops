@@ -23,7 +23,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: healer
-              image: docker.io/library/alpine:3.20
+              image: docker.io/library/alpine:3.23
               command:
                 - /bin/sh
                 - -c
