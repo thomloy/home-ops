@@ -127,7 +127,7 @@ spec:
             capabilities:
               drop: ["ALL"]
         - name: nut-exporter
-          image: ghcr.io/druggeri/nut_exporter:3.1.1@sha256:0d9a0a00554081876178369ab9d46717e002fcf550b18dcd85f98c315438b524
+          image: ghcr.io/druggeri/nut_exporter:3.3.0@sha256:276460d141c732772f8b1fcd785a7de272473e6d39fd85c32b163efc2999cb9a
           env:
             - name: NUT_EXPORTER_SERVER
               value: "${NAS_IP}"
