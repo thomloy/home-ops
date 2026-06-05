@@ -10,5 +10,4 @@ components:
 
 resources:
   - ./namespace.yaml
-  - ./ollama/ks.yaml
-  - ./open-webui/ks.yaml
+  - ./hermes/ks.yaml
