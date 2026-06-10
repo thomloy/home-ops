@@ -32,6 +32,13 @@ spec:
           - name: envoy-internal
             namespace: network
     cephClusterSpec:
+      # Pin the Ceph image explicitly. The on-disk mon/osd store format is
+      # already v20 (Tentacle); relying on the chart default let a chart bump
+      # try to downgrade to v19.2.3 (Squid), which mons refuse to start on
+      # ("unsupported features: incompat={17=tentacle ondisk layout}") and
+      # broke quorum. Never let the Ceph version float for a live cluster.
+      cephVersion:
+        image: quay.io/ceph/ceph:v20.2.1
       cephConfig:
         global:
           bdev_enable_discard: "true" # quote
