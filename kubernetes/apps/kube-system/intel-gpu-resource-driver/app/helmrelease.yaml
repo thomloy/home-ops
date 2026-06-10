@@ -13,3 +13,11 @@ spec:
     cdi:
       staticPath: /var/cdi/static
       dynamicPath: /var/cdi/dynamic
+    kubeletPlugin:
+      # xpumd (Intel XPU Manager) is not deployed on these Talos nodes, so the
+      # default health monitoring (-m flag) panics: "failed to connect to xpumd".
+      # Disable it and let the driver read hardware details directly (needs
+      # privileged) instead of via xpumd.
+      healthMonitoring:
+        enabled: false
+      privileged: true

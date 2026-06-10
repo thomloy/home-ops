@@ -10,7 +10,11 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16
   storage:
     storageClass: ceph-block
-    size: 5Gi
+    # 20Gi (was 5Gi): the combined data+WAL volume filled during the 2026-06
+    # Ceph outage when WAL archiving stalled, and CNPG halts ("Not enough disk
+    # space") until the PVC is enlarged. Headroom to ride out future archiving
+    # outages without wedging the primary.
+    size: 20Gi
   resources:
     requests:
       cpu: 100m

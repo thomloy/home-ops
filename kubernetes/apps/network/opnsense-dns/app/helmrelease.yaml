@@ -18,8 +18,12 @@ spec:
           repository: ghcr.io/crutonjohn/external-dns-opnsense-webhook
           tag: v1.0.0
         env:
+          # NOTE: must be the OPNsense IP, NOT a hostname. Using a name here
+          # (e.g. opnsense.internal) creates a circular dependency — ExternalDNS
+          # cannot resolve its own target once internal DNS is disrupted, and can
+          # then never repair the records. Always point the DNS updater at an IP.
           - name: OPNSENSE_HOST
-            value: https://opnsense.internal
+            value: https://192.168.42.1
           - name: OPNSENSE_API_KEY
             valueFrom:
               secretKeyRef:
