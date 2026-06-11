@@ -48,11 +48,7 @@ spec:
     kubeProxyReplacement: true
     kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
     l2announcements:
-      # Enabled so gateway LB IPs (.110/.120) are answered via ARP directly by
-      # the nodes. They share the /24 with LAN clients, where BGP-only + OPNsense
-      # proxy-ARP caused asymmetric routing (worsened by DSR) and intermittent
-      # connectivity. See l2.yaml for the announcement policy.
-      enabled: true
+      enabled: false
     loadBalancer:
       acceleration: best-effort
       algorithm: maglev

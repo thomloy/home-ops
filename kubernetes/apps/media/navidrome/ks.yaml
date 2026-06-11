@@ -19,19 +19,6 @@ spec:
 
   interval: 1h
   path: "./kubernetes/apps/media/navidrome/app"
-  patches:
-    # Keep navidrome always reachable. The nfs-scaler component scales it to 0
-    # whenever the NAS NFS probe (192.168.42.44:2049) goes inactive — even brief
-    # NAS/UPS blips — which returns HTTP 503 to clients (Feishin "network error",
-    # browser "page isn't working"). Pin minReplicaCount to 1 so the app stays up
-    # and accessible; it simply can't read new music while the NAS is unreachable.
-    - target:
-        kind: ScaledObject
-        name: navidrome
-      patch: |
-        - op: replace
-          path: /spec/minReplicaCount
-          value: 1
   postBuild:
     substitute:
       APP: navidrome
