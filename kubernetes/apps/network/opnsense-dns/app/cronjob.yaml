@@ -19,7 +19,7 @@ data:
     import os, json, sys, ssl, base64
     import urllib.request
 
-    HOST = "https://192.168.42.1"  # IP, not a name — avoids circular DNS dependency
+    HOST = "https://${BGP_ROUTER_IP}"  # IP, not a name — avoids circular DNS dependency
     DOMAIN = "${SECRET_DOMAIN}"
     PREFIX = "k8s.main.cname-"
     KEY = os.environ["OPNSENSE_API_KEY"]
