@@ -4,107 +4,197 @@ apiVersion: externaldns.k8s.io/v1alpha1
 kind: DNSEndpoint
 metadata:
   name: internal-apps-lan
-  annotations:
-    # Internal apps live behind the internal gateway (192.168.42.110). Publish
-    # public A records so devices on the Tailscale VPN (whatever DNS they use)
-    # resolve them and reach .110 via the approved 192.168.42.0/24 subnet route.
-    # DNS-only (proxied=false) is REQUIRED: Cloudflare cannot proxy a private IP.
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 spec:
   endpoints:
     - dnsName: "ai.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "alertmanager.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "atuin.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "audiobookshelf.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "bazarr.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "budget.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "crafty.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "emby.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "fitness.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "grafana.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "home.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "immich.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "it-tools.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "kopia.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "lidarr.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "navidrome.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "nextcloud.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "obsidian.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "paperless.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "pdf.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "prometheus.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "prowlarr.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "qbittorrent.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "radarr.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "readarr.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "romm.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "rook.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "sabnzbd.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "seerr.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "sonarr.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "tandoor.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "victoria-logs.${SECRET_DOMAIN}"
       recordType: A
-      targets: ["192.168.42.110"]
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"

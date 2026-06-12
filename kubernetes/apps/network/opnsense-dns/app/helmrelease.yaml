@@ -23,7 +23,7 @@ spec:
           # cannot resolve its own target once internal DNS is disrupted, and can
           # then never repair the records. Always point the DNS updater at an IP.
           - name: OPNSENSE_HOST
-            value: https://192.168.42.1
+            value: https://${BGP_ROUTER_IP}
           - name: OPNSENSE_API_KEY
             valueFrom:
               secretKeyRef:
