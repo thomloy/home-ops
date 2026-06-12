@@ -1,0 +1,110 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/externaldns.k8s.io/dnsendpoint_v1alpha1.json
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: internal-apps-lan
+  annotations:
+    # Internal apps live behind the internal gateway (192.168.42.110). Publish
+    # public A records so devices on the Tailscale VPN (whatever DNS they use)
+    # resolve them and reach .110 via the approved 192.168.42.0/24 subnet route.
+    # DNS-only (proxied=false) is REQUIRED: Cloudflare cannot proxy a private IP.
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+spec:
+  endpoints:
+    - dnsName: "ai.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "alertmanager.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "atuin.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "audiobookshelf.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "bazarr.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "budget.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "crafty.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "emby.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "fitness.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "grafana.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "home.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "immich.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "it-tools.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "kopia.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "lidarr.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "navidrome.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "nextcloud.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "obsidian.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "paperless.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "pdf.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "prometheus.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "prowlarr.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "qbittorrent.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "radarr.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "readarr.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "romm.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "rook.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "sabnzbd.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "seerr.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "sonarr.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "tandoor.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
+    - dnsName: "victoria-logs.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["192.168.42.110"]
