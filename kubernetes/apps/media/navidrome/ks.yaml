@@ -19,22 +19,6 @@ spec:
 
   interval: 1h
   path: "./kubernetes/apps/media/navidrome/app"
-  patches:
-    # Keep navidrome always reachable. The nfs-scaler component scales it to 0
-    # when the NAS NFS probe (192.168.42.44:2049) goes inactive, which makes the
-    # gateway return HTTP 503 to clients (Feishin "network error"). Pin
-    # minReplicaCount to 1 so the app stays up. This touches ONLY navidrome's
-    # KEDA ScaledObject — no networking / gateway changes.
-    - patch: |
-        apiVersion: keda.sh/v1alpha1
-        kind: ScaledObject
-        metadata:
-          name: navidrome
-        spec:
-          minReplicaCount: 1
-      target:
-        kind: ScaledObject
-        name: navidrome
   postBuild:
     substitute:
       APP: navidrome
