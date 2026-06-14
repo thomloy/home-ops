@@ -62,3 +62,33 @@ spec:
           annotations:
             summary: "UPS métriques manquantes"
             description: "Aucune métrique NUT reçue depuis 5 minutes"
+
+        # =========================
+        # Batterie à remplacer (self-test UPS) — flag RB
+        # =========================
+        - alert: UPSReplaceBattery
+          expr: |
+            network_ups_tools_ups_status{flag="RB"} == 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "UPS — batterie à remplacer"
+            description: "L'UPS signale RB (replace battery) : son auto-test a détecté une batterie HS. À remplacer."
+
+        # =========================
+        # Batterie qui vieillit — autonomie faible alors que pleine et sur secteur
+        # (charge >= 95% implique "sur secteur"; runtime < 5 min = batterie dégradée).
+        # Ne se déclenche pas aux valeurs saines actuelles (~7-15 min).
+        # =========================
+        - alert: UPSBatteryAging
+          expr: |
+            network_ups_tools_battery_runtime < 300
+            and
+            network_ups_tools_battery_charge >= 95
+          for: 2h
+          labels:
+            severity: warning
+          annotations:
+            summary: "UPS — batterie en fin de vie (autonomie faible)"
+            description: "Batterie pleine ({{ with query \"network_ups_tools_battery_charge\" }}{{ . | first | value }}%{{ end }}) mais autonomie {{ $value | humanizeDuration }} seulement — la batterie se dégrade, prévoir un remplacement."
