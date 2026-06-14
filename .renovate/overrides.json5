@@ -24,5 +24,11 @@
       matchPackageNames: ["python/cpython", "python"],
       enabled: false,
     },
+    {
+      description: "cloudflared 2026.6.0 rejects valid tunnel tokens and CrashLoops the tunnel — skip that exact release until a fixed one supersedes it (see PR #263/#302/#306).",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["docker.io/cloudflare/cloudflared"],
+      allowedVersions: "!/^2026\\.6\\.0$/",
+    },
   ],
 }
