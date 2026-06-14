@@ -4,6 +4,12 @@ machine:
     disableManifestsDirectory: true
     extraConfig:
       serializeImagePulls: false
+      # Reclaim unused container images before the OS disk fills up. Defaults
+      # (85/80) only kick in very late; with frequent Renovate image churn the
+      # 256G OS disk crept to 73% and tripped Ceph's mon_data_avail_warn. 70/55
+      # makes kubelet prune unused images continuously, well clear of the warn.
+      imageGCHighThresholdPercent: 70
+      imageGCLowThresholdPercent: 55
     nodeIP:
       validSubnets:
         - 192.168.42.0/24
