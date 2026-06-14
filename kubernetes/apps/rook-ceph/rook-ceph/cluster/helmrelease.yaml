@@ -80,6 +80,15 @@ spec:
         osd:
           limits:
             memory: 8Gi
+        mgr:
+          # Default 1Gi limit but the mgr peaked at 973Mi (95%) — modules
+          # (prometheus, diskprediction, pg_autoscaler) grow with cluster
+          # activity, so an OOM here is a real risk and degrades cluster mgmt.
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            memory: 2Gi
       storage:
         useAllNodes: true
         useAllDevices: false
