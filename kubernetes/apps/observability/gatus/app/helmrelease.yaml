@@ -82,6 +82,9 @@ spec:
               accessMode: ReadWriteOnce
               size: 5Gi
     defaultPodOptions:
+      # gatus has an explicit ServiceAccount + RoleBinding; preserve its SA token
+      # automount, which app-template v5 would otherwise default to false.
+      automountServiceAccountToken: true
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

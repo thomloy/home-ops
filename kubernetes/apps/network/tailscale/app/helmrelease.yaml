@@ -42,6 +42,10 @@ spec:
               limits:
                 memory: 512Mi
     defaultPodOptions:
+      # tailscale persists its node state in the tailscale-state Secret via the
+      # k8s API (TS_KUBE_SECRET + rbac.yaml). app-template v5 flips the SA token
+      # automount default to false, which would break that — keep it mounted.
+      automountServiceAccountToken: true
       securityContext:
         runAsNonRoot: false
         runAsUser: 0
