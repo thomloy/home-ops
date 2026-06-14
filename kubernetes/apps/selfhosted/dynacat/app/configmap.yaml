@@ -59,21 +59,27 @@ data:
                     sites:
                       - title: Radarr
                         url: https://radarr.${SECRET_DOMAIN}
+                        check-url: http://radarr.downloads.svc.cluster.local:7878/ping
                         icon: di:radarr
                       - title: Sonarr
                         url: https://sonarr.${SECRET_DOMAIN}
+                        check-url: http://sonarr.downloads.svc.cluster.local:8989/ping
                         icon: di:sonarr
                       - title: Bazarr
                         url: https://bazarr.${SECRET_DOMAIN}
+                        check-url: http://bazarr.downloads.svc.cluster.local:80/ping
                         icon: di:bazarr
                       - title: Prowlarr
                         url: https://prowlarr.${SECRET_DOMAIN}
+                        check-url: http://prowlarr.downloads.svc.cluster.local:80/ping
                         icon: di:prowlarr
                       - title: Sabnzbd
                         url: https://sabnzbd.${SECRET_DOMAIN}
+                        check-url: http://sabnzbd.downloads.svc.cluster.local:80
                         icon: di:sabnzbd
                       - title: qBittorrent
                         url: https://qbittorrent.${SECRET_DOMAIN}
+                        check-url: http://qbittorrent.downloads.svc.cluster.local:8080
                         icon: di:qbittorrent
                   - type: monitor
                     title: Other
@@ -81,7 +87,7 @@ data:
                       - title: Paperless
                         url: https://paperless.${SECRET_DOMAIN}
                         icon: di:paperless-ngx
-                      - title: Mealie
+                      - title: Tandoor
                         url: https://tandoor.${SECRET_DOMAIN}
                         icon: si:tandoorrecipes
                       - title: Nextcloud
@@ -607,21 +613,27 @@ data:
                     sites:
                       - title: Radarr
                         url: https://radarr.${SECRET_DOMAIN}
+                        check-url: http://radarr.downloads.svc.cluster.local:7878/ping
                         icon: di:radarr
                       - title: Sonarr
                         url: https://sonarr.${SECRET_DOMAIN}
+                        check-url: http://sonarr.downloads.svc.cluster.local:8989/ping
                         icon: di:sonarr
                       - title: Bazarr
                         url: https://bazarr.${SECRET_DOMAIN}
+                        check-url: http://bazarr.downloads.svc.cluster.local:80/ping
                         icon: di:bazarr
                       - title: Prowlarr
                         url: https://prowlarr.${SECRET_DOMAIN}
+                        check-url: http://prowlarr.downloads.svc.cluster.local:80/ping
                         icon: di:prowlarr
                       - title: Sabnzbd
                         url: https://sabnzbd.${SECRET_DOMAIN}
+                        check-url: http://sabnzbd.downloads.svc.cluster.local:80
                         icon: di:sabnzbd
                       - title: qBittorrent
                         url: https://qbittorrent.${SECRET_DOMAIN}
+                        check-url: http://qbittorrent.downloads.svc.cluster.local:8080
                         icon: di:qbittorrent
                   - type: monitor
                     title: Selfhosted
