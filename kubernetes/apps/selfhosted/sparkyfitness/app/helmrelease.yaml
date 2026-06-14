@@ -28,7 +28,7 @@ spec:
           postgres:
             image:
               repository: postgres
-              tag: "18.3-alpine"
+              tag: "18.4-alpine"
             env:
               POSTGRES_USER: sparky
               POSTGRES_DB: sparkyfitness
