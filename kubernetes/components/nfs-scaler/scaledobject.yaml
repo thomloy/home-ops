@@ -7,7 +7,12 @@ metadata:
 spec:
   advanced:
     restoreToOriginalReplicaCount: true
-  cooldownPeriod: 0
+  # Grace period before scaling back to 0 once the NFS probe goes inactive. The
+  # NAS probe (192.168.42.44:2049) flaps on brief NAS/UPS hiccups; with 0 the
+  # apps scaled to 0 instantly and downstream things broke (arrem-sync couldn't
+  # reach Emby, navidrome 503'd). 30 min rides out blips while still scaling to 0
+  # for a real, sustained NAS outage.
+  cooldownPeriod: 1800
   fallback:
     failureThreshold: 3
     replicas: 1
