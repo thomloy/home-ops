@@ -52,6 +52,21 @@ spec:
           - name: log
             configBlock: |-
               class error
+      # Conditional forward for the local ".internal" zone (jetkvm-*, node0*,
+      # etc.) to OPNsense, which is authoritative for it. The node upstreams are
+      # Cloudflare, which returns NXDOMAIN for .internal — that broke in-cluster
+      # resolution and the blackbox LanProbe checks.
+      - zones:
+          - zone: internal
+            scheme: dns://
+            use_tcp: true
+        port: 53
+        plugins:
+          - name: errors
+          - name: forward
+            parameters: . ${BGP_ROUTER_IP}
+          - name: cache
+          - name: reload
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
