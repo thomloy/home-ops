@@ -17,6 +17,7 @@ kubeconfig
 talosconfig
 # Misc.
 CLAUDE.md
+.claude/
 .scripts/
 /scripts/
 .private/
