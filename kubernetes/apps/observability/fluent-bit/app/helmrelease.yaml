@@ -48,6 +48,10 @@ spec:
           k8s-logging.exclude on
           namespace_labels off
           annotations off
+          # Default kube-API client buffer is 32K — large pod objects overflow it
+          # ("cannot increase buffer: max=32000"), failing enrichment and leaking
+          # memory over time. 1M comfortably fits any pod's metadata.
+          buffer_size 1M
 
         [FILTER]
           name nest
@@ -107,3 +111,12 @@ spec:
     serviceMonitor:
       enabled: true
     logLevel: warn
+    # fluent-bit had no limits and crept to ~2Gi/node for only ~6 logs/s. Cap it:
+    # if it ever balloons again it's OOM-restarted, and the filesystem buffer
+    # (storage.type filesystem) means no log loss across the restart.
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 256Mi
