@@ -11,6 +11,7 @@ components:
 resources:
   - ./namespace.yaml
   - ./blackbox-exporter/ks.yaml
+  - ./cluster-rules/ks.yaml
   - ./fluent-bit/ks.yaml
   - ./gatus/ks.yaml
   - ./grafana/ks.yaml

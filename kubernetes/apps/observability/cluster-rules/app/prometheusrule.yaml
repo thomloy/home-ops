@@ -1,0 +1,72 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cluster-backup-disk-rules
+spec:
+  groups:
+    # =========================
+    # Backups VolSync (Kopia → NFS)
+    # =========================
+    - name: volsync.rules
+      rules:
+        - alert: VolSyncBackupStale
+          # 1 = la source est en retard sur son planning (sync manquée)
+          expr: |
+            volsync_volume_out_of_sync == 1
+          for: 6h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup VolSync en retard"
+            description: "Le backup VolSync {{ $labels.obj_namespace }}/{{ $labels.obj_name }} est en retard sur son planning depuis plus de 6h."
+
+    # =========================
+    # Backups CNPG (Postgres → R2)
+    # =========================
+    - name: cnpg-backup.rules
+      rules:
+        - alert: CNPGBackupFailed
+          # le dernier essai a échoué et n'a pas réussi depuis
+          expr: |
+            cnpg_collector_last_failed_backup_timestamp
+            > cnpg_collector_last_available_backup_timestamp
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup CNPG en échec"
+            description: "Le dernier backup du cluster CNPG dans {{ $labels.namespace }} ({{ $labels.pod }}) a échoué et n'a pas réussi depuis 30 min."
+
+        - alert: CNPGBackupStale
+          # aucun backup réussi depuis >36h (planning quotidien) ; garde >0
+          # pour ignorer les instances qui ne sauvegardent pas (réplicas)
+          expr: |
+            (time() - cnpg_collector_last_available_backup_timestamp > 129600)
+            and
+            (cnpg_collector_last_available_backup_timestamp > 0)
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup CNPG périmé"
+            description: "Aucun backup CNPG réussi depuis plus de 36h pour {{ $labels.namespace }} ({{ $labels.pod }})."
+
+    # =========================
+    # Disque OS des nodes Talos (cache containerd)
+    # =========================
+    - name: node-disk.rules
+      rules:
+        - alert: TalosOSDiskFillingUp
+          # /var = partition EPHEMERAL Talos (cache images containerd). Le GC
+          # kubelet purge à 70% ; à 80% c'est qu'il ne suit pas. Exclut le NAS.
+          expr: |
+            100 * (1 - node_filesystem_avail_bytes{instance!="${NAS_IP}:9100",mountpoint="/var"}
+            / node_filesystem_size_bytes{instance!="${NAS_IP}:9100",mountpoint="/var"}) > 80
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Disque OS Talos > 80%"
+            description: "Le disque OS (/var, cache containerd) de {{ $labels.instance }} est à {{ $value | printf \"%.0f\" }}% — le GC d'images (seuil 70%) ne suit peut-être pas."
