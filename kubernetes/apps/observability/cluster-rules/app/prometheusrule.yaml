@@ -30,9 +30,11 @@ spec:
     - name: cnpg-backup.rules
       rules:
         - alert: CNPGBackupStale
-          # aucun Backup CR "completed" depuis >36h (planning quotidien)
+          # Le ScheduledBackup CNPG est HEBDOMADAIRE (0 0 3 * * 0, dimanche 3h)
+          # + WAL archivé en continu pour le PITR. On alerte donc à >8j (semaine
+          # + 1j de grâce), pas à 36h, sinon faux positif chaque semaine.
           expr: |
-            time() - max by (cluster, namespace) (cnpg_backup_created{phase="completed"}) > 129600
+            time() - max by (cluster, namespace) (cnpg_backup_created{phase="completed"}) > 691200
           for: 1h
           labels:
             severity: warning
