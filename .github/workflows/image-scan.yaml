@@ -72,6 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      security-events: write # upload SARIF to the Security tab
     strategy:
       fail-fast: false
       matrix:
@@ -93,13 +94,25 @@ jobs:
           version: v0.71.1
           severity: "CRITICAL,HIGH"
           ignore-unfixed: true
-          format: "table"
-          exit-code: "1"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          # Report-only. These are upstream images we consume, not build, so a
+          # finding isn't ours to fix — gating here would just block Renovate
+          # auto-merges on CVEs we can't patch. exit-code 0 = never fail on
+          # vulns; results go to the Security tab (uploaded below) for triage.
+          exit-code: "0"
           vuln-type: "os,library"
           timeout: "5m"
           trivyignores: ".trivyignore"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
+        with:
+          sarif_file: "trivy-results.sarif"
+          # One category per image so matrix uploads don't overwrite each other.
+          category: "trivy:${{ matrix.image }}"
 
   scan-status:
     name: Image Scan Success
@@ -111,6 +124,6 @@ jobs:
         if: ${{ contains(needs.*.result, 'failure') }}
         run: exit 1
 
-      - name: All clean or skipped?
+      - name: Scans completed?
         if: ${{ !(contains(needs.*.result, 'failure')) }}
-        run: echo "No fixable CRITICAL/HIGH vulns in changed images"
+        run: echo "Image scans completed (report-only — see the Security tab for findings)"
