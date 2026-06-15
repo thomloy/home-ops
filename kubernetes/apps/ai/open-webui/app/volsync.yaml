@@ -1,0 +1,56 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/external-secrets.io/externalsecret_v1.json
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: open-webui-volsync
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: onepassword
+  target:
+    name: open-webui-volsync-secret
+    template:
+      data:
+        KOPIA_PASSWORD: "{{ .KOPIA_PASSWORD }}"
+        KOPIA_REPOSITORY: filesystem:///mnt/repository
+  dataFrom:
+    - extract:
+        key: volsync-template
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: open-webui-data
+spec:
+  # Back up the existing in-place PVC (webui.db, uploads, vector_db) — no PVC
+  # replacement, so the 890Mi of existing data is adopted with zero downtime.
+  sourcePVC: open-webui-data
+  trigger:
+    schedule: "0 4 * * *"
+  kopia:
+    accessModes:
+      - ReadWriteOnce
+    compression: zstd-fastest
+    copyMethod: Snapshot
+    moverSecurityContext:
+      # open-webui's data is owned by uid 1000; fsGroup makes the snapshot
+      # readable, and writing to the NFS repo as a non-root uid avoids the
+      # TrueNAS root_squash hang.
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            path: /mnt/HDD1X4/VolsyncKopia
+            server: ${NAS_IP}
+    parallelism: 2
+    repository: open-webui-volsync-secret
+    retain:
+      hourly: 24
+      daily: 7
+    storageClassName: ceph-block
+    volumeSnapshotClassName: csi-ceph-blockpool
