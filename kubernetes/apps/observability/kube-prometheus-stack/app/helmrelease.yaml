@@ -91,6 +91,37 @@ spec:
       fullnameOverride: node-exporter
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
+      # Let KSM read CNPG Backup CRs and expose their phase + creation time, so
+      # backup health can be alerted on reliably (the cnpg_collector_* backup
+      # timestamps are not updated by the barman-cloud plugin method).
+      rbac:
+        extraRules:
+          - apiGroups: ["postgresql.cnpg.io"]
+            resources: ["backups"]
+            verbs: ["list", "watch"]
+      customResourceState:
+        enabled: true
+        config:
+          spec:
+            resources:
+              - groupVersionKind:
+                  group: postgresql.cnpg.io
+                  version: v1
+                  kind: Backup
+                metricNamePrefix: cnpg_backup
+                labelsFromPath:
+                  namespace: [metadata, namespace]
+                  backup: [metadata, name]
+                  cluster: [spec, cluster, name]
+                metrics:
+                  - name: created
+                    help: "Unix creation time of a CNPG Backup, labelled by status.phase"
+                    each:
+                      type: Gauge
+                      gauge:
+                        path: [metadata, creationTimestamp]
+                        labelsFromPath:
+                          phase: [status, phase]
     grafana:
       enabled: false
       forceDeployDashboards: true
