@@ -65,12 +65,14 @@ data:
                 limit: 12
                 collapse-after: 5
                 feeds:
-                  - url: https://www.bellingcat.com/feed/
-                    title: Bellingcat
+                  - url: https://www.reddit.com/r/OSINT.rss
+                    title: r/OSINT
                   - url: https://feeds.bbci.co.uk/news/world/rss.xml
                     title: BBC World
                   - url: https://www.aljazeera.com/xml/rss/all.xml
                     title: Al Jazeera
+                  - url: https://www.theguardian.com/world/rss
+                    title: The Guardian
               - type: rss
                 title: Tech & Homelab
                 limit: 10
