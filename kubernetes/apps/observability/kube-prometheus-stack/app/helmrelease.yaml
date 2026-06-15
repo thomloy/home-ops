@@ -113,6 +113,7 @@ spec:
                   namespace: [metadata, namespace]
                   backup: [metadata, name]
                   cluster: [spec, cluster, name]
+                  phase: [status, phase]
                 metrics:
                   - name: created
                     help: "Unix creation time of a CNPG Backup, labelled by status.phase"
@@ -120,8 +121,6 @@ spec:
                       type: Gauge
                       gauge:
                         path: [metadata, creationTimestamp]
-                        labelsFromPath:
-                          phase: [status, phase]
     grafana:
       enabled: false
       forceDeployDashboards: true
