@@ -7,4 +7,5 @@ resources:
   - ./pvc.yaml
   - ./secret.sops.yaml
   - ./helmrelease.yaml
+  - ./volsync.yaml
   - ./ciliumnetworkpolicy.yaml
