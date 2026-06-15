@@ -61,7 +61,7 @@ spec:
                   echo "[etcd-snapshot] Done."
               env:
                 - name: TALOS_NODE
-                  value: "192.168.42.41"
+                  value: "${NODE_IP_1}"
                 - name: R2_ENDPOINT
                   value: "https://1aeea9a5d6274c321f9a4805ebaebb51.r2.cloudflarestorage.com"
                 - name: AWS_ACCESS_KEY_ID
