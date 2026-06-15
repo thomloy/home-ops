@@ -35,17 +35,15 @@ spec:
                   /talosctl/talosctl --talosconfig=/talos/talosconfig \
                     --nodes="$${TALOS_NODE}" \
                     etcd snapshot "$${SNAP}"
-                  RAW=$$(stat -c %s "$${SNAP}")
-                  # The bbolt etcd snapshot is uncompressed (~800MB) and dominates
-                  # the R2 bucket; gzip shrinks it ~2-4x. gunzip before running
-                  # `talosctl etcd snapshot restore` when actually recovering.
-                  gzip "$${SNAP}"
-                  GZ=$$(stat -c %s "$${SNAP}.gz")
-                  echo "[etcd-snapshot] Snapshot $${RAW}B → $${GZ}B gzipped, uploading to R2…"
-                  aws s3 cp "$${SNAP}.gz" \
-                    "s3://cnpg-backups/etcd-snapshots/etcd-$${TS}.snap.gz" \
+                  SIZE=$$(stat -c %s "$${SNAP}")
+                  echo "[etcd-snapshot] Snapshot OK ($${SIZE} bytes), uploading to R2…"
+                  aws s3 cp "$${SNAP}" \
+                    "s3://cnpg-backups/etcd-snapshots/etcd-$${TS}.snap" \
                     --endpoint-url="$${R2_ENDPOINT}" \
                     --no-progress
+                  # Retention is the lever that keeps the R2 bucket under the 10GB
+                  # free tier: each bbolt snapshot is ~800MB uncompressed and the
+                  # aws-cli image ships no compressor, so 7 days (~5.5GB) it is.
                   echo "[etcd-snapshot] Pruning snapshots older than 7 days…"
                   CUTOFF=$$(date -u -d '7 days ago' +%Y%m%d)
                   aws s3 ls "s3://cnpg-backups/etcd-snapshots/" \
