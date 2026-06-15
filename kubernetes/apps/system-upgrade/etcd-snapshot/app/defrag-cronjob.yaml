@@ -1,0 +1,101 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: etcd-defrag
+spec:
+  # Monthly, 1st at 05:00 (after the 04:00 snapshot). etcd fragments over
+  # time (bbolt free pages); without periodic defrag the DB — and thus every
+  # snapshot in R2 — bloats back toward ~800MB (was 12% in-use before the
+  # first manual defrag). A monthly compaction keeps snapshots ~100MB.
+  schedule: "0 5 1 * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: defrag
+              # aws-cli image reused only as a bash host for the talosctl binary
+              # (mounted via the image volume below); no AWS calls are made here.
+              image: public.ecr.aws/aws-cli/aws-cli:2.35.4
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  set -euo pipefail
+                  CTL=/talosctl/talosctl
+                  TC=/talos/talosconfig
+                  NODES="${NODE_IP_1} ${NODE_IP_2} ${NODE_IP_3}"
+                  echo "[etcd-defrag] Pre-flight: checking for etcd alarms…"
+                  for n in $${NODES}; do
+                    al=$$("$${CTL}" --talosconfig="$${TC}" -n "$${n}" etcd alarm list 2>&1 || true)
+                    if echo "$${al}" | grep -qiE 'NOSPACE|CORRUPT'; then
+                      echo "[etcd-defrag] ABORT — alarm on $${n}: $${al}"; exit 1
+                    fi
+                  done
+                  # Defrag one member at a time so the cluster keeps quorum; only
+                  # proceed to the next once the current one answers again.
+                  for n in $${NODES}; do
+                    before=$$("$${CTL}" --talosconfig="$${TC}" -n "$${n}" etcd status 2>/dev/null | awk 'NR==2{print $$3" "$$4}')
+                    echo "[etcd-defrag] Defragging $${n} (DB $${before})…"
+                    "$${CTL}" --talosconfig="$${TC}" -n "$${n}" etcd defrag
+                    ok=0
+                    for _ in $$(seq 1 15); do
+                      if "$${CTL}" --talosconfig="$${TC}" -n "$${n}" etcd status >/dev/null 2>&1; then ok=1; break; fi
+                      sleep 2
+                    done
+                    [ "$${ok}" = "1" ] || { echo "[etcd-defrag] ABORT — $${n} unhealthy after defrag"; exit 1; }
+                    after=$$("$${CTL}" --talosconfig="$${TC}" -n "$${n}" etcd status 2>/dev/null | awk 'NR==2{print $$3" "$$4}')
+                    echo "[etcd-defrag] $${n} OK (DB now $${after})"
+                    sleep 5
+                  done
+                  echo "[etcd-defrag] Done — all members defragged."
+              env:
+                - name: HOME
+                  value: /tmp
+              volumeMounts:
+                - name: talosctl
+                  mountPath: /talosctl
+                  readOnly: true
+                - name: talosconfig
+                  mountPath: /talos
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+          volumes:
+            - name: talosctl
+              # renovate: datasource=docker depName=ghcr.io/siderolabs/talosctl
+              image:
+                reference: ghcr.io/siderolabs/talosctl:v1.13.4
+                pullPolicy: IfNotPresent
+            - name: talosconfig
+              secret:
+                secretName: etcd-snapshot-secret
+                items:
+                  - key: talosconfig
+                    path: talosconfig
+            - name: tmp
+              emptyDir: {}
