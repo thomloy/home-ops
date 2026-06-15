@@ -1,0 +1,137 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/grafana.integreatly.org/grafanadashboard_v1beta1.json
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: backups-overview
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      grafana.internal/instance: grafana
+  datasources:
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
+  json: |
+    {
+      "title": "Backups & Disque",
+      "uid": "backups-overview",
+      "schemaVersion": 39,
+      "editable": true,
+      "time": { "from": "now-30d", "to": "now" },
+      "templating": { "list": [] },
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "CNPG — âge du dernier backup réussi",
+          "gridPos": { "h": 7, "w": 12, "x": 0, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" },
+          "targets": [
+            {
+              "expr": "(time() - max by (cluster) (cnpg_backup_created{phase=\"completed\"})) / 86400",
+              "legendFormat": "{{cluster}}",
+              "instant": true,
+              "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "d",
+              "decimals": 1,
+              "thresholds": { "mode": "absolute", "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 7 },
+                { "color": "red", "value": 8 }
+              ] }
+            }
+          },
+          "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } }
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "VolSync — sources en retard",
+          "gridPos": { "h": 7, "w": 6, "x": 12, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" },
+          "targets": [
+            {
+              "expr": "sum(volsync_volume_out_of_sync) or vector(0)",
+              "instant": true,
+              "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": { "mode": "absolute", "steps": [
+                { "color": "green", "value": null },
+                { "color": "red", "value": 1 }
+              ] }
+            }
+          },
+          "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } }
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Disque OS Talos /var — max %",
+          "gridPos": { "h": 7, "w": 6, "x": 18, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" },
+          "targets": [
+            {
+              "expr": "max(100 * (1 - node_filesystem_avail_bytes{instance!=\"${NAS_IP}:9100\",mountpoint=\"/var\"} / node_filesystem_size_bytes{instance!=\"${NAS_IP}:9100\",mountpoint=\"/var\"}))",
+              "instant": true,
+              "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 0,
+              "thresholds": { "mode": "absolute", "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 70 },
+                { "color": "red", "value": 80 }
+              ] }
+            }
+          },
+          "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } }
+        },
+        {
+          "id": 4,
+          "type": "table",
+          "title": "VolSync — détail par app",
+          "gridPos": { "h": 10, "w": 12, "x": 0, "y": 7 },
+          "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" },
+          "targets": [
+            {
+              "expr": "volsync_volume_out_of_sync",
+              "format": "table",
+              "instant": true,
+              "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" }
+            }
+          ],
+          "transformations": [
+            { "id": "organize", "options": {
+              "excludeByName": { "Time": true, "__name__": true, "endpoint": true, "instance": true, "job": true, "pod": true, "service": true, "container": true, "namespace": true, "method": true, "role": true },
+              "renameByName": { "obj_namespace": "Namespace", "obj_name": "App", "Value": "Hors-sync (1=oui)" }
+            } }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "timeseries",
+          "title": "CNPG — backups dans le temps (par phase)",
+          "gridPos": { "h": 10, "w": 12, "x": 12, "y": 7 },
+          "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" },
+          "targets": [
+            {
+              "expr": "count by (cluster, phase) (cnpg_backup_created)",
+              "legendFormat": "{{cluster}} — {{phase}}",
+              "datasource": { "type": "prometheus", "uid": "$${DS_PROMETHEUS}" }
+            }
+          ],
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 60 } } }
+        }
+      ]
+    }
