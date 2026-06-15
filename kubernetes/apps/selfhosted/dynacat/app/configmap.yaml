@@ -60,6 +60,26 @@ data:
                 limit: 10
 
           # Col 3 : météo + bookmarks
+              - type: rss
+                title: Monde & OSINT
+                limit: 12
+                collapse-after: 5
+                feeds:
+                  - url: https://www.bellingcat.com/feed/
+                    title: Bellingcat
+                  - url: https://feeds.bbci.co.uk/news/world/rss.xml
+                    title: BBC World
+                  - url: https://www.aljazeera.com/xml/rss/all.xml
+                    title: Al Jazeera
+              - type: rss
+                title: Tech & Homelab
+                limit: 10
+                collapse-after: 5
+                feeds:
+                  - url: https://www.reddit.com/r/selfhosted.rss
+                    title: r/selfhosted
+                  - url: https://lobste.rs/rss
+                    title: Lobsters
           - size: small
             widgets:
               - type: custom-api
@@ -70,6 +90,24 @@ data:
                 template: |
                   <div id="dynacat-meteo" class="gls-trigger" onanimationstart="(function(el){fetch('https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&current=temperature_2m,weather_code,apparent_temperature,wind_speed_10m,precipitation_probability&hourly=temperature_2m,weather_code,precipitation_probability&past_hours=0&forecast_hours=48&timezone=Europe%2FParis').then(function(r){return r.json()}).then(function(d){var now=new Date(),cur=d.current,times=d.hourly.time,temps=d.hourly.temperature_2m,codes=d.hourly.weather_code,precips=d.hourly.precipitation_probability;function icon(c){if(c===0)return'☀️';if(c<=2)return'🌤';if(c<=3)return'⛅';if(c<=48)return'🌫';if(c<=57)return'🌦';if(c<=67)return'🌧';if(c<=77)return'❄️';if(c<=82)return'🌦';return'⛈';}function desc(c){if(c===0)return'Ensoleillé';if(c===1)return'Peu nuageux';if(c===2)return'Partiellement nuageux';if(c===3)return'Couvert';if(c<=48)return'Brouillard';if(c<=57)return'Bruine';if(c<=67)return'Pluie';if(c<=77)return'Neige';if(c<=82)return'Averses';return'Orage';}var html='<div style=\'text-align:center;padding:4px 0 10px\'><div style=\'font-size:2.2em;font-weight:700;line-height:1\'>'+Math.round(cur.temperature_2m)+'°</div><div style=\'font-size:.88em;margin-top:5px\'>'+icon(cur.weather_code)+' '+desc(cur.weather_code)+'</div><div style=\'font-size:.75em;opacity:.6;margin-top:3px\'>Ressenti '+Math.round(cur.apparent_temperature)+'° &nbsp;💨 '+Math.round(cur.wind_speed_10m)+' km/h</div></div><div style=\'display:flex;flex-direction:column;gap:3px\'>';var apc=String.fromCharCode(39),DAYS=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],MONTHS=['jan','fev','mar','avr','mai','jun','jul','aou','sep','oct','nov','dec'];function dkey(t){return t.getFullYear()+'-'+t.getMonth()+'-'+t.getDate();}function dlabel(t){if(dkey(t)===dkey(now))return'Aujourd'+apc+'hui';var tom=new Date(now.getTime()+86400000);if(dkey(t)===dkey(tom))return'Demain';return DAYS[t.getDay()]+' '+t.getDate()+' '+MONTHS[t.getMonth()];}var lastDay='';for(var i=0;i<times.length;i++){var t=new Date(times[i]);if(t<now)continue;if(t.getHours()%2!==0)continue;var dl=dlabel(t);if(dl!==lastDay){html+='<div style=\'font-size:.62em;font-weight:700;letter-spacing:.08em;color:#f0d9a0;text-transform:uppercase;padding:4px 0 2px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:1px\'>'+dl+'</div>';lastDay=dl;}var h=String(t.getHours()).padStart(2,'0')+'h';var temp=Math.round(temps[i]);var p=precips[i];html+='<div style=\'display:flex;align-items:center;gap:6px;font-size:.8em\'><span style=\'min-width:26px;opacity:.6\'>'+h+'</span><span>'+icon(codes[i])+'</span><span style=\'flex:1;font-size:.82em;color:#93c5fd\'>'+(p>=20?'💧'+p+'%':'')+'</span><span style=\'font-weight:600\'>'+temp+'°</span></div>';}html+='</div><div style=\'text-align:center;font-size:.7em;opacity:.35;margin-top:8px\'>📍 Paris, France</div>';el.innerHTML=html;}).catch(function(e){el.textContent='Err: '+e.message;});})(this)">Chargement...</div>
 
+              - type: custom-api
+                title: Crypto
+                allow-insecure-html: true
+                cache: 5m
+                url: "https://api.coingecko.com/api/v3/ping"
+                template: |
+                  <div id="dynacat-crypto" class="gls-trigger" onanimationstart="(function(el){fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,monero,lightchain-ai&vs_currencies=usd&include_24hr_change=true').then(function(r){return r.json()}).then(function(d){var rows=[['₿','Bitcoin','bitcoin'],['ɱ','Monero','monero'],['◆','Lightchain AI','lightchain-ai']];var h='<div style=\'display:flex;flex-direction:column;gap:9px\'>';rows.forEach(function(c){var o=d[c[2]];if(!o)return;var price=o.usd,chg=o.usd_24h_change||0,col=chg<0?'#ef4444':'#22c55e';var ps=price>=1000?Math.round(price).toLocaleString('en-US'):(price<1?price.toFixed(4):price.toFixed(2));h+='<div style=\'display:flex;justify-content:space-between;align-items:center\'><span style=\'font-weight:600;font-size:.9em\'>'+c[0]+' '+c[1]+'</span><span style=\'text-align:right;line-height:1.15\'><div style=\'font-weight:600\'>$'+ps+'</div><div style=\'font-size:.72em;color:'+col+'\'>'+(chg>=0?'+':'')+chg.toFixed(1)+'%</div></span></div>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Crypto indispo</div>';});})(this)">Chargement...</div>
+              - type: markets
+                title: Marchés
+                markets:
+                  - symbol: "^GSPC"
+                    name: S&P 500
+                  - symbol: "^IXIC"
+                    name: Nasdaq
+                  - symbol: "^FCHI"
+                    name: CAC 40
+                  - symbol: "GC=F"
+                    name: Or
               - type: bookmarks
                 title: Liens
                 groups:
