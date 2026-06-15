@@ -39,6 +39,10 @@ spec:
                 metadata:
                   name: _
                 spec:
+                  # Keep only 3 Helm release revisions (down from the Flux
+                  # default of 5) — each is a gzipped manifest Secret in etcd;
+                  # 3 is plenty for rollback in a GitOps repo.
+                  maxHistory: 3
                   install:
                     crds: CreateReplace
                     strategy:
