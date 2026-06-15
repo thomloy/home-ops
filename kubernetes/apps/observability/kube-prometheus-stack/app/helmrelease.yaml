@@ -76,10 +76,15 @@ spec:
         retention: 14d
         retentionSize: 50GB
         resources:
+          # Peak working set ~3.3Gi. Add a memory request (was none → the
+          # scheduler was blind to it) and give the limit ~2x-peak headroom so
+          # a query/compaction spike can't OOM Prometheus (which would take the
+          # whole monitoring + alerting stack with it).
           requests:
             cpu: 100m
+            memory: 2Gi
           limits:
-            memory: 4Gi
+            memory: 6Gi
         storageSpec:
           volumeClaimTemplate:
             spec:
