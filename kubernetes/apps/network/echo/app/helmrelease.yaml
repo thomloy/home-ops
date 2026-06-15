@@ -15,6 +15,7 @@ spec:
         strategy: RollingUpdate
         containers:
           app:
+            # ci: no-op comment to trigger image-scan SARIF validation (PR will be closed)
             image:
               repository: ghcr.io/mendhak/http-https-echo
               tag: 41
