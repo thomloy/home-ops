@@ -8,7 +8,11 @@ spec:
   dnsNames:
     - ${SECRET_DOMAIN}
     - "*.${SECRET_DOMAIN}"
-  duration: 160h
+  # Let's Encrypt issues 90-day certs. duration must match (2160h) so
+  # cert-manager schedules renewal correctly; with the old 160h it renewed
+  # only ~53h before the real expiry (2-day buffer). renewBefore 30 days.
+  duration: 2160h
+  renewBefore: 720h
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer

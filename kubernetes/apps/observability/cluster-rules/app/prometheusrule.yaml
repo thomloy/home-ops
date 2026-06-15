@@ -71,3 +71,16 @@ spec:
           annotations:
             summary: "Disque OS Talos > 80%"
             description: "Le disque OS (/var, cache containerd) de {{ $labels.instance }} est à {{ $value | printf \"%.0f\" }}% — le GC d'images (seuil 70%) ne suit peut-être pas."
+
+        - alert: NodeMemoryHigh
+          # Remplace la native NodeMemoryHighUtilization (désactivée) : exclut le
+          # NAS dont l'ARC ZFS (~94%) est réclamable et déclenchait un faux positif.
+          expr: |
+            100 * (1 - node_memory_MemAvailable_bytes{job="node-exporter",instance!="${NAS_IP}:9100"}
+            / node_memory_MemTotal_bytes{job="node-exporter",instance!="${NAS_IP}:9100"}) > 90
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Mémoire node élevée"
+            description: "{{ $labels.instance }} utilise {{ $value | printf \"%.0f\" }}% de RAM."
