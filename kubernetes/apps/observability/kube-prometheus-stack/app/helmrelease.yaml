@@ -15,6 +15,11 @@ spec:
       valuesKey: flux-metrics.yaml
   values:
     cleanPrometheusOperatorObjectNames: true
+    defaultRules:
+      disabled:
+        # Fires on the TrueNAS node (ZFS ARC sits ~94%, reclaimable → false
+        # positive). Replaced by a NAS-excluded NodeMemoryHigh in cluster-rules.
+        NodeMemoryHighUtilization: true
     alertmanager:
       route:
         main:
