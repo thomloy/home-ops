@@ -9,6 +9,29 @@ spec:
     kind: OCIRepository
     name: rook-ceph-cluster
   interval: 1h
+  postRenderers:
+    # The built-in CephPoolGrowthWarning rule does
+    #   predict_linear(ceph_pool_percent_used[2d], ...) * on(...) group_right() ceph_pool_metadata
+    # When a mgr pod is recreated (upgrade/failover), the [2d] range window holds
+    # series from BOTH the old and new pod for the same {cluster,pool_id,instance},
+    # so group_right() hits "many-to-many matching not allowed" → Prometheus fires
+    # PrometheusRuleFailures (critical) for ~2 days each time. Wrapping the LHS in
+    # max by(cluster,pool_id,instance)(...) collapses the duplicate to one series
+    # per match group — restart-proof, identical alerting semantics. The `test` op
+    # guards the index: if a chart upgrade reorders the rules, the build fails
+    # loudly in CI instead of silently patching the wrong rule.
+    - kustomize:
+        patches:
+          - target:
+              kind: PrometheusRule
+              name: prometheus-ceph-rules
+            patch: |
+              - op: test
+                path: /spec/groups/7/rules/0/alert
+                value: CephPoolGrowthWarning
+              - op: replace
+                path: /spec/groups/7/rules/0/expr
+                value: "(max by(cluster, pool_id, instance) (predict_linear(ceph_pool_percent_used[2d], 3600 * 24 * 5)) * on(cluster, pool_id, instance) group_right() ceph_pool_metadata) >= 95"
   values:
     # Pin the Ceph image via the chart's documented top-level value. Do NOT put
     # a cephVersion block inside cephClusterSpec — the chart renders cephVersion
