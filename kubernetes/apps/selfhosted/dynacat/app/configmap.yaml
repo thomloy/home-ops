@@ -645,6 +645,67 @@ data:
                         url: https://budget.${SECRET_DOMAIN}
                         icon: si:actualbudget
 
+              - type: custom-api
+                title: Alertes actives
+                allow-insecure-html: true
+                cache: 1m
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=ALERTS%7Balertstate%3D%22firing%22%2Calertname%21%3D%22Watchdog%22%2Calertname%21%3D%22InfoInhibitor%22%7D"
+                template: |
+                  {{$r := .JSON.Array "data.result"}}
+                  {{if eq (len $r) 0}}
+                  <div style="font-size:.85em;opacity:.6;padding:10px 0;text-align:center">✅ Aucune alerte active</div>
+                  {{else}}
+                  <div style="display:flex;flex-direction:column;gap:4px">
+                  {{range $r}}
+                  {{$an := .String "metric.alertname"}}{{$sev := .String "metric.severity"}}{{$ns := .String "metric.namespace"}}
+                  <div style="font-size:.8em;padding:5px 8px;border-left:3px solid {{if eq $sev "critical"}}#ef4444{{else}}#f59e0b{{end}};background:rgba(245,158,11,.1);border-radius:5px"><span style="font-weight:600">{{$an}}</span> <span style="opacity:.55">{{$ns}}</span></div>
+                  {{end}}
+                  </div>
+                  {{end}}
+
+              - type: custom-api
+                title: Backups Postgres
+                allow-insecure-html: true
+                cache: 5m
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=round%28%28time%28%29%20-%20max%20by%20%28cluster%29%20%28cnpg_backup_created%7Bphase%3D%22completed%22%7D%29%29%20%2F%2086400%2C%200.1%29"
+                template: |
+                  {{$r := .JSON.Array "data.result"}}
+                  {{if eq (len $r) 0}}<div style="font-size:.85em;opacity:.5;padding:10px 0;text-align:center">Pas de données backup</div>{{else}}
+                  <div style="display:flex;flex-direction:column;gap:5px">
+                  {{range $r}}{{$c := .String "metric.cluster"}}{{$d := .Float "value.1"}}
+                  <div style="display:flex;justify-content:space-between;font-size:.82em"><span>💾 {{$c}}</span><span style="color:{{if gt $d 8.0}}#ef4444{{else if gt $d 7.0}}#f59e0b{{else}}#22c55e{{end}}">il y a {{.String "value.1"}} j</span></div>
+                  {{end}}
+                  </div>
+                  {{end}}
+
+              - type: custom-api
+                title: Certificats TLS
+                allow-insecure-html: true
+                cache: 30m
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=round%28%28certmanager_certificate_expiration_timestamp_seconds%20-%20time%28%29%29%20%2F%2086400%2C%201%29"
+                template: |
+                  {{$r := .JSON.Array "data.result"}}
+                  {{if eq (len $r) 0}}<div style="font-size:.85em;opacity:.5;padding:10px 0;text-align:center">Pas de certificats</div>{{else}}
+                  <div style="display:flex;flex-direction:column;gap:4px">
+                  {{range $r}}{{$n := .String "metric.name"}}{{$d := .Float "value.1"}}
+                  <div style="display:flex;justify-content:space-between;font-size:.8em"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{$n}}</span><span style="color:{{if lt $d 14.0}}#ef4444{{else if lt $d 30.0}}#f59e0b{{else}}#22c55e{{end}}">{{.String "value.1"}} j</span></div>
+                  {{end}}
+                  </div>
+                  {{end}}
+
+              - type: custom-api
+                title: Top RAM (pods)
+                allow-insecure-html: true
+                cache: 1m
+                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=topk%286%2C%20round%28sum%20by%20%28namespace%2Cpod%29%20%28container_memory_working_set_bytes%7Bcontainer%21%3D%22%22%7D%29%20%2F%201048576%29%29"
+                template: |
+                  {{$r := .JSON.Array "data.result"}}
+                  <div style="display:flex;flex-direction:column;gap:4px">
+                  {{range $r}}{{$ns := .String "metric.namespace"}}{{$pod := .String "metric.pod"}}
+                  <div style="display:flex;justify-content:space-between;font-size:.78em;gap:8px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{$ns}}/{{$pod}}</span><span style="font-weight:600;white-space:nowrap">{{.String "value.1"}} Mi</span></div>
+                  {{end}}
+                  </div>
+
           - size: small
             widgets:
               - type: custom-api
