@@ -22,11 +22,35 @@ spec:
             summary: "Backup VolSync en retard"
             description: "Le backup VolSync {{ $labels.obj_namespace }}/{{ $labels.obj_name }} est en retard sur son planning depuis plus de 6h."
 
-    # NB : pas d'alerte sur cnpg_collector_last_available_backup_timestamp — ce
-    # métrique n'est PAS mis à jour par la méthode plugin barman-cloud
-    # (immich/nextcloud restaient à des semaines alors que leurs Backup CRs sont
-    # completed quotidiennement). Le monitoring CNPG fiable passera par le statut
-    # des Backup CRs via KSM CustomResourceState, à ajouter séparément.
+    # =========================
+    # Backups CNPG (Postgres → R2) — via le statut des Backup CRs (KSM CRS).
+    # Fiable quelle que soit la méthode (plugin barman / volumeSnapshot),
+    # contrairement à cnpg_collector_*_backup_timestamp (non màj par le plugin).
+    # =========================
+    - name: cnpg-backup.rules
+      rules:
+        - alert: CNPGBackupStale
+          # aucun Backup CR "completed" depuis >36h (planning quotidien)
+          expr: |
+            time() - max by (cluster, namespace) (cnpg_backup_created{phase="completed"}) > 129600
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup CNPG périmé"
+            description: "Aucun backup CNPG réussi depuis plus de 36h pour le cluster {{ $labels.cluster }} ({{ $labels.namespace }})."
+
+        - alert: CNPGBackupFailed
+          # le backup le plus récent a échoué (failed plus récent que completed)
+          expr: |
+            max by (cluster, namespace) (cnpg_backup_created{phase="failed"})
+            > max by (cluster, namespace) (cnpg_backup_created{phase="completed"})
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup CNPG en échec"
+            description: "Le dernier backup du cluster CNPG {{ $labels.cluster }} ({{ $labels.namespace }}) a échoué et aucun n'a réussi depuis."
 
     # =========================
     # Disque OS des nodes Talos (cache containerd)
