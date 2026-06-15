@@ -208,272 +208,156 @@ data:
             widgets:
               - type: group
                 widgets:
-                  - type: group
-                    title: Vue d'ensemble
-                    widgets:
-                      - type: custom-api
-                        title: Bibliothèque
-                        allow-insecure-html: true
-                        cache: 5m
-                        url: "http://emby.media.svc.cluster.local:8096/Items/Counts?api_key=$${EMBY_API_KEY}"
-                        template: |
-                          {{$movies := .JSON.Int "MovieCount"}}
-                          {{$series := .JSON.Int "SeriesCount"}}
-                          {{$episodes := .JSON.Int "EpisodeCount"}}
+                  - type: custom-api
+                    title: Ma bibliothèque
+                    allow-insecure-html: true
+                    cache: 5m
+                    url: "http://emby.media.svc.cluster.local:8096/Items/Counts?api_key=$${EMBY_API_KEY}"
+                    template: |
+                      {{$movies := .JSON.Int "MovieCount"}}
+                      {{$series := .JSON.Int "SeriesCount"}}
+                      {{$episodes := .JSON.Int "EpisodeCount"}}
 
-                          <div style="display:flex;flex-direction:column;gap:16px">
-                          <div>
-                            <div class="gls-section-hdr">BIBLIOTHÈQUE</div>
-                            <div style="display:flex;gap:8px;flex-wrap:wrap">
-                              <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
-                                <div style="font-size:1.4em;font-weight:700;color:#3b82f6">{{$movies}}</div>
-                                <div style="font-size:.7em;opacity:.6;margin-top:1px">🎬 Films</div>
-                              </div>
-                              <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
-                                <div style="font-size:1.4em;font-weight:700;color:#8b5cf6">{{$series}}</div>
-                                <div style="font-size:.7em;opacity:.6;margin-top:1px">📺 Séries</div>
-                              </div>
-                              <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
-                                <div style="font-size:1.4em;font-weight:700;color:#06b6d4">{{$episodes}}</div>
-                                <div style="font-size:.7em;opacity:.6;margin-top:1px">🎞 Épisodes</div>
-                              </div>
-                              <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
-                                <div id="dynacat-nsong" style="font-size:1.4em;font-weight:700;color:#f59e0b">…</div>
-                                <div style="font-size:.7em;opacity:.6;margin-top:1px">🎵 Morceaux</div>
-                              </div>
-                            </div>
+                      <div style="display:flex;flex-direction:column;gap:16px">
+                      <div>
+                        <div class="gls-section-hdr">BIBLIOTHÈQUE</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                          <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
+                            <div style="font-size:1.4em;font-weight:700;color:#3b82f6">{{$movies}}</div>
+                            <div style="font-size:.7em;opacity:.6;margin-top:1px">🎬 Films</div>
                           </div>
-                          <div class="gls-trigger" onanimationstart="if(!window.__gls){window.__gls=true;document.addEventListener('click',function(e){var b=e.target;while(b&&!b.classList.contains('widget-group-title'))b=b.parentElement;if(!b)return;var t=b.parentElement;var bs=[].slice.call(t.children);var i=bs.indexOf(b);if(i<0)return;document.querySelectorAll('.widget-header.gap-20').forEach(function(o){if(o===t||o.children.length!==t.children.length)return;var ob=o.children[i];if(ob&&!ob.classList.contains('widget-group-title-current'))ob.click();});},true);}"></div>
-                          <div class="gls-trigger" data-u="$${NAVIDROME_USER}" data-p="$${NAVIDROME_PASS}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var u=el.dataset.u,p=el.dataset.p,d=el.dataset.d;function page(off,tot){fetch('https://navidrome.'+d+'/rest/getAlbumList2.view?u='+u+'&p='+p+'&c=dynacat&v=1.16.1&f=json&type=alphabeticalByArtist&size=500&offset='+off).then(function(r){return r.json()}).then(function(j){var al=(j['subsonic-response']&&j['subsonic-response'].albumList2&&j['subsonic-response'].albumList2.album)||[];var n=al.reduce(function(s,a){return s+(a.songCount||0)},0);tot+=n;var el2=document.getElementById('dynacat-nsong');if(al.length===500){page(off+500,tot)}else if(el2){el2.textContent=tot}}).catch(function(){var el2=document.getElementById('dynacat-nsong');if(el2)el2.textContent='?'})}page(0,0)})(this)"></div>
-                          <div id="dynacat-lib" class="gls-trigger" data-k="$${EMBY_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var k=el.dataset.k,d=el.dataset.d,base='https://emby.'+d;Promise.all([fetch(base+'/Items?SortBy=DateCreated&SortOrder=Descending&IncludeItemTypes=Movie,Series&Recursive=true&Limit=16&Fields=PrimaryImageAspectRatio&api_key='+k).then(function(r){return r.json()}),fetch(base+'/Users?api_key='+k).then(function(r){return r.json()}).then(function(us){var uid=us&&us[0]&&us[0].Id;if(!uid)return{Items:[]};return fetch(base+'/Users/'+uid+'/Items?SortBy=DatePlayed&SortOrder=Descending&Filters=IsPlayed&Recursive=true&Limit=8&IncludeItemTypes=Movie,Episode&Fields=PrimaryImageAspectRatio,UserData&api_key='+k).then(function(r){return r.json();});})]).then(function(res){var rec=res[0].Items||[],hist=res[1].Items||[];function ago(s){var diff=Date.now()-new Date(s).getTime(),m=Math.floor(diff/60000);if(m<60)return'il y a '+m+'min';if(m<1440)return'il y a '+Math.floor(m/60)+'h';return'il y a '+Math.floor(m/1440)+'j';}function dur(t){var s=Math.floor(t/10000000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>0?h+'h'+String(m).padStart(2,'0'):m+'min';}var h='<div class=\'gls-section-hdr\' style=\'margin-bottom:8px\'>AJOUTS RÉCENTS</div>';if(rec.length){h+='<div style=\'display:flex;gap:6px;overflow-x:auto;padding-bottom:6px\'>';rec.forEach(function(it){h+='<a href=\''+base+'/web/index.html#!/details?id='+it.Id+'\' target=\'_blank\' style=\'text-decoration:none;flex-shrink:0;display:block;width:92px\'><img src=\''+base+'/Items/'+it.Id+'/Images/Primary?maxHeight=138&api_key='+k+'\' style=\'width:92px;height:138px;object-fit:cover;border-radius:6px\'><span style=\'display:inline-block;margin-top:2px;font-size:.6em;padding:1px 4px;background:'+(it.Type==='Movie'?'#3b82f6':'#8b5cf6')+';color:#fff;border-radius:3px\'>'+(it.Type==='Movie'?'Film':'Série')+'</span><div style=\'font-size:.7em;font-weight:600;line-height:1.2;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+it.Name+'</div></a>';});h+='</div>';}else{h+='<div style=\'font-size:.85em;opacity:.5\'>Aucun ajout récent</div>';}h+='<div style=\'margin-top:14px\'><div class=\'gls-section-hdr\' style=\'margin-bottom:8px\'>VU RÉCEMMENT</div>';if(hist.length){h+='<div style=\'display:flex;flex-direction:column;gap:5px\'>';hist.forEach(function(it){var title=it.SeriesName||it.Name;var sub=it.SeriesName?'S'+String(it.ParentIndexNumber||0).padStart(2,'0')+'E'+String(it.IndexNumber||0).padStart(2,'0')+' · '+it.Name:(it.ProductionYear?String(it.ProductionYear):'');var ag=it.UserData&&it.UserData.LastPlayedDate?ago(it.UserData.LastPlayedDate):'';var dr=it.RunTimeTicks?dur(it.RunTimeTicks):'';h+='<a href=\''+base+'/web/index.html#!/details?id='+it.Id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:5px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\''+base+'/Items/'+it.Id+'/Images/Primary?maxHeight=80&api_key='+k+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0;flex:1\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+title+'</div>'+(sub?'<div style=\'font-size:.7em;opacity:.65;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+sub+'</div>':'')+'<div style=\'display:flex;justify-content:space-between;font-size:.68em;margin-top:2px;opacity:.5\'><span>'+dr+'</span><span>'+ag+'</span></div></div></a>';});h+='</div>';}else{h+='<div style=\'font-size:.85em;opacity:.5\'>Aucun historique</div>';}h+='</div>';el.innerHTML=h;}).catch(function(e){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur: '+e.message+'</div>';});})(this)">Chargement...</div>
+                          <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
+                            <div style="font-size:1.4em;font-weight:700;color:#8b5cf6">{{$series}}</div>
+                            <div style="font-size:.7em;opacity:.6;margin-top:1px">📺 Séries</div>
                           </div>
+                          <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
+                            <div style="font-size:1.4em;font-weight:700;color:#06b6d4">{{$episodes}}</div>
+                            <div style="font-size:.7em;opacity:.6;margin-top:1px">🎞 Épisodes</div>
+                          </div>
+                          <div style="flex:1;min-width:80px;padding:10px 14px;background:rgba(0,0,0,.1);border-radius:8px;text-align:center">
+                            <div id="dynacat-nsong" style="font-size:1.4em;font-weight:700;color:#f59e0b">…</div>
+                            <div style="font-size:.7em;opacity:.6;margin-top:1px">🎵 Morceaux</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="gls-trigger" onanimationstart="if(!window.__gls){window.__gls=true;document.addEventListener('click',function(e){var b=e.target;while(b&&!b.classList.contains('widget-group-title'))b=b.parentElement;if(!b)return;var t=b.parentElement;var bs=[].slice.call(t.children);var i=bs.indexOf(b);if(i<0)return;document.querySelectorAll('.widget-header.gap-20').forEach(function(o){if(o===t||o.children.length!==t.children.length)return;var ob=o.children[i];if(ob&&!ob.classList.contains('widget-group-title-current'))ob.click();});},true);}"></div>
+                      <div class="gls-trigger" data-u="$${NAVIDROME_USER}" data-p="$${NAVIDROME_PASS}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var u=el.dataset.u,p=el.dataset.p,d=el.dataset.d;function page(off,tot){fetch('https://navidrome.'+d+'/rest/getAlbumList2.view?u='+u+'&p='+p+'&c=dynacat&v=1.16.1&f=json&type=alphabeticalByArtist&size=500&offset='+off).then(function(r){return r.json()}).then(function(j){var al=(j['subsonic-response']&&j['subsonic-response'].albumList2&&j['subsonic-response'].albumList2.album)||[];var n=al.reduce(function(s,a){return s+(a.songCount||0)},0);tot+=n;var el2=document.getElementById('dynacat-nsong');if(al.length===500){page(off+500,tot)}else if(el2){el2.textContent=tot}}).catch(function(){var el2=document.getElementById('dynacat-nsong');if(el2)el2.textContent='?'})}page(0,0)})(this)"></div>
+                      <div id="dynacat-lib" class="gls-trigger" data-k="$${EMBY_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var k=el.dataset.k,d=el.dataset.d,base='https://emby.'+d;Promise.all([fetch(base+'/Items?SortBy=DateCreated&SortOrder=Descending&IncludeItemTypes=Movie,Series&Recursive=true&Limit=16&Fields=PrimaryImageAspectRatio&api_key='+k).then(function(r){return r.json()}),fetch(base+'/Users?api_key='+k).then(function(r){return r.json()}).then(function(us){var uid=us&&us[0]&&us[0].Id;if(!uid)return{Items:[]};return fetch(base+'/Users/'+uid+'/Items?SortBy=DatePlayed&SortOrder=Descending&Filters=IsPlayed&Recursive=true&Limit=8&IncludeItemTypes=Movie,Episode&Fields=PrimaryImageAspectRatio,UserData&api_key='+k).then(function(r){return r.json();});})]).then(function(res){var rec=res[0].Items||[],hist=res[1].Items||[];function ago(s){var diff=Date.now()-new Date(s).getTime(),m=Math.floor(diff/60000);if(m<60)return'il y a '+m+'min';if(m<1440)return'il y a '+Math.floor(m/60)+'h';return'il y a '+Math.floor(m/1440)+'j';}function dur(t){var s=Math.floor(t/10000000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>0?h+'h'+String(m).padStart(2,'0'):m+'min';}var h='<div class=\'gls-section-hdr\' style=\'margin-bottom:8px\'>AJOUTS RÉCENTS</div>';if(rec.length){h+='<div style=\'display:flex;gap:6px;overflow-x:auto;padding-bottom:6px\'>';rec.forEach(function(it){h+='<a href=\''+base+'/web/index.html#!/details?id='+it.Id+'\' target=\'_blank\' style=\'text-decoration:none;flex-shrink:0;display:block;width:92px\'><img src=\''+base+'/Items/'+it.Id+'/Images/Primary?maxHeight=138&api_key='+k+'\' style=\'width:92px;height:138px;object-fit:cover;border-radius:6px\'><span style=\'display:inline-block;margin-top:2px;font-size:.6em;padding:1px 4px;background:'+(it.Type==='Movie'?'#3b82f6':'#8b5cf6')+';color:#fff;border-radius:3px\'>'+(it.Type==='Movie'?'Film':'Série')+'</span><div style=\'font-size:.7em;font-weight:600;line-height:1.2;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+it.Name+'</div></a>';});h+='</div>';}else{h+='<div style=\'font-size:.85em;opacity:.5\'>Aucun ajout récent</div>';}h+='<div style=\'margin-top:14px\'><div class=\'gls-section-hdr\' style=\'margin-bottom:8px\'>VU RÉCEMMENT</div>';if(hist.length){h+='<div style=\'display:flex;flex-direction:column;gap:5px\'>';hist.forEach(function(it){var title=it.SeriesName||it.Name;var sub=it.SeriesName?'S'+String(it.ParentIndexNumber||0).padStart(2,'0')+'E'+String(it.IndexNumber||0).padStart(2,'0')+' · '+it.Name:(it.ProductionYear?String(it.ProductionYear):'');var ag=it.UserData&&it.UserData.LastPlayedDate?ago(it.UserData.LastPlayedDate):'';var dr=it.RunTimeTicks?dur(it.RunTimeTicks):'';h+='<a href=\''+base+'/web/index.html#!/details?id='+it.Id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:5px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\''+base+'/Items/'+it.Id+'/Images/Primary?maxHeight=80&api_key='+k+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0;flex:1\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+title+'</div>'+(sub?'<div style=\'font-size:.7em;opacity:.65;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+sub+'</div>':'')+'<div style=\'display:flex;justify-content:space-between;font-size:.68em;margin-top:2px;opacity:.5\'><span>'+dr+'</span><span>'+ag+'</span></div></div></a>';});h+='</div>';}else{h+='<div style=\'font-size:.85em;opacity:.5\'>Aucun historique</div>';}h+='</div>';el.innerHTML=h;}).catch(function(e){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur: '+e.message+'</div>';});})(this)">Chargement...</div>
+                      </div>
 
-                      - type: custom-api
-                        title: À venir
-                        allow-insecure-html: true
-                        cache: 30m
-                        url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/health?apikey=$${SONARR_API_KEY}"
-                        template: |
-                          <div class="gls-section-hdr">PROCHAINS ÉPISODES</div>
-                          <div id="dynacat-mep" class="gls-trigger" data-ks="$${SONARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+14*864e5).toISOString().slice(0,10);fetch('https://sonarr.'+el.dataset.d+'/api/v3/calendar?start='+t+'&end='+f+'&apikey='+el.dataset.ks+'&unmonitored=false').then(function(r){return r.json()}).then(function(d){if(!d||!d.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun épisode à venir</div>';return;}var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.forEach(function(ep){var au=ep.airDateUtc||'',dt=au?au.slice(8,10)+'-'+au.slice(5,7)+'-'+au.slice(0,4):'',sn=String(ep.seasonNumber||0).padStart(2,'0'),en_=String(ep.episodeNumber||0).padStart(2,'0'),badge=ep.hasFile?'<span style=\'font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Dispo</span>':'<span style=\'font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Manquant</span>';h+='<a href=\'https://sonarr.'+el.dataset.d+'/series\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\'https://sonarr.'+el.dataset.d+'/MediaCover/'+ep.seriesId+'/poster.jpg?apikey='+el.dataset.ks+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+ep.title+'</div><div style=\'font-size:.7em;opacity:.65\'>S'+sn+'E'+en_+' · '+dt+'</div>'+badge+'</div></a>';});h+='</div>';el.innerHTML=h;})})(this)">Chargement...</div>
-                          <div class="gls-sep"></div>
-                          <div class="gls-section-hdr">FILMS À VENIR</div>
-                          <div id="dynacat-mfv" class="gls-trigger" data-kr="$${RADARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+90*864e5).toISOString().slice(0,10);fetch('https://radarr.'+el.dataset.d+'/api/v3/calendar?start='+t+'&end='+f+'&apikey='+el.dataset.kr+'&unmonitored=false').then(function(r){return r.json()}).then(function(d){if(!d||!d.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun film à venir</div>';return;}var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d||[]).slice(0,9).forEach(function(m){var imgObj=(m.images||[]).find(function(i){return i.coverType===\'poster\';});var p=imgObj?'<img src=\''+imgObj.remoteUrl+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.15)\'></div>';var ic=m.inCinemas||'',dt=ic?ic.slice(0,10):'';h+='<a href=\'https://radarr.'+el.dataset.d+'/movie/'+m.tmdbId+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+p+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+(m.title||'')+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+dt+'</div></div></a>';});h+='</div>';el.innerHTML=h;})})(this)">Chargement...</div>
-
-                  - type: group
+                  - type: custom-api
                     title: Films
-                    widgets:
-                      - type: custom-api
-                        title: Bibliothèque
-                        allow-insecure-html: true
-                        cache: 1h
-                        url: "https://api.themoviedb.org/3/movie/upcoming?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
-                        template: |
-                          <div id="dynacat-fsk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('dynacat-fsq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/movie?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://radarr.'+d+'/add/new?term='+encodeURIComponent(m.title)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.title+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.release_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('dynacat-fsr').innerHTML=h;document.getElementById('dynacat-fsr').style.display='';document.getElementById('dynacat-fsd').style.display='none';});})(this)" style="display:none"></div>
-                          <div style="display:flex;gap:8px;margin-bottom:12px">
-                            <input id="dynacat-fsq" placeholder="Rechercher un film..." onkeydown="if(event.key==='Enter')document.getElementById('dynacat-fsk').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
-                            <button onclick="document.getElementById('dynacat-fsk').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
-                            <button onclick="document.getElementById('dynacat-fsq').value='';document.getElementById('dynacat-fsr').style.display='none';document.getElementById('dynacat-fsd').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
-                          </div>
-                          <div id="dynacat-fsr" style="display:none"></div>
-                          <div id="dynacat-fsd">
-                          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
-                          {{range .JSON.Array "results"}}
-                          <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                            <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
-                            <div style="padding:8px">
-                              <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
-                              {{$rd := .String "release_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $rd) 9}}{{slice $rd 8 10}}-{{slice $rd 5 7}}-{{slice $rd 0 4}}{{else}}{{$rd}}{{end}}</div>
-                              <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
-                            </div>
-                          </a>
-                          {{end}}
-                          </div>
-                          </div>
+                    allow-insecure-html: true
+                    cache: 1h
+                    url: "https://api.themoviedb.org/3/movie/upcoming?api_key=$${TMDB_API_KEY}&language=fr-FR&region=FR"
+                    template: |
+                      <div id="dynacat-fsk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('dynacat-fsq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/movie?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://radarr.'+d+'/add/new?term='+encodeURIComponent(m.title)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.title+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.release_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('dynacat-fsr').innerHTML=h;document.getElementById('dynacat-fsr').style.display='';document.getElementById('dynacat-fsd').style.display='none';});})(this)" style="display:none"></div>
+                      <div style="display:flex;gap:8px;margin-bottom:12px">
+                        <input id="dynacat-fsq" placeholder="Rechercher un film..." onkeydown="if(event.key==='Enter')document.getElementById('dynacat-fsk').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
+                        <button onclick="document.getElementById('dynacat-fsk').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
+                        <button onclick="document.getElementById('dynacat-fsq').value='';document.getElementById('dynacat-fsr').style.display='none';document.getElementById('dynacat-fsd').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
+                      </div>
+                      <div id="dynacat-fsr" style="display:none"></div>
+                      <div id="dynacat-fsd">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
+                      {{range .JSON.Array "results"}}
+                      <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
+                        <div style="padding:8px">
+                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
+                          {{$rd := .String "release_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $rd) 9}}{{slice $rd 8 10}}-{{slice $rd 5 7}}-{{slice $rd 0 4}}{{else}}{{$rd}}{{end}}</div>
+                          <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+                      </div>
 
-                      - type: custom-api
-                        title: À venir
-                        allow-insecure-html: true
-                        cache: 30m
-                        url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
-                        template: |
-                          <div class="gls-section-hdr">WATCHLIST RADARR</div>
-                          {{$items := .JSON.Array "@this"}}
-                          {{if eq (len $items) 0}}
-                          <div style="font-size:.85em;opacity:.5">Aucun film dans la watchlist</div>
-                          {{else}}
-                          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
-                          {{range $items}}
-                          <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                            <img src="{{.String "images.#[coverType==poster].remoteUrl"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
-                            <div style="padding:4px">
-                              <div style="font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{.String "title"}}</div>
-                              {{$ic := .String "inCinemas"}}<div style="font-size:.65em;opacity:.6;margin-top:1px">{{if gt (len $ic) 9}}{{slice $ic 8 10}}-{{slice $ic 5 7}}-{{slice $ic 0 4}}{{else}}{{$ic}}{{end}}</div>
-                              {{if eq (.String "hasFile") "true"}}<span style="font-size:.6em;padding:1px 3px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:1px">✓</span>{{else}}<span style="font-size:.6em;padding:1px 3px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:1px">✗</span>{{end}}
-                            </div>
-                          </a>
-                          {{end}}
-                          </div>
-                          {{end}}
-                          <div class="gls-sep"></div>
-                          <div class="gls-section-hdr">SORTIES FILMS (FR)</div>
-                          <div id="dynacat-sfr" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+180*864e5).toISOString().slice(0,10);fetch('https://api.themoviedb.org/3/discover/movie?api_key='+el.dataset.k+'&language=fr-FR&region=FR&with_release_type=3&release_date.gte='+t+'&release_date.lte='+f+'&sort_by=release_date.asc').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d.results||[]).slice(0,9).forEach(function(m){var p=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.15)\'></div>';h+='<a href=\'https://www.themoviedb.org/movie/'+m.id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+p+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+(m.title||'')+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(m.release_date||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucune sortie à venir</div>';});})(this)">Chargement...</div>
-
-                  - type: group
+                  - type: custom-api
                     title: Séries
-                    widgets:
-                      - type: custom-api
-                        title: Bibliothèque
-                        allow-insecure-html: true
-                        cache: 30m
-                        url: "https://api.themoviedb.org/3/discover/tv?api_key=$${TMDB_API_KEY}&sort_by=first_air_date.asc&first_air_date.gte=2025-04-01&language=fr-FR&page=1"
-                        template: |
-                          <div id="dynacat-slk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('dynacat-slq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('dynacat-slr').innerHTML=h;document.getElementById('dynacat-slr').style.display='';document.getElementById('dynacat-sld').style.display='none';});})(this)" style="display:none"></div>
-                          <div style="display:flex;gap:8px;margin-bottom:12px">
-                            <input id="dynacat-slq" placeholder="Ajouter une série..." onkeydown="if(event.key==='Enter')document.getElementById('dynacat-slk').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
-                            <button onclick="document.getElementById('dynacat-slk').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
-                            <button onclick="document.getElementById('dynacat-slq').value='';document.getElementById('dynacat-slr').style.display='none';document.getElementById('dynacat-sld').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
-                          </div>
-                          <div id="dynacat-slr" style="display:none"></div>
-                          <div id="dynacat-sld">
-                          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
-                          {{range .JSON.Array "results"}}
-                          <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                            {{if .String "poster_path"}}<img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)"></div>{{end}}
-                            <div style="padding:8px">
-                              <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
-                              {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $fad) 9}}{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}{{else}}{{$fad}}{{end}}</div>
-                              <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
-                            </div>
-                          </a>
-                          {{end}}
-                          </div>
-                          </div>
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "https://api.themoviedb.org/3/discover/tv?api_key=$${TMDB_API_KEY}&sort_by=first_air_date.asc&first_air_date.gte=2025-04-01&language=fr-FR&page=1"
+                    template: |
+                      <div id="dynacat-slk" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('dynacat-slq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('dynacat-slr').innerHTML=h;document.getElementById('dynacat-slr').style.display='';document.getElementById('dynacat-sld').style.display='none';});})(this)" style="display:none"></div>
+                      <div style="display:flex;gap:8px;margin-bottom:12px">
+                        <input id="dynacat-slq" placeholder="Ajouter une série..." onkeydown="if(event.key==='Enter')document.getElementById('dynacat-slk').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
+                        <button onclick="document.getElementById('dynacat-slk').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
+                        <button onclick="document.getElementById('dynacat-slq').value='';document.getElementById('dynacat-slr').style.display='none';document.getElementById('dynacat-sld').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
+                      </div>
+                      <div id="dynacat-slr" style="display:none"></div>
+                      <div id="dynacat-sld">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
+                      {{range .JSON.Array "results"}}
+                      <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        {{if .String "poster_path"}}<img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)"></div>{{end}}
+                        <div style="padding:8px">
+                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
+                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $fad) 9}}{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}{{else}}{{$fad}}{{end}}</div>
+                          <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+                      </div>
 
-                      - type: custom-api
-                        title: À venir
-                        allow-insecure-html: true
-                        cache: 30m
-                        url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/health?apikey=$${SONARR_API_KEY}"
-                        template: |
-                          <div class="gls-section-hdr">ÉPISODES À VENIR</div>
-                          <div id="dynacat-sep" class="gls-trigger" data-ks="$${SONARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+30*864e5).toISOString().slice(0,10);fetch('https://sonarr.'+el.dataset.d+'/api/v3/calendar?start='+t+'&end='+f+'&apikey='+el.dataset.ks+'&unmonitored=false').then(function(r){return r.json()}).then(function(d){if(!d||!d.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun épisode à venir</div>';return;}var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.forEach(function(ep){var au=ep.airDateUtc||'',dt=au?au.slice(8,10)+'-'+au.slice(5,7)+'-'+au.slice(0,4):'',sn=String(ep.seasonNumber||0).padStart(2,'0'),en_=String(ep.episodeNumber||0).padStart(2,'0'),badge=ep.hasFile?'<span style=\'font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Dispo</span>':'<span style=\'font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Manquant</span>';h+='<a href=\'https://sonarr.'+el.dataset.d+'/series\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\'https://sonarr.'+el.dataset.d+'/MediaCover/'+ep.seriesId+'/poster.jpg?apikey='+el.dataset.ks+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+ep.title+'</div><div style=\'font-size:.7em;opacity:.65\'>S'+sn+'E'+en_+' · '+dt+'</div>'+badge+'</div></a>';});h+='</div>';el.innerHTML=h;})})(this)">Chargement...</div>
-
-                  - type: group
+                  - type: custom-api
                     title: Animés
-                    widgets:
-                      - type: custom-api
-                        title: Bibliothèque
-                        allow-insecure-html: true
-                        cache: 1h
-                        url: "https://api.themoviedb.org/3/discover/tv?api_key=$${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=first_air_date.desc&first_air_date.gte=2024-01-01&language=fr-FR"
-                        template: |
-                          <div id="dynacat-ask" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('dynacat-asq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('dynacat-asr').innerHTML=h;document.getElementById('dynacat-asr').style.display='';document.getElementById('dynacat-asd').style.display='none';});})(this)" style="display:none"></div>
-                          <div style="display:flex;gap:8px;margin-bottom:12px">
-                            <input id="dynacat-asq" placeholder="Rechercher un animé..." onkeydown="if(event.key==='Enter')document.getElementById('dynacat-ask').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
-                            <button onclick="document.getElementById('dynacat-ask').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
-                            <button onclick="document.getElementById('dynacat-asq').value='';document.getElementById('dynacat-asr').style.display='none';document.getElementById('dynacat-asd').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
-                          </div>
-                          <div id="dynacat-asr" style="display:none"></div>
-                          <div id="dynacat-asd">
-                          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
-                          {{range .JSON.Array "results"}}
-                          <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                            <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
-                            <div style="padding:8px">
-                              <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
-                              {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $fad) 9}}{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}{{else}}{{$fad}}{{end}}</div>
-                              <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
-                            </div>
-                          </a>
-                          {{end}}
-                          </div>
-                          </div>
+                    allow-insecure-html: true
+                    cache: 1h
+                    url: "https://api.themoviedb.org/3/discover/tv?api_key=$${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=first_air_date.desc&first_air_date.gte=2024-01-01&language=fr-FR"
+                    template: |
+                      <div id="dynacat-ask" data-k="$${TMDB_API_KEY}" data-d="${SECRET_DOMAIN}" onclick="(function(e){var q=document.getElementById('dynacat-asq').value.trim(),a=e.dataset.k,d=e.dataset.d;if(!q)return;fetch('https://api.themoviedb.org/3/search/tv?api_key='+a+'&query='+encodeURIComponent(q)+'&language=fr-FR').then(function(r){return r.json()}).then(function(data){var h='<div style=\'display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px\'>';data.results.forEach(function(m){var img=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1)\'></div>';h+='<a href=\'https://sonarr.'+d+'/add/new?term='+encodeURIComponent(m.name)+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+img+'<div style=\'padding:8px\'><div style=\'font-weight:600;font-size:.85em;line-height:1.2\'>'+m.name+'</div><div style=\'font-size:.75em;opacity:.65;margin-top:3px\'>'+(m.first_air_date||'')+'</div><div style=\'font-size:.75em;margin-top:3px\'>⭐ '+(m.vote_average?m.vote_average.toFixed(1):'?')+'</div></div></a>';});h+='</div>';document.getElementById('dynacat-asr').innerHTML=h;document.getElementById('dynacat-asr').style.display='';document.getElementById('dynacat-asd').style.display='none';});})(this)" style="display:none"></div>
+                      <div style="display:flex;gap:8px;margin-bottom:12px">
+                        <input id="dynacat-asq" placeholder="Rechercher un animé..." onkeydown="if(event.key==='Enter')document.getElementById('dynacat-ask').click()" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,.2);background:rgba(0,0,0,.05);font-size:.9em">
+                        <button onclick="document.getElementById('dynacat-ask').click()" style="padding:6px 14px;border-radius:6px;background:rgba(0,0,0,.1);border:none;cursor:pointer;font-size:.9em">→</button>
+                        <button onclick="document.getElementById('dynacat-asq').value='';document.getElementById('dynacat-asr').style.display='none';document.getElementById('dynacat-asd').style.display=''" style="padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:.9em;opacity:.6">✕</button>
+                      </div>
+                      <div id="dynacat-asr" style="display:none"></div>
+                      <div id="dynacat-asd">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">
+                      {{range .JSON.Array "results"}}
+                      <a href="https://sonarr.${SECRET_DOMAIN}/add/new?term={{.String "name"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        <img src="https://image.tmdb.org/t/p/w92{{.String "poster_path"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
+                        <div style="padding:8px">
+                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "name"}}</div>
+                          {{$fad := .String "first_air_date"}}<div style="font-size:.75em;opacity:.65;margin-top:3px">{{if gt (len $fad) 9}}{{slice $fad 8 10}}-{{slice $fad 5 7}}-{{slice $fad 0 4}}{{else}}{{$fad}}{{end}}</div>
+                          <div style="font-size:.75em;margin-top:3px">⭐ {{.String "vote_average"}}</div>
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+                      </div>
 
-                      - type: custom-api
-                        title: À venir
-                        allow-insecure-html: true
-                        cache: 30m
-                        url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/health?apikey=$${SONARR_API_KEY}"
-                        template: |
-                          <div class="gls-section-hdr">ÉPISODES À VENIR</div>
-                          <div id="dynacat-aep" class="gls-trigger" data-ks="$${SONARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+30*864e5).toISOString().slice(0,10);Promise.all([fetch('https://sonarr.'+el.dataset.d+'/api/v3/series?apikey='+el.dataset.ks).then(function(r){return r.json()}),fetch('https://sonarr.'+el.dataset.d+'/api/v3/calendar?start='+t+'&end='+f+'&apikey='+el.dataset.ks+'&unmonitored=false').then(function(r){return r.json()})]).then(function(res){var ids={};(res[0]||[]).filter(function(s){return s.seriesType==='anime'}).forEach(function(s){ids[s.id]=1});var d=(res[1]||[]).filter(function(ep){return ids[ep.seriesId]});if(!d.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun épisode à venir</div>';return;}var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.forEach(function(ep){var au=ep.airDateUtc||'',dt=au?au.slice(8,10)+'-'+au.slice(5,7)+'-'+au.slice(0,4):'',sn=String(ep.seasonNumber||0).padStart(2,'0'),en_=String(ep.episodeNumber||0).padStart(2,'0'),badge=ep.hasFile?'<span style=\'font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Dispo</span>':'<span style=\'font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Manquant</span>';h+='<a href=\'https://sonarr.'+el.dataset.d+'/series\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\'https://sonarr.'+el.dataset.d+'/MediaCover/'+ep.seriesId+'/poster.jpg?apikey='+el.dataset.ks+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+ep.title+'</div><div style=\'font-size:.7em;opacity:.65\'>S'+sn+'E'+en_+' · '+dt+'</div>'+badge+'</div></a>'});h+='</div>';el.innerHTML=h})})(this)">Chargement...</div>
-                          <div class="gls-sep"></div>
-                          <div class="gls-section-hdr">NOUVELLES SAISONS</div>
-                          <div id="dynacat-nsa" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+60*864e5).toISOString().slice(0,10);fetch('https://api.themoviedb.org/3/discover/tv?api_key='+el.dataset.k+'&language=fr-FR&with_genres=16&with_original_language=ja&first_air_date.gte='+t+'&first_air_date.lte='+f+'&sort_by=first_air_date.asc').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d.results||[]).slice(0,9).forEach(function(m){var p=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.15)\'></div>';h+='<a href=\'https://www.themoviedb.org/tv/'+m.id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+p+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+(m.name||'')+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(m.first_air_date||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucune sortie à venir</div>';});})(this)">Chargement...</div>
-
-                  - type: group
+                  - type: custom-api
                     title: Livres
-                    widgets:
-                      - type: custom-api
-                        title: Bibliothèque
-                        allow-insecure-html: true
-                        cache: 30m
-                        url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/book?apikey=$${READARR_API_KEY}&pageSize=20&sortKey=releaseDate&sortDirection=desc&unmonitored=false"
-                        template: |
-                          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
-                          {{range .JSON.Array "@this"}}
-                          <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                            {{$cover := .String "images.#[coverType==cover].url"}}
-                            {{if $cover}}<img src="{{$cover}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;font-size:2em">📚</div>{{end}}
-                            <div style="padding:8px">
-                              <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
-                              <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "authorTitle"}}</div>
-                              {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:2px">{{if gt (len $rd) 9}}{{slice $rd 0 10}}{{else}}{{$rd}}{{end}}</div>
-                              {{if eq (.Int "statistics.bookFileCount") 0}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Manquant</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Dispo</span>{{end}}
-                            </div>
-                          </a>
-                          {{end}}
-                          </div>
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/book?apikey=$${READARR_API_KEY}&pageSize=20&sortKey=releaseDate&sortDirection=desc&unmonitored=false"
+                    template: |
+                      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+                      {{range .JSON.Array "@this"}}
+                      <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        {{$cover := .String "images.#[coverType==cover].url"}}
+                        {{if $cover}}<img src="{{$cover}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">{{else}}<div style="width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;font-size:2em">📚</div>{{end}}
+                        <div style="padding:8px">
+                          <div style="font-weight:600;font-size:.85em;line-height:1.2">{{.String "title"}}</div>
+                          <div style="font-size:.75em;opacity:.65;margin-top:3px">{{.String "authorTitle"}}</div>
+                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:2px">{{if gt (len $rd) 9}}{{slice $rd 0 10}}{{else}}{{$rd}}{{end}}</div>
+                          {{if eq (.Int "statistics.bookFileCount") 0}}<span style="font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Manquant</span>{{else}}<span style="font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:3px">Dispo</span>{{end}}
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
 
-                      - type: custom-api
-                        title: À venir
-                        allow-insecure-html: true
-                        cache: 6h
-                        url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/calendar?apikey=$${READARR_API_KEY}&start=2025-01-01&end=2027-12-31&unmonitored=false"
-                        template: |
-                          <div class="gls-section-hdr">LIVRES À VENIR</div>
-                          {{$items := .JSON.Array "@this"}}
-                          {{if eq (len $items) 0}}
-                          <div style="font-size:.85em;opacity:.5">Aucun livre à venir</div>
-                          {{else}}
-                          <div style="display:flex;flex-direction:column;gap:4px">
-                          {{range $items}}
-                          <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
-                            {{$cover := .String "images.#[coverType==cover].url"}}
-                            {{if $cover}}<img src="{{$cover}}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">{{else}}<div style="width:35px;min-width:35px;height:52px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center">📚</div>{{end}}
-                            <div style="min-width:0">
-                              <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
-                              <div style="font-size:.7em;opacity:.65;margin-top:2px">{{.String "authorTitle"}}</div>
-                              {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{if gt (len $rd) 9}}{{slice $rd 0 10}}{{else}}{{$rd}}{{end}}</div>
-                            </div>
-                          </a>
-                          {{end}}
-                          </div>
-                          {{end}}
-
-                  - type: group
+                  - type: custom-api
                     title: Musique
-                    widgets:
-                      - type: custom-api
-                        title: Bibliothèque
-                        allow-insecure-html: true
-                        cache: 30m
-                        url: "http://navidrome.media.svc.cluster.local:4533/rest/ping.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=dynacat&v=1.16.1&f=json"
-                        template: |
-                          <div class="gls-section-hdr">RÉCEMMENT ÉCOUTÉ</div>
-                          <div id="dynacat-nrp" class="gls-trigger" data-u="$${NAVIDROME_USER}" data-p="$${NAVIDROME_PASS}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var u=el.dataset.u,p=el.dataset.p,d=el.dataset.d,base='https://navidrome.'+d;fetch(base+'/rest/getAlbumList2.view?u='+u+'&p='+p+'&c=dynacat&v=1.16.1&f=json&type=recent&size=18').then(function(r){return r.json()}).then(function(j){var al=(j['subsonic-response']&&j['subsonic-response'].albumList2&&j['subsonic-response'].albumList2.album)||[];if(!al.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun album récent</div>';return;}var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';al.forEach(function(a){var cv=a.coverArt?base+'/rest/getCoverArt.view?id='+a.coverArt+'&u='+u+'&p='+p+'&c=dynacat&v=1.16.1':'';h+='<a href=\'https://navidrome.'+d+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+(cv?'<img src=\''+cv+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'>':'')+ '<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.name+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+( a.artist||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur</div>';});})(this)">Chargement...</div>
-                      - type: custom-api
-                        title: À venir
-                        allow-insecure-html: true
-                        cache: 30m
-                        url: "http://navidrome.media.svc.cluster.local:4533/rest/ping.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=dynacat&v=1.16.1&f=json"
-                        template: |
-                          <div class="gls-section-hdr">ALBUMS RÉCENTS</div>
-                          <div id="dynacat-nab" class="gls-trigger" data-u="$${NAVIDROME_USER}" data-p="$${NAVIDROME_PASS}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var u=el.dataset.u,p=el.dataset.p,d=el.dataset.d,base='https://navidrome.'+d;fetch(base+'/rest/getAlbumList2.view?u='+u+'&p='+p+'&c=dynacat&v=1.16.1&f=json&type=newest&size=18').then(function(r){return r.json()}).then(function(j){var al=(j['subsonic-response']&&j['subsonic-response'].albumList2&&j['subsonic-response'].albumList2.album)||[];if(!al.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun album</div>';return;}var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';al.forEach(function(a){var cv=a.coverArt?base+'/rest/getCoverArt.view?id='+a.coverArt+'&u='+u+'&p='+p+'&c=dynacat&v=1.16.1':'';h+='<a href=\''+base+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+(cv?'<img src=\''+cv+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:1/1;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:1.5em\'>🎵</div>')+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.name+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(a.artist||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur</div>';});})(this)">Chargement...</div>
-                          <div class="gls-sep"></div>
-                          <div class="gls-section-hdr">TOP ALBUMS</div>
-                          <div id="dynacat-deezer" class="gls-trigger" onanimationstart="(function(el){fetch('https://api.deezer.com/chart/0/albums?limit=9').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d.data||[]).forEach(function(a){h+='<a href=\''+a.link+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\''+a.cover_medium+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'><div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.title+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(a.artist&&a.artist.name||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album</div>';}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Indisponible</div>';});})(this)">Chargement...</div>
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://navidrome.media.svc.cluster.local:4533/rest/ping.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=dynacat&v=1.16.1&f=json"
+                    template: |
+                      <div class="gls-section-hdr">RÉCEMMENT ÉCOUTÉ</div>
+                      <div id="dynacat-nrp" class="gls-trigger" data-u="$${NAVIDROME_USER}" data-p="$${NAVIDROME_PASS}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var u=el.dataset.u,p=el.dataset.p,d=el.dataset.d,base='https://navidrome.'+d;fetch(base+'/rest/getAlbumList2.view?u='+u+'&p='+p+'&c=dynacat&v=1.16.1&f=json&type=recent&size=18').then(function(r){return r.json()}).then(function(j){var al=(j['subsonic-response']&&j['subsonic-response'].albumList2&&j['subsonic-response'].albumList2.album)||[];if(!al.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun album récent</div>';return;}var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';al.forEach(function(a){var cv=a.coverArt?base+'/rest/getCoverArt.view?id='+a.coverArt+'&u='+u+'&p='+p+'&c=dynacat&v=1.16.1':'';h+='<a href=\'https://navidrome.'+d+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+(cv?'<img src=\''+cv+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'>':'')+ '<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.name+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+( a.artist||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur</div>';});})(this)">Chargement...</div>
           - size: small
             widgets:
               - type: custom-api
@@ -496,6 +380,106 @@ data:
                   </div>
                   {{end}}
 
+              - type: group
+                widgets:
+                  - type: custom-api
+                    title: À venir & découvertes
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/health?apikey=$${SONARR_API_KEY}"
+                    template: |
+                      <div class="gls-section-hdr">PROCHAINS ÉPISODES</div>
+                      <div id="dynacat-mep" class="gls-trigger" data-ks="$${SONARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+14*864e5).toISOString().slice(0,10);fetch('https://sonarr.'+el.dataset.d+'/api/v3/calendar?start='+t+'&end='+f+'&apikey='+el.dataset.ks+'&unmonitored=false').then(function(r){return r.json()}).then(function(d){if(!d||!d.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun épisode à venir</div>';return;}var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.forEach(function(ep){var au=ep.airDateUtc||'',dt=au?au.slice(8,10)+'-'+au.slice(5,7)+'-'+au.slice(0,4):'',sn=String(ep.seasonNumber||0).padStart(2,'0'),en_=String(ep.episodeNumber||0).padStart(2,'0'),badge=ep.hasFile?'<span style=\'font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Dispo</span>':'<span style=\'font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Manquant</span>';h+='<a href=\'https://sonarr.'+el.dataset.d+'/series\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\'https://sonarr.'+el.dataset.d+'/MediaCover/'+ep.seriesId+'/poster.jpg?apikey='+el.dataset.ks+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+ep.title+'</div><div style=\'font-size:.7em;opacity:.65\'>S'+sn+'E'+en_+' · '+dt+'</div>'+badge+'</div></a>';});h+='</div>';el.innerHTML=h;})})(this)">Chargement...</div>
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">FILMS À VENIR</div>
+                      <div id="dynacat-mfv" class="gls-trigger" data-kr="$${RADARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+90*864e5).toISOString().slice(0,10);fetch('https://radarr.'+el.dataset.d+'/api/v3/calendar?start='+t+'&end='+f+'&apikey='+el.dataset.kr+'&unmonitored=false').then(function(r){return r.json()}).then(function(d){if(!d||!d.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun film à venir</div>';return;}var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d||[]).slice(0,9).forEach(function(m){var imgObj=(m.images||[]).find(function(i){return i.coverType===\'poster\';});var p=imgObj?'<img src=\''+imgObj.remoteUrl+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.15)\'></div>';var ic=m.inCinemas||'',dt=ic?ic.slice(0,10):'';h+='<a href=\'https://radarr.'+el.dataset.d+'/movie/'+m.tmdbId+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+p+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+(m.title||'')+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+dt+'</div></div></a>';});h+='</div>';el.innerHTML=h;})})(this)">Chargement...</div>
+
+                  - type: custom-api
+                    title: Films
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://radarr.downloads.svc.cluster.local:7878/api/v3/calendar?start=2025-01-01&end=2027-12-31&apikey=$${RADARR_API_KEY}&unmonitored=false"
+                    template: |
+                      <div class="gls-section-hdr">WATCHLIST RADARR</div>
+                      {{$items := .JSON.Array "@this"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun film dans la watchlist</div>
+                      {{else}}
+                      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
+                      {{range $items}}
+                      <a href="https://radarr.${SECRET_DOMAIN}/add/new?term={{.String "title"}}" target="_blank" style="text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        <img src="{{.String "images.#[coverType==poster].remoteUrl"}}" style="width:100%;aspect-ratio:2/3;object-fit:cover">
+                        <div style="padding:4px">
+                          <div style="font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{.String "title"}}</div>
+                          {{$ic := .String "inCinemas"}}<div style="font-size:.65em;opacity:.6;margin-top:1px">{{if gt (len $ic) 9}}{{slice $ic 8 10}}-{{slice $ic 5 7}}-{{slice $ic 0 4}}{{else}}{{$ic}}{{end}}</div>
+                          {{if eq (.String "hasFile") "true"}}<span style="font-size:.6em;padding:1px 3px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:1px">✓</span>{{else}}<span style="font-size:.6em;padding:1px 3px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:1px">✗</span>{{end}}
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+                      {{end}}
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">SORTIES FILMS (FR)</div>
+                      <div id="dynacat-sfr" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+180*864e5).toISOString().slice(0,10);fetch('https://api.themoviedb.org/3/discover/movie?api_key='+el.dataset.k+'&language=fr-FR&region=FR&with_release_type=3&release_date.gte='+t+'&release_date.lte='+f+'&sort_by=release_date.asc').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d.results||[]).slice(0,9).forEach(function(m){var p=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.15)\'></div>';h+='<a href=\'https://www.themoviedb.org/movie/'+m.id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+p+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+(m.title||'')+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(m.release_date||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucune sortie à venir</div>';});})(this)">Chargement...</div>
+
+                  - type: custom-api
+                    title: Séries
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/health?apikey=$${SONARR_API_KEY}"
+                    template: |
+                      <div class="gls-section-hdr">ÉPISODES À VENIR</div>
+                      <div id="dynacat-sep" class="gls-trigger" data-ks="$${SONARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+30*864e5).toISOString().slice(0,10);fetch('https://sonarr.'+el.dataset.d+'/api/v3/calendar?start='+t+'&end='+f+'&apikey='+el.dataset.ks+'&unmonitored=false').then(function(r){return r.json()}).then(function(d){if(!d||!d.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun épisode à venir</div>';return;}var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.forEach(function(ep){var au=ep.airDateUtc||'',dt=au?au.slice(8,10)+'-'+au.slice(5,7)+'-'+au.slice(0,4):'',sn=String(ep.seasonNumber||0).padStart(2,'0'),en_=String(ep.episodeNumber||0).padStart(2,'0'),badge=ep.hasFile?'<span style=\'font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Dispo</span>':'<span style=\'font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Manquant</span>';h+='<a href=\'https://sonarr.'+el.dataset.d+'/series\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\'https://sonarr.'+el.dataset.d+'/MediaCover/'+ep.seriesId+'/poster.jpg?apikey='+el.dataset.ks+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+ep.title+'</div><div style=\'font-size:.7em;opacity:.65\'>S'+sn+'E'+en_+' · '+dt+'</div>'+badge+'</div></a>';});h+='</div>';el.innerHTML=h;})})(this)">Chargement...</div>
+
+                  - type: custom-api
+                    title: Animés
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://sonarr.downloads.svc.cluster.local:8989/api/v3/health?apikey=$${SONARR_API_KEY}"
+                    template: |
+                      <div class="gls-section-hdr">ÉPISODES À VENIR</div>
+                      <div id="dynacat-aep" class="gls-trigger" data-ks="$${SONARR_API_KEY}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+30*864e5).toISOString().slice(0,10);Promise.all([fetch('https://sonarr.'+el.dataset.d+'/api/v3/series?apikey='+el.dataset.ks).then(function(r){return r.json()}),fetch('https://sonarr.'+el.dataset.d+'/api/v3/calendar?start='+t+'&end='+f+'&apikey='+el.dataset.ks+'&unmonitored=false').then(function(r){return r.json()})]).then(function(res){var ids={};(res[0]||[]).filter(function(s){return s.seriesType==='anime'}).forEach(function(s){ids[s.id]=1});var d=(res[1]||[]).filter(function(ep){return ids[ep.seriesId]});if(!d.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun épisode à venir</div>';return;}var h='<div style=\'display:flex;flex-direction:column;gap:4px\'>';d.forEach(function(ep){var au=ep.airDateUtc||'',dt=au?au.slice(8,10)+'-'+au.slice(5,7)+'-'+au.slice(0,4):'',sn=String(ep.seasonNumber||0).padStart(2,'0'),en_=String(ep.episodeNumber||0).padStart(2,'0'),badge=ep.hasFile?'<span style=\'font-size:.65em;padding:1px 5px;background:#22c55e;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Dispo</span>':'<span style=\'font-size:.65em;padding:1px 5px;background:#ef4444;color:#fff;border-radius:3px;display:inline-block;margin-top:2px\'>Manquant</span>';h+='<a href=\'https://sonarr.'+el.dataset.d+'/series\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\'https://sonarr.'+el.dataset.d+'/MediaCover/'+ep.seriesId+'/poster.jpg?apikey='+el.dataset.ks+'\' style=\'width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0\'><div style=\'min-width:0\'><div style=\'font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\'>'+ep.title+'</div><div style=\'font-size:.7em;opacity:.65\'>S'+sn+'E'+en_+' · '+dt+'</div>'+badge+'</div></a>'});h+='</div>';el.innerHTML=h})})(this)">Chargement...</div>
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">NOUVELLES SAISONS</div>
+                      <div id="dynacat-nsa" class="gls-trigger" data-k="$${TMDB_API_KEY}" onanimationstart="(function(el){var n=new Date(),t=n.toISOString().slice(0,10),f=new Date(n.getTime()+60*864e5).toISOString().slice(0,10);fetch('https://api.themoviedb.org/3/discover/tv?api_key='+el.dataset.k+'&language=fr-FR&with_genres=16&with_original_language=ja&first_air_date.gte='+t+'&first_air_date.lte='+f+'&sort_by=first_air_date.asc').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d.results||[]).slice(0,9).forEach(function(m){var p=m.poster_path?'<img src=\'https://image.tmdb.org/t/p/w92'+m.poster_path+'\' style=\'width:100%;aspect-ratio:2/3;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:2/3;background:rgba(0,0,0,.15)\'></div>';h+='<a href=\'https://www.themoviedb.org/tv/'+m.id+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+p+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+(m.name||'')+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(m.first_air_date||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucune sortie à venir</div>';});})(this)">Chargement...</div>
+
+                  - type: custom-api
+                    title: Livres
+                    allow-insecure-html: true
+                    cache: 6h
+                    url: "http://readarr.downloads.svc.cluster.local:8787/api/v1/calendar?apikey=$${READARR_API_KEY}&start=2025-01-01&end=2027-12-31&unmonitored=false"
+                    template: |
+                      <div class="gls-section-hdr">LIVRES À VENIR</div>
+                      {{$items := .JSON.Array "@this"}}
+                      {{if eq (len $items) 0}}
+                      <div style="font-size:.85em;opacity:.5">Aucun livre à venir</div>
+                      {{else}}
+                      <div style="display:flex;flex-direction:column;gap:4px">
+                      {{range $items}}
+                      <a href="https://readarr.${SECRET_DOMAIN}" target="_blank" style="text-decoration:none;color:inherit;display:flex;gap:8px;align-items:flex-start;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:5px" onmouseover="this.style.opacity=.75" onmouseout="this.style.opacity=1">
+                        {{$cover := .String "images.#[coverType==cover].url"}}
+                        {{if $cover}}<img src="{{$cover}}" style="width:35px;min-width:35px;height:52px;object-fit:cover;border-radius:3px;flex-shrink:0">{{else}}<div style="width:35px;min-width:35px;height:52px;background:rgba(0,0,0,.1);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center">📚</div>{{end}}
+                        <div style="min-width:0">
+                          <div style="font-weight:600;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{.String "title"}}</div>
+                          <div style="font-size:.7em;opacity:.65;margin-top:2px">{{.String "authorTitle"}}</div>
+                          {{$rd := .String "releaseDate"}}<div style="font-size:.7em;opacity:.5;margin-top:1px">{{if gt (len $rd) 9}}{{slice $rd 0 10}}{{else}}{{$rd}}{{end}}</div>
+                        </div>
+                      </a>
+                      {{end}}
+                      </div>
+                      {{end}}
+
+                  - type: custom-api
+                    title: Musique
+                    allow-insecure-html: true
+                    cache: 30m
+                    url: "http://navidrome.media.svc.cluster.local:4533/rest/ping.view?u=$${NAVIDROME_USER}&p=$${NAVIDROME_PASS}&c=dynacat&v=1.16.1&f=json"
+                    template: |
+                      <div class="gls-section-hdr">ALBUMS RÉCENTS</div>
+                      <div id="dynacat-nab" class="gls-trigger" data-u="$${NAVIDROME_USER}" data-p="$${NAVIDROME_PASS}" data-d="${SECRET_DOMAIN}" onanimationstart="(function(el){var u=el.dataset.u,p=el.dataset.p,d=el.dataset.d,base='https://navidrome.'+d;fetch(base+'/rest/getAlbumList2.view?u='+u+'&p='+p+'&c=dynacat&v=1.16.1&f=json&type=newest&size=18').then(function(r){return r.json()}).then(function(j){var al=(j['subsonic-response']&&j['subsonic-response'].albumList2&&j['subsonic-response'].albumList2.album)||[];if(!al.length){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Aucun album</div>';return;}var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';al.forEach(function(a){var cv=a.coverArt?base+'/rest/getCoverArt.view?id='+a.coverArt+'&u='+u+'&p='+p+'&c=dynacat&v=1.16.1':'';h+='<a href=\''+base+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'>'+(cv?'<img src=\''+cv+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'>':'<div style=\'width:100%;aspect-ratio:1/1;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:1.5em\'>🎵</div>')+'<div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.name+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(a.artist||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h;}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Erreur</div>';});})(this)">Chargement...</div>
+                      <div class="gls-sep"></div>
+                      <div class="gls-section-hdr">TOP ALBUMS</div>
+                      <div id="dynacat-deezer" class="gls-trigger" onanimationstart="(function(el){fetch('https://api.deezer.com/chart/0/albums?limit=9').then(function(r){return r.json()}).then(function(d){var h='<div style=\'display:grid;grid-template-columns:repeat(3,1fr);gap:5px\'>';(d.data||[]).forEach(function(a){h+='<a href=\''+a.link+'\' target=\'_blank\' style=\'text-decoration:none;color:inherit;display:block;border-radius:5px;overflow:hidden;background:rgba(0,0,0,.06)\' onmouseover=\'this.style.opacity=.75\' onmouseout=\'this.style.opacity=1\'><img src=\''+a.cover_medium+'\' style=\'width:100%;aspect-ratio:1/1;object-fit:cover\'><div style=\'padding:4px\'><div style=\'font-weight:600;font-size:.7em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden\'>'+a.title+'</div><div style=\'font-size:.65em;opacity:.6;margin-top:1px\'>'+(a.artist&&a.artist.name||'')+'</div></div></a>';});h+='</div>';el.innerHTML=h||'<div style=\'font-size:.85em;opacity:.5\'>Aucun album</div>';}).catch(function(){el.innerHTML='<div style=\'font-size:.85em;opacity:.5\'>Indisponible</div>';});})(this)">Chargement...</div>
 
       # ── Stats ──────────────────────────────────────────────────────────────
       - name: Infra
