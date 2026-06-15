@@ -81,7 +81,8 @@ jobs:
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ matrix.image }}
-          version: "v0.69.1"
+          # renovate: datasource=github-releases depName=aquasecurity/trivy
+          version: v0.71.1
           severity: "CRITICAL,HIGH"
           ignore-unfixed: true
           format: "table"
