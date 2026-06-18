@@ -15,7 +15,11 @@ spec:
         type: cronjob
         cronjob:
           schedule: "45 */6 * * *"
-          backoffLimit: 0
+          # Retry on transient failures: the job treats a single unreachable Arr
+          # (e.g. a brief CoreDNS EAI_AGAIN blip) as fatal. With restartPolicy
+          # Never, backoffLimit > 0 reschedules a fresh pod, so a momentary DNS
+          # hiccup no longer fails the whole 6h sync.
+          backoffLimit: 2
           concurrencyPolicy: Forbid
           failedJobsHistory: 1
           successfulJobsHistory: 1
