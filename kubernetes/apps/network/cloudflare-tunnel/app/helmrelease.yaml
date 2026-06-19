@@ -22,7 +22,7 @@ spec:
               # Tunnel token is not valid" and CrashLoops, while 2026.5.2 runs the
               # exact same secret fine — upstream token-validation regression.
               # Re-test before taking the Renovate bump past 2026.5.2 again.
-              tag: 2026.5.2
+              tag: 2026.6.1
             env:
               NO_AUTOUPDATE: true
               TUNNEL_METRICS: 0.0.0.0:8080
