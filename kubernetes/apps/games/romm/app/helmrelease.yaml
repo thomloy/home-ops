@@ -65,7 +65,7 @@ spec:
             image:
               # renovate: datasource=docker depName=docker.io/rommapp/romm
               repository: docker.io/rommapp/romm
-              tag: "4.9.1"
+              tag: "4.9.2"
             env:
               TZ: Europe/Paris
               REDIS_HOST: romm-valkey
