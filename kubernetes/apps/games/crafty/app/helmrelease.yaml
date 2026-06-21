@@ -41,7 +41,7 @@ spec:
             image:
               # renovate: datasource=docker depName=registry.gitlab.com/crafty-controller/crafty-4
               repository: registry.gitlab.com/crafty-controller/crafty-4
-              tag: "4.10.4"
+              tag: "4.10.7"
             env:
               TZ: Europe/Paris
             probes:
