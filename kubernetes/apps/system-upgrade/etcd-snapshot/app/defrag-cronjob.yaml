@@ -29,7 +29,7 @@ spec:
             - name: defrag
               # aws-cli image reused only as a bash host for the talosctl binary
               # (mounted via the image volume below); no AWS calls are made here.
-              image: public.ecr.aws/aws-cli/aws-cli:2.35.4
+              image: public.ecr.aws/aws-cli/aws-cli:2.35.10
               command:
                 - /bin/bash
                 - -c
