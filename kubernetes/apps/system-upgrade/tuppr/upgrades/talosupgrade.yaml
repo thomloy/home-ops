@@ -9,6 +9,13 @@ spec:
     # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
     version: v1.13.5
   policy:
+    # Single-instance CNPG DBs (e.g. games/romm-postgres) have a PDB that
+    # makes them unevictable, so the pre-upgrade drain deadlocks and the
+    # upgrade aborts before rebooting, stranding the node cordoned. Skip the
+    # drain: the reboot is graceful at the Talos level (etcd leaves/rejoins,
+    # Ceph mon/osd cycle, pods reschedule) and the Ceph HEALTH_OK health gate
+    # below still sequences nodes safely.
+    nodrain: true
     rebootMode: powercycle
   healthChecks:
     - apiVersion: volsync.backube/v1alpha1
