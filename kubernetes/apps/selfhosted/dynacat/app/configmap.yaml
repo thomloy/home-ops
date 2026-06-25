@@ -651,15 +651,19 @@ data:
                 title: Alertes actives
                 allow-insecure-html: true
                 cache: 1m
-                url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/query?query=ALERTS%7Balertstate%3D%22firing%22%2Calertname%21%3D%22Watchdog%22%2Calertname%21%3D%22InfoInhibitor%22%7D"
+                # Source = Alertmanager (not Prometheus ALERTS) so the board
+                # respects silences & inhibitions: active=true,silenced=false,
+                # inhibited=false. Response is a root array of alert objects
+                # with .labels.* (vs Prometheus .data.result[].metric.*).
+                url: "http://kube-prometheus-stack-alertmanager.observability.svc.cluster.local:9093/api/v2/alerts?active=true&silenced=false&inhibited=false&filter=alertname%21%3D%22Watchdog%22&filter=alertname%21%3D%22InfoInhibitor%22"
                 template: |
-                  {{$r := .JSON.Array "data.result"}}
+                  {{$r := .JSON.Array ""}}
                   {{if eq (len $r) 0}}
                   <div style="font-size:.85em;opacity:.6;padding:10px 0;text-align:center">✅ Aucune alerte active</div>
                   {{else}}
                   <div style="display:flex;flex-direction:column;gap:4px">
                   {{range $r}}
-                  {{$an := .String "metric.alertname"}}{{$sev := .String "metric.severity"}}{{$ns := .String "metric.namespace"}}
+                  {{$an := .String "labels.alertname"}}{{$sev := .String "labels.severity"}}{{$ns := .String "labels.namespace"}}
                   <div style="font-size:.8em;padding:5px 8px;border-left:3px solid {{if eq $sev "critical"}}#ef4444{{else}}#f59e0b{{end}};background:rgba(245,158,11,.1);border-radius:5px"><span style="font-weight:600">{{$an}}</span> <span style="opacity:.55">{{$ns}}</span></div>
                   {{end}}
                   </div>
