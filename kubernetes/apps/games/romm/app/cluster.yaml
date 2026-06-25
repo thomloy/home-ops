@@ -6,6 +6,12 @@ metadata:
   name: romm-postgres
 spec:
   instances: 1
+  # Single-instance cluster: CNPG's auto-created PDB (minAvailable=1) makes the
+  # sole pod unevictable, which deadlocks node drains during Talos upgrades and
+  # strands the node cordoned (the 2026-06-25 incident). Disable it so a drain
+  # can evict-and-reschedule this pod; a brief restart on drain is acceptable
+  # for a single-instance DB. Belt-and-suspenders with tuppr policy nodrain=true.
+  enablePDB: false
   imageName: ghcr.io/cloudnative-pg/postgresql:16
   storage:
     storageClass: ceph-block
