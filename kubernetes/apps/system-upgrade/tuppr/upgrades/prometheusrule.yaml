@@ -91,3 +91,26 @@ spec:
               A {{ $labels.upgrade_type }} upgrade job has been active for more
               than 1 hour, which exceeds the expected duration. The job may be
               stuck. Check the job logs in the controller namespace.
+
+    - name: tuppr.nodes
+      rules:
+        # Safety net for the failure mode where a Talos upgrade aborts (e.g. a
+        # drain blocked by a single-instance PodDisruptionBudget) and Tuppr
+        # leaves the node cordoned. A stranded cordon keeps node-pinned Ceph
+        # mon/osd pods Pending, silently degrading storage until the cascade is
+        # noticed elsewhere. 20m clears a normal drain+reboot+rejoin window.
+        - alert: NodeStuckCordoned
+          expr: kube_node_spec_unschedulable == 1
+          for: 20m
+          labels:
+            severity: warning
+          annotations:
+            summary: >-
+              Node {{ $labels.node }} has been cordoned for over 20 minutes
+            description: >-
+              Node {{ $labels.node }} is unschedulable (cordoned) and has been
+              for more than 20 minutes. A failed or aborted Talos/Tuppr upgrade
+              can leave a node cordoned, stranding node-pinned Ceph mon/osd pods
+              (Pending) and degrading the cluster. Verify the node is healthy
+              ({{ $labels.node }} Ready, target Talos version, MachineStatus
+              STAGE=running) and run `kubectl uncordon {{ $labels.node }}`.
