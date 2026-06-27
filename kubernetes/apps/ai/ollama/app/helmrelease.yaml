@@ -29,7 +29,7 @@ spec:
             image:
               # renovate: datasource=docker depName=ollama/ollama
               repository: docker.io/ollama/ollama
-              tag: "0.30.10"
+              tag: "0.30.11"
             env:
               OLLAMA_HOST: "0.0.0.0:11434"
               OLLAMA_KEEP_ALIVE: "1h"
