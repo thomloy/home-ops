@@ -25,48 +25,48 @@ spec:
           "gridPos": {"h":4,"w":4,"x":0,"y":1},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "area", "textMode": "auto"},
           "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "thresholds": {"mode": "absolute", "steps": [{"color":"green","value":null},{"color":"yellow","value":60},{"color":"red","value":85}]}}},
-          "targets": [{"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu", "legendFormat": "CPU", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "targets": [{"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu", "legendFormat": "CPU", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}],
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "stat", "id": 3, "title": "Memory Usage",
           "gridPos": {"h":4,"w":4,"x":4,"y":1},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "area"},
           "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "thresholds": {"mode": "absolute", "steps": [{"color":"green","value":null},{"color":"yellow","value":70},{"color":"red","value":90}]}}},
-          "targets": [{"expr": "(1 - truenas_nas_truenas_meminfo_available_available / truenas_nas_truenas_meminfo_total_total) * 100", "legendFormat": "Mem %", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "targets": [{"expr": "(1 - truenas_nas_truenas_meminfo_available_available / truenas_nas_truenas_meminfo_total_total) * 100", "legendFormat": "Mem %", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}],
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "stat", "id": 4, "title": "System Load (1m)",
           "gridPos": {"h":4,"w":4,"x":8,"y":1},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "area"},
           "fieldConfig": {"defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color":"green","value":null},{"color":"yellow","value":2},{"color":"red","value":4}]}}},
-          "targets": [{"expr": "truenas_nas_system_load_load1", "legendFormat": "Load 1m", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "targets": [{"expr": "truenas_nas_system_load_load1", "legendFormat": "Load 1m", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}],
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "stat", "id": 5, "title": "UPS Charge",
           "gridPos": {"h":4,"w":4,"x":12,"y":1},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "none"},
           "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "thresholds": {"mode": "absolute", "steps": [{"color":"red","value":null},{"color":"yellow","value":50},{"color":"green","value":80}]}}},
-          "targets": [{"expr": "truenas_nas_nut_ups_charge_charge", "legendFormat": "Charge", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "targets": [{"expr": "truenas_nas_nut_ups_charge_charge", "legendFormat": "Charge", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}],
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "stat", "id": 6, "title": "UPS Load",
           "gridPos": {"h":4,"w":4,"x":16,"y":1},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "area"},
           "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "thresholds": {"mode": "absolute", "steps": [{"color":"green","value":null},{"color":"yellow","value":60},{"color":"red","value":80}]}}},
-          "targets": [{"expr": "truenas_nas_nut_ups_load_load", "legendFormat": "Load", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "targets": [{"expr": "truenas_nas_nut_ups_load_load", "legendFormat": "Load", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}],
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "stat", "id": 7, "title": "UPS Runtime",
           "gridPos": {"h":4,"w":4,"x":20,"y":1},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "none"},
           "fieldConfig": {"defaults": {"unit": "s", "thresholds": {"mode": "absolute", "steps": [{"color":"red","value":null},{"color":"yellow","value":300},{"color":"green","value":600}]}}},
-          "targets": [{"expr": "truenas_nas_nut_ups_runtime_runtime", "legendFormat": "Runtime", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "targets": [{"expr": "truenas_nas_nut_ups_runtime_runtime", "legendFormat": "Runtime", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}],
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "row", "id": 10, "title": "CPU & Temperature", "gridPos": {"h":1,"w":24,"x":0,"y":5}, "collapsed": false
@@ -76,26 +76,26 @@ spec:
           "gridPos": {"h":8,"w":12,"x":0,"y":6},
           "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu0", "legendFormat": "cpu0", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu1", "legendFormat": "cpu1", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu2", "legendFormat": "cpu2", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu3", "legendFormat": "cpu3", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu", "legendFormat": "avg", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu0", "legendFormat": "cpu0", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu1", "legendFormat": "cpu1", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu2", "legendFormat": "cpu2", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu3", "legendFormat": "cpu3", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_cpu_usage_cpu_cpu", "legendFormat": "avg", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "timeseries", "id": 12, "title": "CPU Temperatures",
           "gridPos": {"h":8,"w":12,"x":12,"y":6},
           "fieldConfig": {"defaults": {"unit": "celsius", "custom": {"lineWidth": 1, "fillOpacity": 10}, "thresholds": {"mode": "absolute", "steps": [{"color":"green","value":null},{"color":"yellow","value":65},{"color":"red","value":80}]}}},
           "targets": [
-            {"expr": "truenas_nas_cputemp_temperatures_cpu", "legendFormat": "avg", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_cputemp_temperatures_cpu0", "legendFormat": "cpu0", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_cputemp_temperatures_cpu1", "legendFormat": "cpu1", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_cputemp_temperatures_cpu2", "legendFormat": "cpu2", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_cputemp_temperatures_cpu3", "legendFormat": "cpu3", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_cputemp_temperatures_cpu", "legendFormat": "avg", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_cputemp_temperatures_cpu0", "legendFormat": "cpu0", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_cputemp_temperatures_cpu1", "legendFormat": "cpu1", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_cputemp_temperatures_cpu2", "legendFormat": "cpu2", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_cputemp_temperatures_cpu3", "legendFormat": "cpu3", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "row", "id": 20, "title": "Memory & ZFS ARC", "gridPos": {"h":1,"w":24,"x":0,"y":14}, "collapsed": false
@@ -105,22 +105,22 @@ spec:
           "gridPos": {"h":8,"w":12,"x":0,"y":15},
           "fieldConfig": {"defaults": {"unit": "bytes", "custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_truenas_meminfo_total_total", "legendFormat": "Total", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_meminfo_available_available", "legendFormat": "Available", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_meminfo_total_total - truenas_nas_truenas_meminfo_available_available", "legendFormat": "Used", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_truenas_meminfo_total_total", "legendFormat": "Total", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_meminfo_available_available", "legendFormat": "Available", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_meminfo_total_total - truenas_nas_truenas_meminfo_available_available", "legendFormat": "Used", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "timeseries", "id": 22, "title": "ZFS ARC",
           "gridPos": {"h":8,"w":12,"x":12,"y":15},
           "fieldConfig": {"defaults": {"unit": "bytes", "custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_truenas_arcstats_size_size", "legendFormat": "ARC Size", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_arcstats_free_free", "legendFormat": "Free", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_arcstats_avail_avail", "legendFormat": "Available", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_truenas_arcstats_size_size", "legendFormat": "ARC Size", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_arcstats_free_free", "legendFormat": "Free", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_arcstats_avail_avail", "legendFormat": "Available", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "row", "id": 30, "title": "Disk I/O", "gridPos": {"h":1,"w":24,"x":0,"y":23}, "collapsed": false
@@ -130,28 +130,28 @@ spec:
           "gridPos": {"h":8,"w":12,"x":0,"y":24},
           "fieldConfig": {"defaults": {"unit": "Bps", "custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WX22D3309EK6_50014ee215afcf3c_reads", "legendFormat": "WD1 read", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WX22D3309EK6_50014ee215afcf3c_writes", "legendFormat": "WD1 write", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WX22D44E4NFL_50014ee26ba5e40b_reads", "legendFormat": "WD2 read", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WX22D44E4NFL_50014ee26ba5e40b_writes", "legendFormat": "WD2 write", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WXJ2D23RAR64_50014ee2c05885c7_reads", "legendFormat": "WD3 read", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WXJ2D23RAR64_50014ee2c05885c7_writes", "legendFormat": "WD3 write", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WXN2D43KA65V_50014ee26b198c36_reads", "legendFormat": "WD4 read", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WXN2D43KA65V_50014ee26b198c36_writes", "legendFormat": "WD4 write", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WX22D3309EK6_50014ee215afcf3c_reads", "legendFormat": "WD1 read", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WX22D3309EK6_50014ee215afcf3c_writes", "legendFormat": "WD1 write", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WX22D44E4NFL_50014ee26ba5e40b_reads", "legendFormat": "WD2 read", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WX22D44E4NFL_50014ee26ba5e40b_writes", "legendFormat": "WD2 write", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WXJ2D23RAR64_50014ee2c05885c7_reads", "legendFormat": "WD3 read", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WXJ2D23RAR64_50014ee2c05885c7_writes", "legendFormat": "WD3 write", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WXN2D43KA65V_50014ee26b198c36_reads", "legendFormat": "WD4 read", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats__serial_lunid_WD_WXN2D43KA65V_50014ee26b198c36_writes", "legendFormat": "WD4 write", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "timeseries", "id": 32, "title": "Disk Busy %",
           "gridPos": {"h":8,"w":12,"x":12,"y":24},
           "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_truenas_disk_stats_busy__serial_lunid_WD_WX22D3309EK6_50014ee215afcf3c_busy", "legendFormat": "WD1", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats_busy__serial_lunid_WD_WX22D44E4NFL_50014ee26ba5e40b_busy", "legendFormat": "WD2", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats_busy__serial_lunid_WD_WXJ2D23RAR64_50014ee2c05885c7_busy", "legendFormat": "WD3", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_truenas_disk_stats_busy__serial_lunid_WD_WXN2D43KA65V_50014ee26b198c36_busy", "legendFormat": "WD4", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_truenas_disk_stats_busy__serial_lunid_WD_WX22D3309EK6_50014ee215afcf3c_busy", "legendFormat": "WD1", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats_busy__serial_lunid_WD_WX22D44E4NFL_50014ee26ba5e40b_busy", "legendFormat": "WD2", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats_busy__serial_lunid_WD_WXJ2D23RAR64_50014ee2c05885c7_busy", "legendFormat": "WD3", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_truenas_disk_stats_busy__serial_lunid_WD_WXN2D43KA65V_50014ee26b198c36_busy", "legendFormat": "WD4", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "row", "id": 40, "title": "Network & NFS", "gridPos": {"h":1,"w":24,"x":0,"y":32}, "collapsed": false
@@ -161,20 +161,20 @@ spec:
           "gridPos": {"h":8,"w":12,"x":0,"y":33},
           "fieldConfig": {"defaults": {"unit": "Bps", "custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_net_enp3s0_received", "legendFormat": "RX", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "abs(truenas_nas_net_enp3s0_sent)", "legendFormat": "TX", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_net_enp3s0_received", "legendFormat": "RX", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "abs(truenas_nas_net_enp3s0_sent)", "legendFormat": "TX", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "timeseries", "id": 42, "title": "NFS I/O",
           "gridPos": {"h":8,"w":12,"x":12,"y":33},
           "fieldConfig": {"defaults": {"unit": "Bps", "custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_nfsd_io_read", "legendFormat": "NFS Read", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_nfsd_io_write", "legendFormat": "NFS Write", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_nfsd_io_read", "legendFormat": "NFS Read", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_nfsd_io_write", "legendFormat": "NFS Write", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "row", "id": 50, "title": "UPS", "gridPos": {"h":1,"w":24,"x":0,"y":41}, "collapsed": false
@@ -184,20 +184,20 @@ spec:
           "gridPos": {"h":8,"w":12,"x":0,"y":42},
           "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_nut_ups_charge_charge", "legendFormat": "Charge %", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_nut_ups_load_load", "legendFormat": "Load %", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_nut_ups_charge_charge", "legendFormat": "Charge %", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_nut_ups_load_load", "legendFormat": "Load %", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         },
         {
           "type": "timeseries", "id": 52, "title": "UPS Runtime & Output Voltage",
           "gridPos": {"h":8,"w":12,"x":12,"y":42},
           "fieldConfig": {"defaults": {"custom": {"lineWidth": 1, "fillOpacity": 10}}},
           "targets": [
-            {"expr": "truenas_nas_nut_ups_runtime_runtime", "legendFormat": "Runtime (s)", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}},
-            {"expr": "truenas_nas_nut_ups_output_voltage_voltage", "legendFormat": "Output V", "datasource": {"type":"prometheus","uid":"${DS_PROMETHEUS}"}}
+            {"expr": "truenas_nas_nut_ups_runtime_runtime", "legendFormat": "Runtime (s)", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}},
+            {"expr": "truenas_nas_nut_ups_output_voltage_voltage", "legendFormat": "Output V", "datasource": {"type":"prometheus","uid":"$${DS_PROMETHEUS}"}}
           ],
-          "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"}
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"}
         }
       ],
       "__inputs": [{"name": "DS_PROMETHEUS", "type": "datasource", "pluginId": "prometheus"}],
