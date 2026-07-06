@@ -6,9 +6,9 @@ metadata:
 data:
   monitor.sh: |
     #!/bin/sh
-    THRESHOLD="${THRESHOLD:-20}"
+    THRESHOLD="$${THRESHOLD:-20}"
     # Require this many consecutive OB+low-battery readings before triggering (30s poll → 3 = 90s minimum)
-    CONSECUTIVE_REQUIRED="${CONSECUTIVE_REQUIRED:-3}"
+    CONSECUTIVE_REQUIRED="$${CONSECUTIVE_REQUIRED:-3}"
     SHUTDOWN_DONE=0
     OB_COUNT=0
 
@@ -21,7 +21,7 @@ data:
     # Send shutdown.return: UPS cuts power after ups.delay.shutdown, restarts when AC returns
     nut_shutdown_return() {
       printf "USERNAME %s\nPASSWORD %s\nINSTCMD ups shutdown.return\nLOGOUT\n" \
-        "${NUT_USER}" "${NUT_PASS}" | nc -w 5 "${NAS_IP}" 3493 2>/dev/null
+        "$${NUT_USER}" "$${NUT_PASS}" | nc -w 5 "${NAS_IP}" 3493 2>/dev/null
     }
 
     while true; do

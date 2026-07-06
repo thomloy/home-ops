@@ -41,7 +41,7 @@ spec:
                   find "$base" -maxdepth 4 -type d -name '_UNPACK_*' -mmin +30 -print | while read -r d; do
                     parent=$(dirname "$d")
                     name=$(basename "$d")
-                    new="$parent/${name#_UNPACK_}"
+                    new="$parent/$${name#_UNPACK_}"
                     if [ -e "$new" ]; then
                       echo "SKIP (target exists): $d"
                       continue
