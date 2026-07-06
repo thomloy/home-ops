@@ -51,7 +51,12 @@ spec:
                         kubectl delete job -n "$${ns}" "$${name}" --ignore-not-found --wait=false
                       done
 
-                  # 2) Orphan Succeeded pods older than TTL (owning job already gone).
+                  # 2) Any Succeeded pod older than TTL: job pods whose Job is
+                  #    already gone, and "ghost" Deployment/RS pods left in the
+                  #    Succeeded phase after a graceful node shutdown (kubelet
+                  #    marks them Succeeded; the controller-manager only GCs
+                  #    terminated pods past its count threshold, so they linger).
+                  #    Their live replacements are separate Running pods, untouched.
                   kubectl get pods -A --field-selector=status.phase==Succeeded -o json \
                     | jq -r --argjson ttl "$${TTL}" '
                       .items[]
