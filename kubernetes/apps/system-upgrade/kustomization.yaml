@@ -13,3 +13,4 @@ resources:
   - ./tuppr/ks.yaml
   - ./nut-shutdown/ks.yaml
   - ./etcd-snapshot/ks.yaml
+  - ./job-cleaner/ks.yaml
