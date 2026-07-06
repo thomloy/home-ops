@@ -1,0 +1,90 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-cleaner
+spec:
+  # Daily janitor: completed Jobs (and their finished pods) accumulate because
+  # CronJob history limits are count-based and standalone/manual Jobs have no
+  # TTL. This enforces an age-based cleanup cluster-wide. FAILED jobs are left
+  # untouched so KubeJobFailed keeps alerting until they are investigated.
+  schedule: "30 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          serviceAccountName: job-cleaner
+          automountServiceAccountToken: true
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: job-cleaner
+              # renovate: datasource=docker depName=docker.io/alpine/k8s
+              image: docker.io/alpine/k8s:1.35.3
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  TTL="$${TTL_SECONDS}"
+                  echo "[job-cleaner] deleting Succeeded jobs/pods finished > $${TTL}s ago"
+
+                  # 1) Succeeded Jobs older than TTL — cascade-deletes their pods.
+                  #    Failed jobs (no completionTime) are intentionally kept.
+                  kubectl get jobs -A -o json | jq -r --argjson ttl "$${TTL}" '
+                    .items[]
+                    | select(.status.completionTime != null)
+                    | select((now - (.status.completionTime | fromdateiso8601)) > $ttl)
+                    | "\(.metadata.namespace) \(.metadata.name)"
+                  ' | while read -r ns name; do
+                        echo "  del job $${ns}/$${name}"
+                        kubectl delete job -n "$${ns}" "$${name}" --ignore-not-found --wait=false
+                      done
+
+                  # 2) Orphan Succeeded pods older than TTL (owning job already gone).
+                  kubectl get pods -A --field-selector=status.phase==Succeeded -o json \
+                    | jq -r --argjson ttl "$${TTL}" '
+                      .items[]
+                      | ([ (.status.containerStatuses // [])[].state.terminated.finishedAt ]
+                          | map(select(. != null)) | max) as $fin
+                      | ($fin // .status.startTime // .metadata.creationTimestamp) as $t
+                      | select((now - ($t | fromdateiso8601)) > $ttl)
+                      | "\(.metadata.namespace) \(.metadata.name)"
+                    ' | while read -r ns name; do
+                          echo "  del pod $${ns}/$${name}"
+                          kubectl delete pod -n "$${ns}" "$${name}" --ignore-not-found --wait=false
+                        done
+
+                  echo "[job-cleaner] done"
+              env:
+                - name: HOME
+                  value: /tmp
+                - name: TTL_SECONDS
+                  value: "86400" # 24h
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+          volumes:
+            - name: tmp
+              emptyDir: {}
