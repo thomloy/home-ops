@@ -66,6 +66,11 @@ spec:
           - name: forward
             parameters: . ${BGP_ROUTER_IP}
           - name: cache
+            configBlock: |-
+              # Serve cached .internal answers up to 1h past TTL when OPNsense
+              # (the authority for this zone) is unreachable, so a router hiccup
+              # doesn't immediately break in-cluster .internal name resolution.
+              serve_stale 1h
           - name: reload
     affinity:
       nodeAffinity:

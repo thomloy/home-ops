@@ -11,6 +11,11 @@ spec:
   interval: 5m
   values:
     fullnameOverride: *app
+    # Give ExternalDNS 30s (default 5s) to hear back from the webhook->OPNsense
+    # API. The initial sync fatally exits on timeout, and a slow/loaded OPNsense
+    # was crashlooping this pod (~140 restarts), each restart re-hitting the API.
+    extraArgs:
+      - --webhook-provider-read-timeout=30s
     provider:
       name: webhook
       webhook:
