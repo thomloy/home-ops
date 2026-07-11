@@ -14,4 +14,5 @@ resources:
   - ./envoy-gateway/ks.yaml
   - ./echo/ks.yaml
   - ./opnsense-dns/ks.yaml
+  - ./pihole/ks.yaml
   - ./tailscale/ks.yaml
