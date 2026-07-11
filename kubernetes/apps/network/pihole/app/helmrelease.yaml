@@ -1,0 +1,115 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pihole
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: pihole
+  interval: 1h
+  values:
+    controllers:
+      pihole:
+        # Single replica on a RWO Ceph volume — Pi-hole's gravity DB is SQLite
+        # and not HA. It sits UPSTREAM of OPNsense (clients -> OPNsense -> here),
+        # so a brief outage means "no filtering", not "no LAN DNS".
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: docker.io/pihole/pihole
+              tag: 2026.07.2
+            env:
+              TZ: Europe/Paris
+              # Forward non-blocked queries to Cloudflare public DNS. MUST NOT be
+              # OPNsense (which forwards here) — that would be a resolution loop.
+              FTLCONF_dns_upstreams: "1.1.1.1;1.0.0.1"
+              # Accept queries arriving via the LoadBalancer IP (from OPNsense),
+              # not just from localhost/local subnet.
+              FTLCONF_dns_listeningMode: "all"
+              FTLCONF_webserver_api_password:
+                valueFrom:
+                  secretKeyRef:
+                    name: pihole-secret
+                    key: FTLCONF_webserver_api_password
+            probes:
+              liveness: &probe
+                enabled: true
+              readiness: *probe
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+            securityContext:
+              # Pi-hole's entrypoint runs as root (chowns /etc/pihole, drops to
+              # the pihole user) and FTL binds :53/:80, so full non-root + drop
+              # ALL is not possible. Grant only the caps it needs.
+              readOnlyRootFilesystem: false
+              capabilities:
+                add:
+                  - NET_BIND_SERVICE
+                  - CHOWN
+                  - SETUID
+                  - SETGID
+                  - DAC_OVERRIDE
+                  - SYS_NICE
+                drop: ["ALL"]
+            resources:
+              requests:
+                cpu: 25m
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    service:
+      # Web UI — internal only, fronted by envoy-internal below.
+      app:
+        ports:
+          http:
+            port: 80
+      # DNS — LoadBalancer on a fixed LAN IP that OPNsense forwards to.
+      dns:
+        controller: pihole
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 192.168.42.53
+        externalTrafficPolicy: Local
+        ports:
+          dns-tcp:
+            port: 53
+            protocol: TCP
+          dns-udp:
+            port: 53
+            protocol: UDP
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            alerts:
+              - type: pushover
+            conditions: ["[STATUS] < 400"]
+            ui:
+              hide-hostname: true
+        hostnames:
+          - pihole.${SECRET_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+    persistence:
+      config:
+        existingClaim: pihole
+        globalMounts:
+          - path: /etc/pihole
