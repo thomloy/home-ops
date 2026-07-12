@@ -56,6 +56,11 @@ spec:
                   - SETGID
                   - DAC_OVERRIDE
                   - SYS_NICE
+                  # Pi-hole v6 entrypoint runs `setcap` on the pihole-FTL binary
+                  # (to grant it NET_BIND_SERVICE/CHOWN/SYS_NICE) before dropping
+                  # to the pihole user — that needs CAP_SETFCAP, else it errors
+                  # "Cannot run as non-root" and crashloops.
+                  - SETFCAP
                 drop: ["ALL"]
             resources:
               requests:
