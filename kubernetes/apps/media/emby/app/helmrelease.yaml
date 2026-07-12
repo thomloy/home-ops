@@ -69,10 +69,10 @@ spec:
                 memory: 4Gi
     service:
       app:
-        type: LoadBalancer
-        annotations:
-          lbipam.cilium.io/ips: ${CLUSTER_GATEWAY_INTERNAL_IP}
-        externalTrafficPolicy: Local
+        # ClusterIP — Emby is reached via the envoy-internal route below
+        # (emby.${SECRET_DOMAIN}). The previous LoadBalancer pinned itself to
+        # the internal gateway's own IP (.110), which conflicted with
+        # envoy-internal and left the service permanently Pending.
         ports:
           http:
             port: *port
