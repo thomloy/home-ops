@@ -5,12 +5,25 @@ kind: CiliumLoadBalancerIPPool
 metadata:
   name: services
 spec:
+  # DHCP-free block (OPNsense DHCP is .54-.245) so an LB IP can never collide
+  # with a leased/static device — this is what bit the .53 Pi-hole conflict.
   allowFirstLastIPs: "Yes"
   blocks:
     - start: ${LB_POOL_START}
       stop: ${LB_POOL_STOP}
-    - start: ${LB_POOL2_START}
-      stop: ${LB_POOL2_STOP}
+---
+# Dedicated pool for the kube-api LoadBalancer (.100). That IP is also the
+# Talos control-plane VIP (L2), so API access does not depend on this pool —
+# it just preserves the existing Cilium kube-api service's requested IP.
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: api
+spec:
+  allowFirstLastIPs: "Yes"
+  blocks:
+    - start: ${CLUSTER_API_IP}
+      stop: ${CLUSTER_API_IP}
 ---
 apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
