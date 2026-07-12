@@ -83,12 +83,16 @@ spec:
           http:
             port: 80
       # DNS — LoadBalancer on a fixed LAN IP that OPNsense forwards to.
+      # .53 was already taken by a real LAN device; .101 verified free of any
+      # host (only OPNsense proxy-ARP answers, like the working gateway IPs).
+      # NOTE: the services LB pool overlaps the DHCP range — reserve/exclude
+      # this IP in OPNsense so it can't later be leased to a device.
       dns:
         controller: pihole
         type: LoadBalancer
         annotations:
-          lbipam.cilium.io/ips: 192.168.42.53
-        externalTrafficPolicy: Local
+          lbipam.cilium.io/ips: 192.168.42.101
+        externalTrafficPolicy: Cluster
         ports:
           dns-tcp:
             port: 53
