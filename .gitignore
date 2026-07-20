@@ -15,6 +15,7 @@
 # Kubernetes
 kubeconfig
 talosconfig
+.kube/
 # Misc.
 CLAUDE.md
 .claude/
