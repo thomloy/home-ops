@@ -76,7 +76,9 @@ spec:
             severity: warning
           annotations:
             summary: "Slot de réplication CNPG inactif"
-            description: "Le slot {{ $labels.slot_name }} ({{ $labels.namespace }}/{{ $labels.job }}) est inactif depuis plus de 30min et retient du WAL. Vérifier la réplique correspondante — si elle est morte, la re-cloner (delete PVC + pod)."
+            # $labels.job vaut déjà "<namespace>/<cluster>" : ne pas le préfixer
+            # du namespace, ça rendait "selfhosted/selfhosted/immich-postgres".
+            description: "Le slot {{ $labels.slot_name }} ({{ $labels.job }}) est inactif depuis plus de 30min et retient du WAL. Vérifier la réplique correspondante — si elle est morte, la re-cloner (delete PVC + pod)."
 
         - alert: CNPGWalVolumeGrowing
           # Régime normal ~0.6-1.5GB (max_wal_size=1GB, wal_keep_size=512MB).
