@@ -55,6 +55,43 @@ spec:
             description: "Le dernier backup du cluster CNPG {{ $labels.cluster }} ({{ $labels.namespace }}) a échoué et aucun n'a réussi depuis."
 
     # =========================
+    # WAL CNPG — détection de la rétention par slot inactif.
+    # Le 2026-07-20, la réplique nextcloud-postgres-5 (divergée sur sa timeline)
+    # a crashloopé 7j en gardant son slot déclaré mais inactif : ~14GB de WAL
+    # empilés pour une base de 42MB, volume saturé, cluster entier à terre.
+    # max_slot_wal_keep_size=4GB est le garde-fou ; ces alertes préviennent AVANT
+    # qu'il ne se déclenche, pour re-cloner la réplique sans perdre le slot.
+    # =========================
+    - name: cnpg-wal.rules
+      rules:
+        - alert: CNPGReplicationSlotInactive
+          # Chaque instance publie la métrique pour TOUS les slots du cluster :
+          # les répliques rapportent 0 pour les slots qu'elles ne possèdent pas.
+          # Un `== 0` nu fanionnerait donc en permanence. Le max by() dit "aucune
+          # instance ne voit ce slot actif", seul cas qui compte réellement.
+          expr: |
+            max by (namespace, job, slot_name) (cnpg_pg_replication_slots_active) == 0
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Slot de réplication CNPG inactif"
+            description: "Le slot {{ $labels.slot_name }} ({{ $labels.namespace }}/{{ $labels.job }}) est inactif depuis plus de 30min et retient du WAL. Vérifier la réplique correspondante — si elle est morte, la re-cloner (delete PVC + pod)."
+
+        - alert: CNPGWalVolumeGrowing
+          # Régime normal ~0.6-1.5GB (max_wal_size=1GB, wal_keep_size=512MB).
+          # 3GB = anomalie franche, et laisse 1GB de marge avant que le plafond
+          # max_slot_wal_keep_size (4GB) n'invalide un slot.
+          expr: |
+            cnpg_collector_pg_wal{value="size"} > 3e9
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "WAL CNPG en accumulation"
+            description: "Le pg_wal de {{ $labels.pod }} ({{ $labels.namespace }}) fait {{ $value | humanize1024 }}B, bien au-delà du régime normal. Slot inactif ou archivage bloqué — le plafond de 4GB va invalider un slot si ça continue."
+
+    # =========================
     # Disque OS des nodes Talos (cache containerd)
     # =========================
     - name: node-disk.rules
