@@ -15,6 +15,17 @@ spec:
     # space") until the PVC is enlarged. Headroom to ride out future archiving
     # outages without wedging the primary.
     size: 20Gi
+  postgresql:
+    parameters:
+      # Plafonne le WAL qu'un slot de réplication peut retenir. Par défaut
+      # max_slot_wal_keep_size = -1 (illimité) : une réplique morte garde son
+      # slot déclaré mais inactif, et PostgreSQL conserve indéfiniment le WAL
+      # dont elle aurait besoin — jusqu'à saturer le volume et faire tomber TOUT
+      # le cluster, primary compris (c'est ce qui a tué nextcloud-postgres le
+      # 2026-07-20, et l'incident de 2026-06 ci-dessus). Au-delà du plafond, le
+      # slot est invalidé : la réplique en retard doit être re-clonée, mais le
+      # cluster survit. 4GB = ~4x le régime normal (max_wal_size 1GB).
+      max_slot_wal_keep_size: 4GB
   resources:
     requests:
       cpu: 100m

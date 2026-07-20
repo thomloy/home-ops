@@ -10,7 +10,20 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16
   storage:
     storageClass: ceph-block
+    # 30Gi (was 15Gi) : le volume combiné data+WAL a saturé le 2026-07-20 et
+    # CNPG s'est bloqué en "Not enough disk space" jusqu'à l'agrandissement.
+    # La base ne fait que 42MB — c'était du WAL retenu, cf. max_slot_wal_keep_size.
     size: 30Gi
+  postgresql:
+    parameters:
+      # Plafonne le WAL qu'un slot de réplication peut retenir. Par défaut
+      # max_slot_wal_keep_size = -1 (illimité) : la réplique -5, divergée sur sa
+      # timeline et crashloopée pendant 7j, a gardé son slot inactif et fait
+      # empiler ~14GB de WAL pour une base de 42MB — jusqu'à saturer les 15Gi et
+      # faire tomber les 3 instances, primary compris. Au-delà du plafond, le
+      # slot est invalidé : la réplique en retard doit être re-clonée, mais le
+      # cluster survit. 4GB = ~4x le régime normal (max_wal_size 1GB).
+      max_slot_wal_keep_size: 4GB
   resources:
     requests:
       cpu: 100m
@@ -21,6 +34,15 @@ spec:
     initdb:
       database: nextcloud
       owner: nextcloud
+      postInitApplicationSQL:
+        # La base nextcloud porte une ACL explicite ({nextcloud=CTc/nextcloud}),
+        # ce qui révoque le CONNECT implicite de PUBLIC. Sans ce GRANT, le
+        # collecteur CNPG échoue en "permission denied for database" et n'expose
+        # AUCUNE métrique cnpg_pg_replication_slots_* pour ce cluster — le trou
+        # exact qui a laissé la rétention WAL du 2026-07-20 passer inaperçue.
+        # (immich a datacl=NULL, donc PUBLIC peut se connecter : pas concerné.)
+        # Appliqué à chaud sur le cluster existant, ceci ne couvre qu'un rebuild.
+        - GRANT CONNECT ON DATABASE nextcloud TO cnpg_metrics_exporter;
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
