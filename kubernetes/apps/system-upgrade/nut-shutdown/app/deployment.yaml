@@ -159,7 +159,7 @@ spec:
           # makes the binary available at /shared/talosctl without cp or shell utils.
           image:
             # renovate: datasource=docker depName=ghcr.io/siderolabs/talosctl
-            reference: ghcr.io/siderolabs/talosctl:v1.13.7
+            reference: ghcr.io/siderolabs/talosctl:v1.13.8
             pullPolicy: IfNotPresent
         - name: talosconfig
           secret:
