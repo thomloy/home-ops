@@ -7,7 +7,7 @@ metadata:
 spec:
   talos:
     # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
-    version: v1.13.7
+    version: v1.13.8
   policy:
     # Single-instance CNPG DBs (e.g. games/romm-postgres) have a PDB that
     # makes them unevictable, so the pre-upgrade drain deadlocks and the
