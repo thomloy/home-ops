@@ -14,6 +14,12 @@ spec:
     # CNPG s'est bloqué en "Not enough disk space" jusqu'à l'agrandissement.
     # La base ne fait que 42MB — c'était du WAL retenu, cf. max_slot_wal_keep_size.
     size: 30Gi
+  # Pas de walStorage dédié — décision explicite du 2026-07-20, ne pas "corriger".
+  # Rationale complet dans immich/app/cluster.yaml : stockage mono-pool/mono-device
+  # (1 NVMe par node), donc un PVC WAL séparé n'apporte aucune isolation I/O, pour
+  # un coût irréversible. Écarté aussi comme remède à la saturation : un slot sans
+  # borne remplit un volume dédié tout autant — c'est max_slot_wal_keep_size qui
+  # traite la cause, ci-dessous.
   postgresql:
     parameters:
       # Plafonne le WAL qu'un slot de réplication peut retenir. Par défaut

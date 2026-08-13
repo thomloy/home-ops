@@ -15,6 +15,17 @@ spec:
     # space") until the PVC is enlarged. Headroom to ride out future archiving
     # outages without wedging the primary.
     size: 20Gi
+  # Pas de walStorage dédié — décision explicite du 2026-07-20, ne pas "corriger".
+  # Le stockage est mono-pool/mono-device : 1 StorageClass (ceph-block), 1 pool
+  # (ceph-blockpool), 3 OSDs = un seul NVMe par node (osdsPerDevice: 1). Un PVC
+  # WAL séparé serait une autre image RBD sur les MÊMES OSDs et les MÊMES disques
+  # — séparation logique, zéro isolation I/O. Et aucune contention à résoudre :
+  # 134 KiB/s wr cluster-wide, latences OSD 5-6ms, débit WAL immich 0 MB/h.
+  # Le coût serait réel : re-cloner toutes les instances (switchover pour le
+  # primary) et c'est IRRÉVERSIBLE ("removing walStorage from an existing cluster
+  # is not supported"). À noter : le webhook CNPG 1.30 accepte pourtant le champ
+  # en dry-run — son acceptation ne dit RIEN de la faisabilité de la migration.
+  # À rouvrir seulement avec un 2e NVMe par node → device class + pool + SC dédiés.
   postgresql:
     parameters:
       # Plafonne le WAL qu'un slot de réplication peut retenir. Par défaut
