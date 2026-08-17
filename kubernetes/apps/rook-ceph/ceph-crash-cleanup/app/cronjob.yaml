@@ -1,0 +1,133 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/batch/cronjob_v1.json
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ceph-crash-cleanup
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      # Indexed pour que l'index 0 seul purge le store Ceph (opération globale),
+      # pendant que les 3 pods nettoient chacun le spool de LEUR nœud.
+      completionMode: Indexed
+      completions: 3
+      parallelism: 3
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: ceph-crash-cleanup
+        spec:
+          restartPolicy: OnFailure
+          # Force un pod par nœud : le spool est un hostPath, un pod ne voit que
+          # le sien. Sans ça, 3 pods pourraient atterrir sur le même nœud.
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: ceph-crash-cleanup
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 167 # ceph — propriétaire des fichiers de crash
+            runAsGroup: 167
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: cleanup
+              image: quay.io/ceph/ceph:v20.2.3
+              command: ["/bin/bash", "-c"]
+              # NB: les ${...} shell sont échappés en $${...}, sinon la
+              # substitution postBuild de Flux les vide silencieusement.
+              args:
+                - |
+                  set -euo pipefail
+
+                  # --- 1. Spool disque local (le vrai réservoir) -------------
+                  # Le module mgr `dashboard` appelle node_proxy_fullreport
+                  # toutes les 15s ; l'orchestrateur Rook ne l'implémente pas,
+                  # chaque échec écrit ~4Ko ici (~23 Mo/jour sur le disque OS).
+                  # Purger le store sans vider le spool est inutile : les
+                  # collecteurs le republient.
+                  before=$$(find /host-crash -mindepth 1 -maxdepth 1 -type d | wc -l)
+                  find /host-crash -mindepth 1 -maxdepth 1 -type d -mtime +1 \
+                    -exec rm -rf {} + 2>/dev/null || true
+                  find /host-crash/posted -mindepth 1 -maxdepth 1 -type d -mtime +1 \
+                    -exec rm -rf {} + 2>/dev/null || true
+                  after=$$(find /host-crash -mindepth 1 -maxdepth 1 -type d | wc -l)
+                  echo "spool $$(hostname): $${before} -> $${after}"
+
+                  # --- 2. Store Ceph : un seul pod, c'est global ------------
+                  if [ "$${JOB_COMPLETION_INDEX:-0}" != "0" ]; then
+                    echo "index $${JOB_COMPLETION_INDEX}: spool uniquement"
+                    exit 0
+                  fi
+
+                  ceph_secret=$$(cat /var/lib/rook-ceph-mon/secret.keyring)
+                  cat > /etc/ceph/keyring <<EOF
+                  [client.admin]
+                  key = $${ceph_secret}
+                  EOF
+                  mon_endpoints=$$(sed 's/[a-z0-9_-]\+=//g' /etc/rook/mon-endpoints)
+                  cat > /etc/ceph/ceph.conf <<EOF
+                  [global]
+                  mon_host = $${mon_endpoints}
+
+                  [client.admin]
+                  keyring = /etc/ceph/keyring
+                  EOF
+
+                  # prune supprime les crashes > 1j ; archive-all neutralise les
+                  # récents pour lever RECENT_MGR_MODULE_CRASH. Sans ça le compte
+                  # atteint ~6800, le module crash s'écroule, la CephCluster
+                  # passe HEALTH_ERR et bloque 30 Kustomizations en cascade.
+                  ceph crash prune 1
+                  ceph crash archive-all
+                  echo "store restant: $$(ceph crash ls | wc -l)"
+                  ceph health
+              volumeMounts:
+                - name: host-crash
+                  mountPath: /host-crash
+                - name: ceph-config
+                  mountPath: /etc/ceph
+                - name: mon-endpoint-volume
+                  mountPath: /etc/rook
+                - name: ceph-admin-secret
+                  mountPath: /var/lib/rook-ceph-mon
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: [ALL]
+                readOnlyRootFilesystem: true
+          volumes:
+            - name: host-crash
+              hostPath:
+                path: /var/lib/rook/rook-ceph/crash
+                type: DirectoryOrCreate
+            - name: ceph-config
+              emptyDir: {}
+            - name: mon-endpoint-volume
+              configMap:
+                name: rook-ceph-mon-endpoints
+                items:
+                  - key: data
+                    path: mon-endpoints
+            - name: ceph-admin-secret
+              secret:
+                secretName: rook-ceph-mon
+                optional: false
+                items:
+                  - key: ceph-secret
+                    path: secret.keyring
