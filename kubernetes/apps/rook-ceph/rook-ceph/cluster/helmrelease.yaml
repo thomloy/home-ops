@@ -39,7 +39,7 @@ spec:
     # v20 (Tentacle) and cannot be downgraded, so never let the version float.
     cephImage:
       repository: quay.io/ceph/ceph
-      tag: v20.2.3
+      tag: v20.2.4
     monitoring:
       enabled: true
       createPrometheusRules: true
