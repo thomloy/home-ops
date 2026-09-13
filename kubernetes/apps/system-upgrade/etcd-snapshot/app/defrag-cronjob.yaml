@@ -89,7 +89,7 @@ spec:
             - name: talosctl
               # renovate: datasource=docker depName=ghcr.io/siderolabs/talosctl
               image:
-                reference: ghcr.io/siderolabs/talosctl:v1.13.9
+                reference: ghcr.io/siderolabs/talosctl:v1.14.0
                 pullPolicy: IfNotPresent
             - name: talosconfig
               secret:
