@@ -30,7 +30,7 @@ spec:
           containers:
             - name: job-cleaner
               # renovate: datasource=docker depName=docker.io/alpine/k8s
-              image: docker.io/alpine/k8s:1.36.2
+              image: docker.io/alpine/k8s:1.37.0
               command:
                 - /bin/sh
                 - -c
