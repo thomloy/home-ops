@@ -11,3 +11,4 @@ components:
 resources:
   - ./namespace.yaml
   - ./rook-ceph/ks.yaml
+  - ./ceph-crash-cleanup/ks.yaml
