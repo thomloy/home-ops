@@ -40,7 +40,9 @@ spec:
               type: RuntimeDefault
           containers:
             - name: cleanup
-              image: quay.io/ceph/ceph:v20.2.3
+              # Doit suivre cephImage.tag de rook-ceph-cluster : le store
+              # mon/osd est en v20 (Tentacle) et ne se downgrade pas.
+              image: quay.io/ceph/ceph:v20.2.4
               command: ["/bin/bash", "-c"]
               # NB: les ${...} shell sont échappés en $${...}, sinon la
               # substitution postBuild de Flux les vide silencieusement.
