@@ -72,10 +72,15 @@ spec:
     route:
       app:
         annotations:
+          # Probed on the Service, not the public hostname: that hostname resolves
+          # to Cloudflare, whose JS-detection page answers 200 on / and hides
+          # kromgo's own 404 there. Hitting a real metric path also proves the
+          # Prometheus query path works, which / never did.
           gatus.home-operations.com/endpoint: |-
             alerts:
               - type: pushover
-            conditions: ["[STATUS] == 404"]
+            url: http://kromgo.observability.svc.cluster.local/cluster_node_count
+            conditions: ["[STATUS] == 200", "[BODY].label == Nodes"]
             ui:
               hide-hostname: true
         hostnames:
