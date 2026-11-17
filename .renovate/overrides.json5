@@ -30,5 +30,11 @@
       matchPackageNames: ["docker.io/cloudflare/cloudflared"],
       allowedVersions: "!/^2026\\.6\\.0$/",
     },
+    {
+      description: "Talos 1.13 supports Kubernetes up to 1.36 — talhelper refuses 1.37 and tuppr's upgrade would fail. Lift this cap together with the Talos 1.14 upgrade.",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/siderolabs/kubelet"],
+      allowedVersions: "<1.37.0",
+    },
   ],
 }
