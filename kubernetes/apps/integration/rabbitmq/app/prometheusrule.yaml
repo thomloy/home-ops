@@ -1,0 +1,39 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: rabbitmq-rules
+spec:
+  groups:
+    - name: rabbitmq.rules
+      rules:
+        - alert: RabbitMQDown
+          expr: |-
+            absent(rabbitmq_identity_info{namespace="integration"})
+          for: 5m
+          annotations:
+            summary: >-
+              The RabbitMQ broker is not reporting metrics, the integration flows are stopped
+          labels:
+            severity: critical
+
+        - alert: RabbitMQMemoryAlarm
+          expr: |-
+            max(rabbitmq_alarms_memory_used_watermark{namespace="integration"}) == 1
+          for: 1m
+          annotations:
+            summary: >-
+              RabbitMQ memory watermark reached, publishers are blocked
+          labels:
+            severity: critical
+
+        - alert: RabbitMQDiskAlarm
+          expr: |-
+            max(rabbitmq_alarms_free_disk_space_watermark{namespace="integration"}) == 1
+          for: 1m
+          annotations:
+            summary: >-
+              RabbitMQ free disk space below limit, publishers are blocked
+          labels:
+            severity: critical

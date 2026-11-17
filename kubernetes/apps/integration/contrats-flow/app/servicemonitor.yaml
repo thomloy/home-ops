@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contrats-flow-metrics
+  labels:
+    app.kubernetes.io/name: contrats-flow
+spec:
+  selector:
+    app.kubernetes.io/name: contrats-flow
+    app.kubernetes.io/instance: contrats-flow
+  ports:
+    - name: metrics
+      port: 8000
+      targetPort: 8000
+      protocol: TCP
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/monitoring.coreos.com/servicemonitor_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: contrats-flow
+spec:
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+  # Keep the role (producteur / controleur / si-central) on every series
+  podTargetLabels:
+    - app.kubernetes.io/controller
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: contrats-flow

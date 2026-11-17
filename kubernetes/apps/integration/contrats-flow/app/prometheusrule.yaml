@@ -1,0 +1,78 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: contrats-flow-rules
+spec:
+  groups:
+    - name: contrats-flow.rules
+      rules:
+        # End-to-end check: contracts go in but nothing reaches the central system
+        - alert: ContratsFluxInterrompu
+          expr: |-
+            sum(rate(contrats_emis_total{namespace="integration"}[10m])) > 0
+            and
+            sum(rate(contrats_integres_total{namespace="integration"}[10m])) == 0
+          for: 10m
+          annotations:
+            summary: >-
+              Contracts are being sent but none is integrated by the central system
+          labels:
+            severity: critical
+
+        - alert: ContratsFileSansConsommateur
+          expr: |-
+            rabbitmq_queue_consumers{namespace="integration", queue=~"contrats\\.(entrants|valides)"} == 0
+          for: 5m
+          annotations:
+            summary: >-
+              Queue {{ $labels.queue }} has no consumer, the flow is blocked
+          labels:
+            severity: critical
+
+        - alert: ContratsFileEnRetard
+          expr: |-
+            rabbitmq_queue_messages_ready{namespace="integration", queue=~"contrats\\.(entrants|valides)"} > 500
+          for: 10m
+          annotations:
+            summary: >-
+              {{ $value }} messages waiting in {{ $labels.queue }}
+          labels:
+            severity: warning
+
+        - alert: ContratsTauxDeRejetEleve
+          expr: |-
+            sum(rate(contrats_rejetes_total{namespace="integration"}[10m]))
+            /
+            (sum(rate(contrats_valides_total{namespace="integration"}[10m])) + sum(rate(contrats_rejetes_total{namespace="integration"}[10m])))
+            > 0.15
+          for: 10m
+          annotations:
+            summary: >-
+              {{ $value | humanizePercentage }} of contracts are rejected by the control rules
+          labels:
+            severity: warning
+
+        - alert: ContratsSourceEnErreur
+          expr: |-
+            sum by (source) (rate(contrats_rejetes_total{namespace="integration"}[15m]))
+            /
+            (sum by (source) (rate(contrats_valides_total{namespace="integration"}[15m])) + sum by (source) (rate(contrats_rejetes_total{namespace="integration"}[15m])))
+            > 0.30
+          for: 15m
+          annotations:
+            summary: >-
+              Source {{ $labels.source }} has {{ $value | humanizePercentage }} of its contracts rejected
+          labels:
+            severity: warning
+
+        - alert: ContratsMessagesIllisibles
+          expr: |-
+            sum(increase(contrats_illisibles_total{namespace="integration"}[15m])) > 30
+          for: 5m
+          annotations:
+            summary: >-
+              {{ $value | humanize }} unreadable messages dead-lettered in the last 15 minutes
+          labels:
+            severity: warning

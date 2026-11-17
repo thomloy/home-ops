@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: rabbitmq
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: rabbitmq
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+    - name: onepassword
+      namespace: external-secrets
+  interval: 1h
+  path: ./kubernetes/apps/integration/rabbitmq/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: integration
+  timeout: 5m
+  wait: true
