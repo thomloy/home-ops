@@ -112,6 +112,17 @@ spec:
             memory: 512Mi
           limits:
             memory: 2Gi
+      security:
+        cephx:
+          # Ceph 20.2.4 flags `aes` daemon keys as insecure
+          # (AUTH_INSECURE_SERVICE_KEY_TYPE → HEALTH_ERR), which fails the Flux
+          # health check on the CephCluster and blocks every dependent app.
+          # Let Rook rotate osd/mgr keys to aes256k and update their keyrings.
+          # Bump keyGeneration to force a new rotation in the future.
+          daemon:
+            keyType: aes256k
+            keyRotationPolicy: KeyGeneration
+            keyGeneration: 2
       storage:
         useAllNodes: true
         useAllDevices: false

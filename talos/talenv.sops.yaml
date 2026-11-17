@@ -1,0 +1,18 @@
+NAS_IP: ENC[AES256_GCM,data:MT8k2G+D+amxvFSOaA==,iv:VlgkTPDZnRgI64MliOwTCoFhISxhQKrPCSO1/DmI2Ao=,tag:jsFaA+Do8soSz4wb40SSUg==,type:str]
+NUT_UPSMON_PASSWORD: ENC[AES256_GCM,data:VlZtVUorSTFCmRk=,iv:B1cf3BPnlylXHZVxUt55x8ecu90YL92e7DOQfCNF7so=,tag:AS3SjfwKziN017M8EdOy/Q==,type:str]
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB1QWNiS0ZTRVFoaVp1b2FE
+        RGwwQXByZEx0SzZJNjIvSW00aVJVenFEOVNrCklYY0tpQjJ5eVpYT1VpTVZnTm5J
+        YU9KbHExejFib2FidVlwZkVkaG9qVUUKLS0tIGFHRTNWbzl3UldIRnV5eHcvMVZa
+        MkI2bHpVN2h1dTBCaklLN3pRbENuUFUKWDK9lS9fLkMi//cFACXdBs+HwagNmewG
+        hoIkue2RV0TVoUDnICHIHdJQSnhxxZywWpjAK+Fg01/zVBNYbUV2sQ==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age1ctpw7mxxzshknqmtwfn9c202hx0j57tv29fdsx4hym6hm5ed2stqtft3he
+  lastmodified: "2026-11-17T13:16:36Z"
+  mac: ENC[AES256_GCM,data:ffx6DuN2kDilD1oU2tGXUYcfxfqC0Y61iv4fYM5tvBSaNZqzMmjXqXGIEapg8x9zPXMyCTYs5l/QcnR+mwQWo8DZLdk8klVrhY5jkXBGTLWRj1k16kmvwsDQAbe0mgyoJ6T4JWMcwGabpWPqXb0csqTptmEq3hI2zm/jLqtw7jY=,iv:tLoQ8l/amuxj6TxLtJ1tA4hUSy/HwRXQ6C43JN3tXrI=,tag:IL/WK3raAj2jlhp+4w9bBg==,type:str]
+  mac_only_encrypted: true
+  unencrypted_suffix: _unencrypted
+  version: 3.13.3
