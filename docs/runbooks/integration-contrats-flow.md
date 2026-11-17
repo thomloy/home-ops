@@ -66,8 +66,13 @@ kubectl -n integration exec deploy/rabbitmq -- rabbitmqctl list_queues name type
 | Poison messages | set `PRODUCER_POISON_RATIO` to `0.05` | messages land in `contrats.rejets` with routing key `rejet.illisible`, `ContratsMessagesIllisibles` fires |
 | Broker restart | `kubectl -n integration rollout restart deploy/rabbitmq` | workers reconnect automatically, persistent messages survive |
 
-Changes go through Git like everything else: edit the HelmRelease, open a PR,
-let flux-local post the diff, merge, Flux applies it.
+`docs/runbooks/integration-demo.ps1` starts and reverts each scenario in one command
+(`check`, `panne`, `reprise`, `qualite`, `illisibles`, `files`, `reset`), so
+nothing has to be typed live. Flux does not revert these kubectl changes: run
+`reset` afterwards.
+
+Lasting changes go through Git like everything else: edit the HelmRelease, open
+a PR, let flux-local post the diff, merge, Flux applies it.
 
 ## Troubleshooting
 
