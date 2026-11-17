@@ -26,7 +26,10 @@ graph LR
 
 Design choices:
 
-- **Quorum queues** (replicated, Raft-based) instead of classic queues.
+- **Quorum queues** (Raft-based) instead of classic queues: durable, with
+  delivery limits and native dead-lettering. The broker runs as a single node
+  here, so there is no replication yet; the same queues replicate as-is once
+  RabbitMQ is scaled to a 3-node cluster.
 - **Publisher confirms + `mandatory`**: a message is acknowledged upstream only
   once the broker has accepted the downstream publish, so nothing is lost silently.
 - **Business rejects vs technical rejects**: rule failures are routed explicitly
