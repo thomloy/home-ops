@@ -50,13 +50,16 @@ metrics:
       - {color: red, min: 76, max: 9999}
     title: Memory
 
+  # CPU package power (Intel RAPL) summed over the 3 nodes. The nodes sit on the
+  # UPS surge-only outlets, which the UPS does not meter, so ups.load is always 0.
+  # RAPL excludes RAM/NVMe/NIC/PSU losses: wall power is ~5-15 W/node higher.
   - name: cluster_power_usage
-    query: round(truenas_nas_nut_ups_load_load / 100 * 510, 1)
+    query: round(sum(rate(node_rapl_package_joules_total{pod!=""}[5m])), 1)
     suffix: "W"
     colors:
-      - {color: "green", min: 0, max: 306}
-      - {color: "orange", min: 307, max: 408}
-      - {color: "red", min: 409, max: 9999}
+      - {color: "green", min: 0, max: 100}
+      - {color: "orange", min: 101, max: 200}
+      - {color: "red", min: 201, max: 9999}
     title: Power
 
   - name: cluster_age_days

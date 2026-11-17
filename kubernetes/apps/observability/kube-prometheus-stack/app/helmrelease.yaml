@@ -99,6 +99,21 @@ spec:
                   storage: 50Gi
     prometheus-node-exporter:
       fullnameOverride: node-exporter
+      # Intel RAPL energy counters (/sys/class/powercap/*/energy_uj) are
+      # root-only (0400) since CVE-2020-8694, so the rapl collector fails as
+      # nobody. Run as uid 0 but with every capability dropped and a read-only
+      # rootfs: owner permission is enough to read the file, nothing else is
+      # granted. Feeds the cluster_power_usage kromgo badge.
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: ["ALL"]
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
       # Let KSM read CNPG Backup CRs and expose their phase + creation time, so
