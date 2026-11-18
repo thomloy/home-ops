@@ -64,8 +64,14 @@ spec:
     cephClusterSpec:
       cephConfig:
         global:
-          bdev_enable_discard: "true" # quote
-          bdev_async_discard_threads: "1" # quote
+          # Discard stays OFF (Ceph default). With bdev_enable_discard +
+          # async discard threads, a clean OSD shutdown can write the NCB
+          # allocation file while BlueFS released extents are still queued for
+          # discard; the next mount then dies in HybridAllocator::init_rm_free
+          # ("Uexpected extent"). https://tracker.ceph.com/issues/81213
+          # This crashed osd.2 on 2026-11-18. Do not re-enable until fixed.
+          bdev_enable_discard: "false" # quote
+          bdev_async_discard_threads: "0" # quote
           osd_class_update_on_start: "false" # quote
           device_failure_prediction_mode: local # requires mgr module
           ms_bind_ipv4: "true"
@@ -150,8 +156,13 @@ spec:
             policy: mute
           AUTH_EMERGENCY_CIPHERS_SET:
             policy: mute
+          # AUTH_INSECURE_ROTATING_SERVICE_KEY_TYPE is deliberately NOT muted:
+          # it signals a cephx rotation still in progress. Muting it reported
+          # HEALTH_OK mid-rotation, which let tuppr start a Talos upgrade and
+          # contributed to the 2026-11-18 storage outage. Mutes are sticky in
+          # Ceph, so it must be explicitly unmuted (not just removed).
           AUTH_INSECURE_ROTATING_SERVICE_KEY_TYPE:
-            policy: mute
+            policy: unmute
       storage:
         useAllNodes: true
         useAllDevices: false
