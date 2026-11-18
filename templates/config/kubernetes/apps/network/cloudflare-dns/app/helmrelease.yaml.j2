@@ -18,6 +18,11 @@ spec:
             name: &secret cloudflare-dns-secret
             key: api-token
     extraArgs:
+      # external-dns >= v0.22 reads only `external-dns.kubernetes.io/` by default.
+      # Every annotation in this repo (gateways, DNSEndpoints) still uses the
+      # alpha prefix; without this flag the target annotation is ignored and
+      # sync policy DELETES the public CNAMEs (happened 2026-11-18 on 1.23.0).
+      - --annotation-prefix=external-dns.alpha.kubernetes.io/
       - --cloudflare-dns-records-per-page=1000
       - --cloudflare-proxied
       - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
