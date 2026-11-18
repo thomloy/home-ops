@@ -123,6 +123,25 @@ spec:
             keyType: aes256k
             keyRotationPolicy: KeyGeneration
             keyGeneration: 2
+      healthCheck:
+        # Expected leftovers of the CVE-2025-30156 migration: CSI and
+        # rbd-mirror-peer keys must stay `aes` until every node runs Linux 7.0+
+        # (Talos nodes are on 6.18), and Rook therefore keeps `aes` in the
+        # allowed/emergency cipher list. Muted as recommended by
+        # https://rook.io/docs/rook/latest/Storage-Configuration/Advanced/cephx-key-rotation/#warnings
+        # so the cluster reports HEALTH_OK — the tuppr TalosUpgrade health check
+        # requires it. Switch to `unmute` once CSI keys are rotated to aes256k.
+        muteHealthWarning:
+          AUTH_INSECURE_CLIENT_KEY_TYPE:
+            policy: mute
+          AUTH_INSECURE_KEYS_ALLOWED:
+            policy: mute
+          AUTH_INSECURE_KEYS_CREATABLE:
+            policy: mute
+          AUTH_EMERGENCY_CIPHERS_SET:
+            policy: mute
+          AUTH_INSECURE_ROTATING_SERVICE_KEY_TYPE:
+            policy: mute
       storage:
         useAllNodes: true
         useAllDevices: false
