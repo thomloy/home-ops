@@ -30,7 +30,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/emby
-              tag: 4.9.5.0@sha256:137b8d2de08dc5c82799318c9c4d876c80ad8c9b4733a9bc0db18b26f2943dc0
+              tag: 4.10.2.0@sha256:9f07edc2a494fc02f034df232c5eb56280f1d26388de8ab7aef23ecdf7cb0eb1
             env:
               TZ: Europe/Paris
               DOTNET_SYSTEM_IO_DISABLEFILELOCKING: "true"
