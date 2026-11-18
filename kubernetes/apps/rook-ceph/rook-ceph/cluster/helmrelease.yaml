@@ -123,6 +123,16 @@ spec:
             keyType: aes256k
             keyRotationPolicy: KeyGeneration
             keyGeneration: 2
+      placement:
+        all:
+          tolerations:
+            # tuppr taints every node pending a Talos upgrade with
+            # PreferNoSchedule. Rook treats any untolerated taint as
+            # "placement settings do not match" and then refuses to create or
+            # update OSDs on those nodes (OSDs stuck on the old Ceph version).
+            - key: tuppr.home-operations.com/outdated
+              operator: Exists
+              effect: PreferNoSchedule
       healthCheck:
         # Expected leftovers of the CVE-2025-30156 migration: CSI and
         # rbd-mirror-peer keys must stay `aes` until every node runs Linux 7.0+
