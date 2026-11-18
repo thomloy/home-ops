@@ -1,0 +1,122 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: rabbitmq
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: rabbitmq
+  interval: 1h
+  values:
+    controllers:
+      rabbitmq:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              # renovate: datasource=docker depName=docker.io/library/rabbitmq
+              repository: docker.io/library/rabbitmq
+              tag: 4.2-management
+            env:
+              # Stable node name so the data directory survives pod rescheduling
+              RABBITMQ_NODENAME: rabbit@localhost
+              TZ: Europe/Paris
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &amqp 5672
+                  periodSeconds: 20
+                  timeoutSeconds: 5
+                  failureThreshold: 6
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *amqp
+                  failureThreshold: 60
+                  periodSeconds: 5
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    service:
+      app:
+        ports:
+          amqp:
+            port: *amqp
+          http:
+            port: 15672
+          metrics:
+            port: 15692
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: metrics
+            path: /metrics
+            interval: 30s
+    route:
+      app:
+        hostnames:
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
+    configMaps:
+      plugins:
+        data:
+          enabled_plugins: |
+            [rabbitmq_management,rabbitmq_prometheus].
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 2Gi
+        storageClass: ceph-block
+        globalMounts:
+          - path: /var/lib/rabbitmq
+      config:
+        type: secret
+        name: rabbitmq-secret
+        globalMounts:
+          - path: /etc/rabbitmq/rabbitmq.conf
+            subPath: rabbitmq.conf
+            readOnly: true
+      plugins:
+        type: configMap
+        identifier: plugins
+        globalMounts:
+          - path: /etc/rabbitmq/enabled_plugins
+            subPath: enabled_plugins
+            readOnly: true
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

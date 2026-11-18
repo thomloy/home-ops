@@ -1,0 +1,39 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: rabbitmq
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+      app.kubernetes.io/instance: rabbitmq
+  ingress:
+    # Management UI through the internal gateway only
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+            gateway.networking.k8s.io/gateway-name: envoy-internal
+      toPorts:
+        - ports:
+            - port: "15672"
+              protocol: TCP
+    # AMQP only from the applications of the integration flow
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: integration
+            app.kubernetes.io/name: contrats-flow
+      toPorts:
+        - ports:
+            - port: "5672"
+              protocol: TCP
+    # Metrics scraping
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "15692"
+              protocol: TCP
