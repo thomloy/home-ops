@@ -15,6 +15,11 @@ spec:
     # API. The initial sync fatally exits on timeout, and a slow/loaded OPNsense
     # was crashlooping this pod (~140 restarts), each restart re-hitting the API.
     extraArgs:
+      # external-dns >= v0.22 reads only `external-dns.kubernetes.io/` by default.
+      # Every annotation in this repo (gateways, DNSEndpoints) still uses the
+      # alpha prefix; without this flag the target annotation is ignored and
+      # sync policy DELETES the public CNAMEs (happened 2026-11-18 on 1.23.0).
+      - --annotation-prefix=external-dns.alpha.kubernetes.io/
       - --webhook-provider-read-timeout=30s
     provider:
       name: webhook
