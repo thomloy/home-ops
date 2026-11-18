@@ -135,7 +135,7 @@ spec:
           gotenberg:
             image:
               repository: gotenberg/gotenberg
-              tag: 8
+              tag: 9
             args:
               - gotenberg
               - --chromium-disable-routes=true
