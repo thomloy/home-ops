@@ -8,6 +8,9 @@ data:
     server:
       port: 8080
       assets-path: /app/assets
+      # v3 web UI editor: config is a read-only ConfigMap managed by Flux and
+      # there is no auth, so anyone on the LAN could try to rewrite it.
+      allow-editing: false
 
     theme:
       light: false
