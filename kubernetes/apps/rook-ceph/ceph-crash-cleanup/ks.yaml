@@ -1,0 +1,22 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: ceph-crash-cleanup
+spec:
+  # Volontairement sur l'opérateur et NON sur rook-ceph-cluster : c'est le
+  # healthCheckExprs de ce dernier (failed si HEALTH_ERR) qui bloque tout en
+  # cascade. Y dépendre rendrait ce correctif indéployable pendant la panne
+  # qu'il adresse.
+  dependsOn:
+    - name: rook-ceph
+  interval: 1h
+  path: ./kubernetes/apps/rook-ceph/ceph-crash-cleanup/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: rook-ceph
+  wait: true
