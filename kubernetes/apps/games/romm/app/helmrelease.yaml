@@ -146,9 +146,10 @@ spec:
             resources:
               requests:
                 cpu: 200m
-                memory: 512Mi
-              limits:
                 memory: 1Gi
+              limits:
+                # RomM 5.x runs several uvicorn + rq worker processes: ~1Gi idle (OOMKilled at 1Gi)
+                memory: 2Gi
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
