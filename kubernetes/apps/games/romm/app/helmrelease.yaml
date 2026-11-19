@@ -49,6 +49,12 @@ spec:
                 else
                   echo "config.yml already present, leaving as-is"
                 fi
+                # RomM >= 5.3 refuses to start until the library layout is
+                # declared. The library is "structure A" (roms/{platform}/...).
+                if ! grep -q '^filesystem:' /romm/config/config.yml; then
+                  printf '\nfilesystem:\n  structure:\n    default: "roms/{platform}/{game}"\n    firmware: "bios/{platform}"\n' >> /romm/config/config.yml
+                  echo "Declared filesystem.structure (structure A)"
+                fi
             resources:
               requests:
                 cpu: 5m
@@ -122,7 +128,9 @@ spec:
                   httpGet:
                     path: /api/heartbeat
                     port: 8080
-                  failureThreshold: 30
+                  # 5.4 migrations rewrite the roms table on first start
+                  # (15-20 min upstream estimate); restarting mid-way is unsafe.
+                  failureThreshold: 180
                   periodSeconds: 10
               liveness: &romm_probe
                 enabled: true
