@@ -26,6 +26,10 @@ spec:
               PROWLARR__AUTH__REQUIRED: DisabledForLocalAddresses
               PROWLARR__LOG__DBENABLED: "False"
               PROWLARR__LOG__LEVEL: info
+              # Hostnames clients use: the route (browser, gatus, dynacat) and the
+              # Service (other *arr, seerr, recyclarr...). Loopback and the pod name
+              # are always allowed; the HTTP probe therefore sends `Host: localhost`.
+              PROWLARR__SERVER__ALLOWEDHOSTS: prowlarr.${SECRET_DOMAIN},prowlarr.downloads.svc.cluster.local,prowlarr.downloads.svc,prowlarr.downloads,prowlarr
               PROWLARR__SERVER__PORT: &port 80
               PROWLARR__UPDATE__BRANCH: develop
               TZ: Europe/Paris
@@ -46,6 +50,9 @@ spec:
                   httpGet:
                     path: /ping
                     port: *port
+                    httpHeaders:
+                      - name: Host
+                        value: localhost
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5

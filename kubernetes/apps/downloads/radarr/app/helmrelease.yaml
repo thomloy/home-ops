@@ -41,6 +41,10 @@ spec:
               RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
               RADARR__LOG__DBENABLED: "False"
               RADARR__LOG__LEVEL: info
+              # Hostnames clients use: the route (browser, gatus, dynacat) and the
+              # Service (other *arr, seerr, recyclarr...). Loopback and the pod name
+              # are always allowed; the HTTP probe therefore sends `Host: localhost`.
+              RADARR__SERVER__ALLOWEDHOSTS: radarr.${SECRET_DOMAIN},radarr.downloads.svc.cluster.local,radarr.downloads.svc,radarr.downloads,radarr
               RADARR__SERVER__PORT: &port 7878
               RADARR__UPDATE__BRANCH: develop
             probes:
@@ -57,6 +61,9 @@ spec:
                   httpGet:
                     path: /ping
                     port: *port
+                    httpHeaders:
+                      - name: Host
+                        value: localhost
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 5
