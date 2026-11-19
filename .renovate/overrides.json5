@@ -36,5 +36,11 @@
       matchPackageNames: ["ghcr.io/siderolabs/kubelet"],
       allowedVersions: "<1.37.0",
     },
+    {
+      description: "Gotenberg 9 removed the /forms/pdfengines routes and the pdfa field that paperless-ngx (gotenberg-client) still calls. Stay on 8.x until paperless supports Gotenberg 9 (see #622).",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["gotenberg/gotenberg"],
+      allowedVersions: "<9",
+    },
   ],
 }
