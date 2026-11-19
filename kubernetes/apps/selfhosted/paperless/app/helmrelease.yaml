@@ -88,6 +88,11 @@ spec:
                   httpGet:
                     path: /health/
                     port: 8000
+                    # Paperless 3 enforces ALLOWED_HOSTS (from PAPERLESS_URL) on
+                    # every path: a probe hitting the pod IP gets HTTP 400.
+                    httpHeaders: &probeHost
+                      - name: Host
+                        value: paperless.${SECRET_DOMAIN}
                   initialDelaySeconds: 0
                   periodSeconds: 30
                   timeoutSeconds: 5
@@ -100,6 +105,7 @@ spec:
                   httpGet:
                     path: /health/
                     port: 8000
+                    httpHeaders: *probeHost
                   failureThreshold: 60
                   periodSeconds: 5
             resources:
