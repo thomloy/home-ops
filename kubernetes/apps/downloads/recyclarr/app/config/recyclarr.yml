@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: https://raw.githubusercontent.com/recyclarr/recyclarr/master/schemas/config-schema.json
+# yaml-language-server: $schema=https://schemas.recyclarr.dev/v8/config-schema.json
 sonarr:
   sonarr:
     base_url: http://sonarr.downloads.svc.cluster.local:8989
@@ -7,26 +7,22 @@ sonarr:
     delete_old_custom_formats: true
     quality_definition:
       type: series
-    include:
-      - template: sonarr-v4-quality-profile-web-1080p
-      - template: sonarr-v4-custom-formats-web-1080p
-      - template: sonarr-v4-quality-profile-web-2160p
-      - template: sonarr-v4-custom-formats-web-2160p
-      - template: sonarr-v4-quality-profile-bluray-web-1080p-french-multi-vo
-      - template: sonarr-v4-custom-formats-bluray-web-1080p-french-multi-vo
-      - template: sonarr-v4-quality-profile-1080p-french-anime-vostfr
-      - template: sonarr-v4-custom-formats-1080p-french-anime-vostfr
+    # Recyclarr v8 config-templates dropped the `include` templates: profiles
+    # are now guide-backed via trash_id (their default CFs come with them).
+    # `name` keeps the existing profile names in Sonarr.
+    # FR-ANIME-VOSTFR is no longer in the TRaSH guides, so it is left
+    # unmanaged (kept as-is in Sonarr) instead of mapped to a non-anime profile.
     quality_profiles:
-      - name: WEB-1080p
+      - trash_id: 72dae194fc92bf828f32cde7744e51a1 # WEB-1080p
+        name: WEB-1080p
         reset_unmatched_scores:
           enabled: true
-      - name: WEB-2160p
+      - trash_id: d1498e7d189fbe6c7110ceaabb7473e6 # WEB-2160p
+        name: WEB-2160p
         reset_unmatched_scores:
           enabled: true
-      - name: FR-MULTi-VO-WEB-1080p
-        reset_unmatched_scores:
-          enabled: true
-      - name: FR-ANIME-VOSTFR
+      - trash_id: 4c48f506c1116a3a57ae33f12346bd15 # [French MULTi.VO] HD Bluray + WEB (1080p)
+        name: FR-MULTi-VO-WEB-1080p
         reset_unmatched_scores:
           enabled: true
     custom_formats:
@@ -50,16 +46,13 @@ radarr:
     delete_old_custom_formats: true
     quality_definition:
       type: movie
-    include:
-      - template: radarr-quality-profile-sqp-1-2160p-default
-      - template: radarr-custom-formats-sqp-1-2160p
-      - template: radarr-quality-profile-hd-bluray-web-french-multi-vo
-      - template: radarr-custom-formats-hd-bluray-web-french-multi-vo
     quality_profiles:
-      - name: SQP-1 (2160p)
+      - trash_id: 5128baeb2b081b72126bc8482b2a86a0 # [SQP] SQP-1 (2160p)
+        name: SQP-1 (2160p)
         reset_unmatched_scores:
           enabled: true
-      - name: FR-MULTi-VO-HD
+      - trash_id: 2572ce3ea4eef1c19d59e0e20ed1cea7 # [French MULTi.VO] HD Bluray + WEB
+        name: FR-MULTi-VO-HD
         reset_unmatched_scores:
           enabled: true
     custom_formats:
