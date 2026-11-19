@@ -30,7 +30,7 @@ spec:
           app:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: 2.20.15
+              tag: 3.5.1
 
             env:
 
@@ -57,6 +57,13 @@ spec:
               PAPERLESS_OCR_ROTATE_PAGES: "1"
               PAPERLESS_OCR_DESKEW: "1"
               PAPERLESS_OCR_CLEAN: clean
+              # Paperless 3 changed two defaults; keep the v2 behaviour:
+              # always produce the PDF/A archive copy, and reject duplicates.
+              PAPERLESS_ARCHIVE_FILE_GENERATION: always
+              PAPERLESS_CONSUMER_DELETE_DUPLICATES: "true"
+              # One proxy hop (envoy-internal) in X-Forwarded-For, so allauth
+              # rate-limits logins per client instead of per Envoy pod.
+              PAPERLESS_ALLAUTH_TRUSTED_PROXY_COUNT: "1"
 
               PAPERLESS_ADMIN_USER:
                 valueFrom:
