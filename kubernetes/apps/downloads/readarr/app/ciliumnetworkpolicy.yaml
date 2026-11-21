@@ -20,6 +20,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: downloads
             app.kubernetes.io/name: prowlarr
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: downloads
+            app.kubernetes.io/name: readarr-prefer-french
       toPorts:
         - ports:
             - port: "8787"

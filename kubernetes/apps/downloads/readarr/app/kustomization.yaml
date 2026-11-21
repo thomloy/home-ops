@@ -7,3 +7,12 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ciliumnetworkpolicy.yaml
+  - ./cronjob.yaml
+configMapGenerator:
+  - name: readarr-prefer-french-scripts
+    files:
+      - scripts/prefer-french-editions.js
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
