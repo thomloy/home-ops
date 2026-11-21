@@ -158,6 +158,21 @@ spec:
             cron:
               - path: /nc-data
 
+      # Ebook library on the NAS, exposed in Nextcloud as a "Local" external
+      # storage so the folder tree can be browsed and reorganised as-is.
+      books:
+        type: nfs
+        server: ${NAS_IP}
+        path: /mnt/HDD1X4/media
+        advancedMounts:
+          nextcloud:
+            app:
+              - path: /mnt/livres
+                subPath: Library/ebooks
+            cron:
+              - path: /mnt/livres
+                subPath: Library/ebooks
+
     route:
       app:
         annotations:
