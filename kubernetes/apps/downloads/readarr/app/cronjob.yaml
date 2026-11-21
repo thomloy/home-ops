@@ -1,0 +1,63 @@
+---
+# Readarr has no "preferred edition language" setting: this job switches the
+# monitored edition to the French one for every book that has a French edition,
+# and unmonitors books without one so they are not grabbed in another language.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: readarr-prefer-french
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: readarr-prefer-french
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: prefer-french
+              image: docker.io/library/node:24-alpine
+              command: ["node", "/scripts/prefer-french-editions.js"]
+              env:
+                - name: READARR_URL
+                  value: http://readarr.downloads.svc.cluster.local:8787
+                - name: PREFERRED_LANGUAGE
+                  value: fra
+                - name: UNMONITOR_WITHOUT_PREFERRED
+                  value: "true"
+                - name: READARR_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: readarr-secret
+                      key: api_key
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: [ALL]
+                readOnlyRootFilesystem: true
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+          volumes:
+            - name: scripts
+              configMap:
+                name: readarr-prefer-french-scripts
