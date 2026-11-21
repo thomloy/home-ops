@@ -27,6 +27,9 @@ spec:
               repository: ghcr.io/kareadita/kavita
               tag: 0.9.1@sha256:31181a32f0dda73cae68721867028a7253d57881b58bea5754cd9e578e75421a
             env:
+              # SQLite and .NET need a writable temp directory; without one,
+              # creating the first account fails with "disk I/O error".
+              TMPDIR: /var/tmp
               TZ: Europe/Paris
             probes:
               liveness:
@@ -57,7 +60,8 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               # The entrypoint copies its default appsettings.json from /tmp/config
-              # in the image, so /tmp must not be shadowed by an emptyDir.
+              # in the image, so /tmp must not be shadowed by an emptyDir: the
+              # writable temp directory is /var/tmp instead.
               readOnlyRootFilesystem: true
               capabilities:
                 drop:
@@ -78,6 +82,10 @@ spec:
         existingClaim: kavita
         globalMounts:
           - path: /kavita/config
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /var/tmp
       nfs-nas-media:
         type: nfs
         server: ${NAS_IP}
