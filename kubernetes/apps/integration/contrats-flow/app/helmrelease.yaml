@@ -1,0 +1,133 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: contrats-flow
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: contrats-flow
+  interval: 1h
+  values:
+    # Three decoupled applications exchanging contracts through RabbitMQ only.
+    # Same script, the ROLE variable selects the behaviour.
+    controllers:
+      producteur:
+        annotations: &annotations
+          reloader.stakater.com/auto: "true"
+        initContainers: &init
+          deps:
+            image: &image
+              # renovate: datasource=docker depName=docker.io/library/python
+              repository: docker.io/library/python
+              tag: 3.13-slim
+            command: ["pip", "install", "--no-cache-dir", "--target", "/deps", "pika==1.3.2", "prometheus-client==0.21.1"]
+            env:
+              HOME: /tmp
+              PIP_DISABLE_PIP_VERSION_CHECK: "1"
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+        containers:
+          app:
+            image: *image
+            command: ["python", "/app/flow.py"]
+            env:
+              ROLE: producteur
+              PRODUCER_RATE_PER_SECOND: "2"
+              PRODUCER_ERROR_RATIO: "0.08"
+              PRODUCER_POISON_RATIO: "0.005"
+              PYTHONPATH: /deps
+              PYTHONUNBUFFERED: "1"
+              PYTHONDONTWRITEBYTECODE: "1"
+              RABBITMQ_USER: &user
+                valueFrom:
+                  secretKeyRef:
+                    name: rabbitmq-secret
+                    key: RABBITMQ_USER
+              RABBITMQ_PASSWORD: &password
+                valueFrom:
+                  secretKeyRef:
+                    name: rabbitmq-secret
+                    key: RABBITMQ_PASSWORD
+            probes: &probes
+              liveness: &probe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /metrics
+                    port: 8000
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness: *probe
+            securityContext: *securityContext
+            resources: &resources
+              requests:
+                cpu: 10m
+                memory: 48Mi
+              limits:
+                memory: 128Mi
+
+      controleur:
+        annotations: *annotations
+        initContainers: *init
+        containers:
+          app:
+            image: *image
+            command: ["python", "/app/flow.py"]
+            env:
+              ROLE: controleur
+              PYTHONPATH: /deps
+              PYTHONUNBUFFERED: "1"
+              PYTHONDONTWRITEBYTECODE: "1"
+              RABBITMQ_USER: *user
+              RABBITMQ_PASSWORD: *password
+            probes: *probes
+            securityContext: *securityContext
+            resources: *resources
+
+      si-central:
+        annotations: *annotations
+        initContainers: *init
+        containers:
+          app:
+            image: *image
+            command: ["python", "/app/flow.py"]
+            env:
+              ROLE: si-central
+              PYTHONPATH: /deps
+              PYTHONUNBUFFERED: "1"
+              PYTHONDONTWRITEBYTECODE: "1"
+              RABBITMQ_USER: *user
+              RABBITMQ_PASSWORD: *password
+            probes: *probes
+            securityContext: *securityContext
+            resources: *resources
+
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+    persistence:
+      script:
+        type: configMap
+        name: contrats-flow-script
+        globalMounts:
+          - path: /app/flow.py
+            subPath: flow.py
+            readOnly: true
+      deps:
+        type: emptyDir
+        globalMounts:
+          - path: /deps
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

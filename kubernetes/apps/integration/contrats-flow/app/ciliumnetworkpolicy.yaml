@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliumnetworkpolicy_v2.json
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: contrats-flow
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: contrats-flow
+      app.kubernetes.io/instance: contrats-flow
+  ingress:
+    # Nothing calls these workers: only Prometheus may reach the metrics port
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
