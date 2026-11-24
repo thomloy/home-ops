@@ -5,3 +5,13 @@ resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./ciliumnetworkpolicy.yaml
+configMapGenerator:
+  - name: bentopdf-pwa
+    files:
+      - resources/site.webmanifest
+      - resources/open.html
+      - resources/open-file.js
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled

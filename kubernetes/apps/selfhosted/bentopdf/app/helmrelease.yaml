@@ -78,6 +78,21 @@ spec:
           - name: envoy-internal
             namespace: network
     persistence:
+      # PWA file handler: lets Windows open .pdf files in the installed BentoPDF app.
+      # site.webmanifest overrides the upstream one (adds file_handlers -> /open).
+      pwa:
+        type: configMap
+        name: bentopdf-pwa
+        globalMounts:
+          - path: /usr/share/nginx/html/site.webmanifest
+            subPath: site.webmanifest
+            readOnly: true
+          - path: /usr/share/nginx/html/open.html
+            subPath: open.html
+            readOnly: true
+          - path: /usr/share/nginx/html/open-file.js
+            subPath: open-file.js
+            readOnly: true
       nginx-cache:
         type: emptyDir
         globalMounts:
