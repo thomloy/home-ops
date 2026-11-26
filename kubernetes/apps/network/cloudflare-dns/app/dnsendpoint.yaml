@@ -66,6 +66,12 @@ spec:
       providerSpecific:
         - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
           value: "false"
+    - dnsName: "headlamp.${SECRET_DOMAIN}"
+      recordType: A
+      targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: "home.${SECRET_DOMAIN}"
       recordType: A
       targets: ["${CLUSTER_GATEWAY_INTERNAL_IP}"]
