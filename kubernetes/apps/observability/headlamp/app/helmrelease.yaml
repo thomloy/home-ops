@@ -1,0 +1,63 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas-ebx.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headlamp
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: headlamp
+  interval: 1h
+  values:
+    config:
+      # The Prometheus plugin ships in the image (static plugin); the others
+      # are installed by the plugin manager sidecar after startup, so Headlamp
+      # has to watch the plugins directory to pick them up.
+      watchPlugins: true
+    # Users log in with the headlamp-admin token (see rbac.yaml); the pod's
+    # own ServiceAccount does not need cluster-admin.
+    clusterRoleBinding:
+      create: false
+    pluginsManager:
+      enabled: true
+      configContent: |
+        plugins:
+          - name: flux
+            source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_flux
+            version: 0.8.0
+          - name: cert-manager
+            source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_cert-manager
+            version: 0.1.1
+          - name: keda
+            source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_keda
+            version: 0.1.2
+        installOptions:
+          parallel: true
+          maxConcurrent: 2
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 512Mi
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        memory: 256Mi
+    httpRoute:
+      enabled: true
+      annotations:
+        gatus.home-operations.com/endpoint: |-
+          alerts:
+            - type: pushover
+          name: Headlamp
+          ui:
+            hide-hostname: true
+      hostnames:
+        - headlamp.${SECRET_DOMAIN}
+      parentRefs:
+        - name: envoy-internal
+          namespace: network
