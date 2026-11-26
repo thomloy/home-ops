@@ -48,7 +48,9 @@ spec:
     kubeProxyReplacement: true
     kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
     l2announcements:
-      enabled: false
+      # Nodes answer ARP for the LoadBalancer IPs so LAN clients reach them
+      # on-link instead of through OPNsense. See config/l2.yaml.
+      enabled: true
     loadBalancer:
       acceleration: best-effort
       algorithm: maglev

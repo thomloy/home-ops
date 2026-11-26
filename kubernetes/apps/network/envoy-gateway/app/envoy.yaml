@@ -21,7 +21,9 @@ spec:
             limits:
               memory: 256Mi
       envoyService:
-        externalTrafficPolicy: Local
+        # Cluster, not Local: Cilium L2 announcements can elect a node without
+        # an Envoy pod. Cilium DSR still preserves the client source IP.
+        externalTrafficPolicy: Cluster
   shutdown:
     drainTimeout: 180s
   telemetry:

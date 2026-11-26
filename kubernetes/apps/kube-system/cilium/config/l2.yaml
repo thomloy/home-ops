@@ -1,0 +1,30 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/cilium.io/ciliuml2announcementpolicy_v2alpha1.json
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: lan-loadbalancers
+spec:
+  # LoadBalancer IPs share the /24 with LAN clients. With BGP only, LAN clients
+  # reached them through OPNsense (proxy-ARP) while replies went back directly,
+  # and the firewall dropped any TCP upload past ~130 KB on that half-seen
+  # connection. Answering ARP from the nodes keeps both directions on-link.
+  # BGP stays in place for routed clients (other VLANs, WAN port-forwards).
+  loadBalancerIPs: true
+  interfaces:
+    - ^enp90s0$
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+  # L2 announcements ignore externalTrafficPolicy: Local and may pick a node
+  # without a backend pod, so services that keep `Local` are left out:
+  # - kube-api: .100 is already held at L2 by the Talos control-plane VIP
+  # - qbittorrent-bittorrent: only reached from the WAN, through BGP
+  # Any new LoadBalancer service announced here must use `Cluster`.
+  serviceSelector:
+    matchExpressions:
+      - key: io.kubernetes.service.name
+        operator: NotIn
+        values:
+          - kube-api
+          - qbittorrent-bittorrent
